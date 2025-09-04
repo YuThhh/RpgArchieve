@@ -1,0 +1,4 @@
+name: RPG
+version: '1.0-SNAPSHOT'
+main: org.role.rPG.RPG
+api-version: '1.21'
