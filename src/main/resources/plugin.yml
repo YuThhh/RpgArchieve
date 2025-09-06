@@ -1,4 +1,17 @@
 name: RPG
-version: '1.0-SNAPSHOT'
+version: 1.0
 main: org.role.rPG.RPG
 api-version: '1.21'
+commands:
+  myinfo:
+    description: 내 정보 UI를 엽니다.
+    usage: /myinfo
+  sucheck:
+    description: 자신의 돈을 소모하여 지정한 금액의 수표를 발행합니다.
+    usage: /수표 <금액>
+    aliases: [수표]
+  # [추가됨] 개발자용 수표 발행 명령어
+  devsucheck:
+    description: 돈 소모 없이 지정한 금액의 수표를 발행합니다.
+    usage: /개발자수표 <금액>
+    aliases: [개발자수표]
