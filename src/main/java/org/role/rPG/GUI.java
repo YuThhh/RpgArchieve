@@ -3,6 +3,10 @@ package org.role.rPG;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -11,7 +15,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-public class GUI implements InventoryHolder {
+public class GUI implements InventoryHolder, Listener {
 
     private final Inventory inv;
 
@@ -103,5 +107,19 @@ public class GUI implements InventoryHolder {
 
     public void openInventory(final Player p) {
         p.openInventory(inv);
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        // 클릭된 인벤토리가 현재 GUI 클래스의 인스턴스인지 확인
+        if (event.getInventory().getHolder() instanceof GUI) {
+            // 이벤트 취소하여 아이템 이동 방지
+            event.setCancelled(true);
+
+            // Shift 클릭으로 플레이어 인벤토리에서 GUI로 아이템이 들어오는 것도 방지
+            if (event.getClickedInventory() != null && event.getClickedInventory().getType() == InventoryType.PLAYER) {
+                event.setCancelled(true);
+            }
+        }
     }
 }
