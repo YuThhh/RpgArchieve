@@ -15,11 +15,11 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-public class GUI implements InventoryHolder, Listener {
+public class MENU implements InventoryHolder, Listener {
 
     private final Inventory inv;
 
-    public GUI() {
+    public MENU() {
         // InventoryHolder 인터페이스의 메서드인 getInventory()만 @Override를 사용합니다.
         Component titleComponent = Component.text("메뉴", NamedTextColor.BLUE);
         inv = Bukkit.createInventory(this, 54, titleComponent);
@@ -112,7 +112,7 @@ public class GUI implements InventoryHolder, Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         // 클릭된 인벤토리가 현재 GUI 클래스의 인스턴스인지 확인
-        if (event.getInventory().getHolder() instanceof GUI) {
+        if (event.getInventory().getHolder() instanceof MENU) {
             // 이벤트 취소하여 아이템 이동 방지
             event.setCancelled(true);
 

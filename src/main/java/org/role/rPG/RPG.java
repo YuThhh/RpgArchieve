@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public final class RPG extends JavaPlugin implements CommandExecutor {
 
-    private GUI gui;
+    private MENU menu;
 
     @Override
     public void onEnable() {
@@ -19,10 +19,10 @@ public final class RPG extends JavaPlugin implements CommandExecutor {
         Objects.requireNonNull(this.getCommand("메뉴")).setExecutor(this);
 
         // GUI 인스턴스 생성
-        this.gui = new GUI();
+        this.menu = new MENU();
 
         // GUI 클래스가 Listener를 구현하도록 수정했으므로, 이제 등록 가능
-        getServer().getPluginManager().registerEvents(this.gui, this);
+        getServer().getPluginManager().registerEvents(this.menu, this);
     }
 
     @Override
@@ -34,7 +34,7 @@ public final class RPG extends JavaPlugin implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
         if (sender instanceof Player player) {
             // 인스턴스 필드에 접근하여 GUI 열기
-            this.gui.openInventory(player);
+            this.menu.openInventory(player);
             return true;
         }
         return false;
