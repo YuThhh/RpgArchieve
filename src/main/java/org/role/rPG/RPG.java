@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
+import java.util.Arrays;
 
 public final class RPG extends JavaPlugin {
 
@@ -43,7 +43,6 @@ public final class RPG extends JavaPlugin {
         Player player = (Player) sender;
         String commandName = command.getName().toLowerCase();
 
-        // 일반 수표 또는 개발자 수표 명령어일 경우
         if (commandName.equals("sucheck") || commandName.equals("devsucheck")) {
             if (args.length != 1) {
                 player.sendMessage("§c사용법: /" + label + " <금액>");
@@ -58,23 +57,26 @@ public final class RPG extends JavaPlugin {
                     return true;
                 }
 
-                // 일반 수표일 경우 돈 차감 로직 실행
                 if (commandName.equals("sucheck")) {
                     int playerMoney = Cash.getMoney(player);
                     if (playerMoney < amount) {
                         player.sendMessage("§c돈이 부족합니다. (현재 소지금: " + String.format("%,d", playerMoney) + "G)");
                         return true;
                     }
-                    // 돈 차감
                     Cash.removeMoney(player, amount);
                 }
 
-                // 수표 아이템 생성
                 ItemStack sucheckItem = new ItemStack(Material.IRON_NUGGET, 1);
                 ItemMeta meta = sucheckItem.getItemMeta();
                 if (meta != null) {
-                    meta.setDisplayName("§6" + amount + "G");
-                    meta.setLore(Collections.singletonList("§7우클릭하여 사용하세요."));
+                    meta.setDisplayName("§6" + String.format("%,d", amount) + "G");
+
+                    // [수정됨] 아이템 설명 문구를 더 명확하게 변경합니다.
+                    meta.setLore(Arrays.asList(
+                            "§7우클릭하여 사용하세요.",
+                            "§7쉬프트+우클릭 시 같은 금액의 수표를 모두 사용합니다."
+                    ));
+
                     sucheckItem.setItemMeta(meta);
                 }
 
