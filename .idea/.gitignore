@@ -3,3 +3,23 @@
 /workspace.xml
 # 에디터 기반 HTTP 클라이언트 요청
 /httpRequests/
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+build/
+*.class
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildnumber.json
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
