@@ -3,8 +3,9 @@ package org.role.rPG;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.command.CommandExecutor;
 
-public final class RPG extends JavaPlugin {
+public final class RPG extends JavaPlugin implements CommandExecutor {
 
     public static NamespacedKey SUCHECK_VALUE_KEY;
 
@@ -18,6 +19,14 @@ public final class RPG extends JavaPlugin {
         CommandManager.register(this);
 
         getLogger().info("RPG Plugin has been enabled!");
+        // 데이터 관리자 초기화
+        new PER_DATA();
+
+        // '담당자'들에게 등록 작업을 지시
+        new CMD_MANAGER(this).registerCommands();
+        new LIS_MANAGER(this).registerListeners();
+
+        getLogger().info("RPG Plugin Enabled.");
     }
 
     @Override
