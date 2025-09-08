@@ -15,11 +15,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-public class PROFILE implements Listener, InventoryHolder {
+public class LEVEL_UI implements Listener, InventoryHolder {
 
     private final Inventory inv;
 
-    public PROFILE() {
+    public LEVEL_UI() {
         Component titleComponent = Component.text("프로필", NamedTextColor.BLUE); //GUI 이름
         inv = Bukkit.createInventory(this, 54, titleComponent); // GUI 칸 개수
         initializeItems();
@@ -30,7 +30,6 @@ public class PROFILE implements Listener, InventoryHolder {
         // 슬롯 번호는 0부터 시작
         ItemStack grayGlassPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta grayMeta = grayGlassPane.getItemMeta();
-        grayMeta.displayName(Component.text(" ", NamedTextColor.GRAY));
         grayMeta.setHideTooltip(true);
         grayGlassPane.setItemMeta(grayMeta);
         for (int i = 0; i < inv.getSize(); i++) {
@@ -51,7 +50,7 @@ public class PROFILE implements Listener, InventoryHolder {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
 
-        if(event.getInventory().getHolder() instanceof PROFILE) {
+        if(event.getInventory().getHolder() instanceof LEVEL_UI) {
             event.setCancelled(true);
 
             if (event.getClickedInventory() != null && event.getClickedInventory().getType() == InventoryType.PLAYER) {

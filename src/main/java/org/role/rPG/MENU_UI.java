@@ -15,11 +15,11 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-public class MENU implements InventoryHolder, Listener {
+public class MENU_UI implements InventoryHolder, Listener {
 
     private final Inventory inv;
 
-    public MENU() {
+    public MENU_UI() {
         // InventoryHolder 인터페이스의 메서드인 getInventory()만 @Override를 사용합니다.
         Component titleComponent = Component.text("메뉴", NamedTextColor.BLUE);
         inv = Bukkit.createInventory(this, 54, titleComponent);
@@ -113,13 +113,48 @@ public class MENU implements InventoryHolder, Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         Player player =  (Player) event.getWhoClicked();
         // 클릭된 인벤토리가 현재 GUI 클래스의 인스턴스인지 확인
-        if (event.getInventory().getHolder() instanceof MENU) {
+        if (event.getInventory().getHolder() instanceof MENU_UI) {
+            RPG.last_ui = "menu";
             // 이벤트 취소하여 아이템 이동 방지
             event.setCancelled(true);
 
             if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
-                PROFILE profile = new PROFILE();
+                PROFILE_UI profile = new PROFILE_UI(); // 프로필 UI 열기
                 profile.openInventory(player);
+
+            } else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.END_CRYSTAL) {
+                TITLE_UI title = new TITLE_UI(); // 칭호 UI 열기
+                title.openInventory(player);
+
+            } else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.NETHER_STAR) {
+                QUEST_UI quest = new QUEST_UI(); // 퀘스트 UI 열기
+                quest.openInventory(player);
+
+            } else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.EXPERIENCE_BOTTLE) {
+                LEVEL_UI level = new LEVEL_UI(); // 숙련도 UI 열기
+                level.openInventory(player);
+
+            } else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.CRAFTING_TABLE) {
+                CRAFT_UI craft = new CRAFT_UI(); // 제작대 UI 열기
+                craft.openInventory(player);
+
+            } else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.CHEST) {
+                // 1. 중앙 관리소(RPG)에 접근해서 현재 플레이어의 창고 데이터를 요청
+                ItemStack[] playerData = PER_DATA.getInstance().getPlayerStorage(player.getUniqueId());
+
+                // 2. 받아온 데이터를 '청사진'처럼 STORAGE_UI의 생성자로 전달
+                STORAGE_UI storage = new STORAGE_UI(playerData);
+
+                // 3. '청사진'대로 만들어진 UI를 플레이어에게 보여줌
+                storage.openInventory(player);
+
+            } else if  (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.BOOK) {
+                GUIDE_UI guide = new GUIDE_UI(); // 도감 UI 열기
+                guide.openInventory(player);
+
+            } else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.BARRIER) {
+                player.closeInventory();
+
             }
 
             // Shift 클릭으로 플레이어 인벤토리에서 GUI로 아이템이 들어오는 것도 방지
