@@ -12,12 +12,21 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class Cash implements Listener {
+
+    /**
+     * Cash 시스템을 서버에 이벤트 리스너로 등록합니다.
+     * @param plugin 메인 클래스 인스턴스
+     */
+    public static void register(JavaPlugin plugin) {
+        plugin.getServer().getPluginManager().registerEvents(new Cash(), plugin);
+    }
 
     private static final Map<UUID, Integer> playerMoney = new HashMap<>();
 
@@ -60,14 +69,12 @@ public class Cash implements Listener {
                 }
 
                 if (totalAmount > 0) {
-                    // [수정됨] 명확하게 Cash.addMoney()로 호출
                     Cash.addMoney(player, totalAmount);
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1.0f);
                     player.sendMessage("§e수표 " + totalItemsUsed + "장을 모두 사용하여 §6" + String.format("%,d", totalAmount) + "G§f를 획득했습니다.");
                 }
 
             } else {
-                // [수정됨] 명확하게 Cash.addMoney()로 호출
                 Cash.addMoney(player, amount);
                 itemInHand.setAmount(itemInHand.getAmount() - 1);
                 player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
@@ -81,7 +88,6 @@ public class Cash implements Listener {
         playerMoney.put(player.getUniqueId(), currentMoney + amount);
     }
 
-    // [추가됨] 이 메소드가 누락되어 RPG.java에서 오류가 발생했을 것입니다.
     public static void removeMoney(Player player, int amount) {
         int currentMoney = getMoney(player);
         playerMoney.put(player.getUniqueId(), currentMoney - amount);

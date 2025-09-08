@@ -21,7 +21,19 @@ import java.util.Collections;
 
 public class Ui implements Listener {
 
-    // --- GUI 메뉴 관련 코드 ---
+    /**
+     * Ui 시스템(이벤트, 스케줄러)을 서버에 등록합니다.
+     * @param plugin 메인 클래스 인스턴스
+     */
+    public static void register(JavaPlugin plugin) {
+        // Ui 클래스의 이벤트 핸들러(onPlayerJoin 등)를 등록합니다.
+        plugin.getServer().getPluginManager().registerEvents(new Ui(), plugin);
+        // 액션바와 스코어보드 업데이트를 시작합니다.
+        startActionBarUpdater(plugin);
+        startScoreboardUpdater(plugin);
+    }
+
+    // --- GUI 메뉴 관련 코드 (그대로 유지) ---
     private Inventory inv;
 
     public Ui() {
@@ -59,7 +71,6 @@ public class Ui implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        // Cash 클래스에 데이터 제거를 요청
         Cash.unloadPlayerData(event.getPlayer());
     }
 
@@ -118,7 +129,6 @@ public class Ui implements Listener {
                     Scoreboard board = player.getScoreboard();
                     if (board.getObjective("rpg_info") == null) continue;
 
-                    // Cash 클래스에서 현재 돈을 가져와서 표시
                     int currentMoney = Cash.getMoney(player);
 
                     Team moneyTeam = board.getTeam("rpg_money");
