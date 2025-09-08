@@ -9,6 +9,7 @@ public class PER_DATA{
 
     private  static PER_DATA instance;
 
+    private final Map<UUID, String> lastUiMap = new HashMap<>();
     private final Map<UUID,ItemStack[]> p_storage = new HashMap<>();
 
     // 생성자: new PER_DATA()를 할 때 instance에 자기 자신을 저장합니다.
@@ -28,6 +29,14 @@ public class PER_DATA{
 
     public void savePlayerStorage(UUID playerUUID, ItemStack[] items) {
         p_storage.put(playerUUID, items);
+    }
+
+    public void setLastUi(UUID playerUUID, String uiName) {
+        lastUiMap.put(playerUUID, uiName);
+    }
+
+    public String getLastUi(UUID playerUUID) {
+        return lastUiMap.getOrDefault(playerUUID, "none");
     }
 
 }

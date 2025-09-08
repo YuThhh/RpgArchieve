@@ -1,0 +1,20 @@
+package org.role.rPG;
+
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.PluginManager;
+
+public class LIS_MANAGER {
+
+    private final JavaPlugin plugin;
+    private final PluginManager pm;
+
+    public LIS_MANAGER(JavaPlugin plugin) {
+        this.plugin = plugin;
+        this.pm = plugin.getServer().getPluginManager();
+    }
+
+    public void registerListeners() {
+        pm.registerEvents(new MENU_UI(), plugin);
+        pm.registerEvents(new STORAGE_UI(null), plugin);
+    }
+}

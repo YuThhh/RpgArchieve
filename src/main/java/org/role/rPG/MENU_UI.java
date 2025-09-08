@@ -114,7 +114,6 @@ public class MENU_UI implements InventoryHolder, Listener {
         Player player =  (Player) event.getWhoClicked();
         // 클릭된 인벤토리가 현재 GUI 클래스의 인스턴스인지 확인
         if (event.getInventory().getHolder() instanceof MENU_UI) {
-            RPG.last_ui = "menu";
             // 이벤트 취소하여 아이템 이동 방지
             event.setCancelled(true);
 
