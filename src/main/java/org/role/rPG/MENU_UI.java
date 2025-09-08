@@ -122,20 +122,13 @@ public class MENU_UI implements InventoryHolder, Listener {
                 profile.openInventory(player);
 
             } else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.END_CRYSTAL) {
-                TITLE_UI title = new TITLE_UI(); // 칭호 UI 열기
-                title.openInventory(player);
+
 
             } else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.NETHER_STAR) {
-                QUEST_UI quest = new QUEST_UI(); // 퀘스트 UI 열기
-                quest.openInventory(player);
 
             } else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.EXPERIENCE_BOTTLE) {
-                LEVEL_UI level = new LEVEL_UI(); // 숙련도 UI 열기
-                level.openInventory(player);
 
             } else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.CRAFTING_TABLE) {
-                CRAFT_UI craft = new CRAFT_UI(); // 제작대 UI 열기
-                craft.openInventory(player);
 
             } else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.CHEST) {
                 // 1. 중앙 관리소(RPG)에 접근해서 현재 플레이어의 창고 데이터를 요청
@@ -148,8 +141,6 @@ public class MENU_UI implements InventoryHolder, Listener {
                 storage.openInventory(player);
 
             } else if  (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.BOOK) {
-                GUIDE_UI guide = new GUIDE_UI(); // 도감 UI 열기
-                guide.openInventory(player);
 
             } else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.BARRIER) {
                 player.closeInventory();
