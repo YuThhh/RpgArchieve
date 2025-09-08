@@ -111,10 +111,16 @@ public class MENU implements InventoryHolder, Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        Player player =  (Player) event.getWhoClicked();
         // 클릭된 인벤토리가 현재 GUI 클래스의 인스턴스인지 확인
         if (event.getInventory().getHolder() instanceof MENU) {
             // 이벤트 취소하여 아이템 이동 방지
             event.setCancelled(true);
+
+            if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
+                PROFILE profile = new PROFILE();
+                profile.openInventory(player);
+            }
 
             // Shift 클릭으로 플레이어 인벤토리에서 GUI로 아이템이 들어오는 것도 방지
             if (event.getClickedInventory() != null && event.getClickedInventory().getType() == InventoryType.PLAYER) {
