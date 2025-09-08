@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="주요 클래스 파일" pattern="file:src/main/java/org/role/rPG/CHEST_UI.java||file:src/main/java/org/role/rPG/CRAFT_UI.java||file:src/main/java/org/role/rPG/GUIDE_UI.java||file:src/main/java/org/role/rPG/LEVEL_UI.java||file:src/main/java/org/role/rPG/MENU_UI.java||file:src/main/java/org/role/rPG/PER_DATA.java||file:src/main/java/org/role/rPG/PROFILE_UI.java||file:src/main/java/org/role/rPG/QUEST_UI.java||file:src/main/java/org/role/rPG/RPG.java||file:src/main/java/org/role/rPG/STORAGE_UI.java||file:src/main/java/org/role/rPG/TITLE_UI.java" />
+  <scope name="주요 클래스 파일" pattern="" />
 </component>

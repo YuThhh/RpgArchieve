@@ -14,3 +14,5 @@ commands:
     description: 돈 소모 없이 지정한 금액의 수표를 발행합니다.
     usage: /개발자수표 <금액> [개수]
     aliases: [개발자수표]
+  메뉴:
+    usage: /<command>
