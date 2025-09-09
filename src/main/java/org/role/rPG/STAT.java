@@ -48,7 +48,17 @@ public class STAT implements Listener {
     @EventHandler
     public void onDamage(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player p) {
-            double damage = e.getDamage();
+            double def = data.getPlayerDefense(p.getUniqueId());
+
+            if (def > 0.0) {
+                double original_damage = e.getDamage();
+                double DR = (-100*(Math.pow(0.5,def/500)+100));
+                double final_damage = original_damage * (1-DR);
+
+                e.setDamage(final_damage);
+            }
         }
     }
+
+
 }
