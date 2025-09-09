@@ -18,3 +18,7 @@ commands:
     usage: /메뉴
   setdef:
     usage: /setdef
+  setcirt:
+    usage: /setcirt
+  setcritdmg:
+    usage: /setcritdmg
