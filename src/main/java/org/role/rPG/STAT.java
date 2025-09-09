@@ -3,6 +3,7 @@ package org.role.rPG;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -69,6 +70,16 @@ public class STAT implements Listener {
 
                     e.setDamage(final_damage);
                 }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntityDamage(EntityDamageByEntityEvent e) {
+        if (e.getDamager() instanceof Player p) {
+            if (e.isCancelled()) {
+                double original_damage = e.getDamage() / 1.5;
+                e.setDamage(original_damage);
             }
         }
     }
