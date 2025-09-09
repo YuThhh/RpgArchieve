@@ -1,6 +1,8 @@
 package org.role.rPG;
 
+import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -8,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 import java.util.Random;
@@ -66,7 +69,7 @@ public class STAT implements Listener {
                 int random = new Random().nextInt(100) + 1;
                 if (random <= cirt) {
                     double original_damage = e.getDamage();
-                    double final_damage = original_damage * critDamage * 0.01;
+                    double final_damage = original_damage * ( 1 + critDamage * 0.01);
 
                     e.setDamage(final_damage);
                 }
@@ -74,13 +77,24 @@ public class STAT implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onEntityDamage(EntityDamageByEntityEvent e) {
-        if (e.getDamager() instanceof Player p) {
-            if (e.isCancelled()) {
-                double original_damage = e.getDamage() / 1.5;
-                e.setDamage(original_damage);
-            }
+    @EventHandler
+    public void onPlayerAttack(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player player)) return;
+        if (!(event.getEntity() instanceof LivingEntity)) return;
+
+        // 크리티컬 조건
+        if (player.getAttackCooldown() >= 1.0F &&
+                !player.isOnGround() &&
+                !player.isInWater() &&
+                !player.isInsideVehicle() &&
+                !player.hasPotionEffect(PotionEffectType.BLINDNESS)) {
+
+            // 크리티컬 무효화 → 일반 공격으로 바꾸기
+            double baseDamage = event.getDamage() / 1.5; // 1.5배 증가 제거
+            event.setDamage(baseDamage);
+
+            // 파티클도 없애고 싶으면, 강제로 0개 스폰
+            event.getEntity().getWorld().spawnParticle(Particle.CRIT, event.getEntity().getLocation(), 0);
         }
     }
 }
