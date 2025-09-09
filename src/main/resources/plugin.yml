@@ -15,4 +15,10 @@ commands:
     usage: /개발자수표 <금액> [개수]
     aliases: [개발자수표]
   메뉴:
-    usage: /<command>
+    usage: /메뉴
+  setdef:
+    usage: /setdef
+  setcirt:
+    usage: /setcirt
+  setcritdmg:
+    usage: /setcritdmg

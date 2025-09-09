@@ -12,6 +12,8 @@ public class PER_DATA{
     private final Map<UUID, String> lastUiMap = new HashMap<>(); // GUI 뒤로가기 창
     private final Map<UUID,ItemStack[]> p_storage = new HashMap<>(); // GUI 창고 스토리지
     private final Map<UUID, Double> playerDefense = new HashMap<>(); // 방어력 스탯
+    private final Map<UUID, Double> playerCrit = new HashMap<>();
+    private final Map<UUID, Double> playerCritDamage = new HashMap<>();
 
     // 생성자: new PER_DATA()를 할 때 instance에 자기 자신을 저장합니다.
     public PER_DATA() {
@@ -54,4 +56,19 @@ public class PER_DATA{
         playerDefense.remove(playerUUID);
     }
 
+    public double getPlayerCrit(UUID playerUUID) {
+        return playerCrit.getOrDefault(playerUUID, 0.0);
+    }
+
+    public void setPlayerCrit(UUID playerUUID, double cirt) {
+        playerCrit.put(playerUUID, cirt);
+    }
+
+    public double getPlayerCritDamage(UUID playerUUID) {
+        return playerCritDamage.getOrDefault(playerUUID, 50.0);
+    }
+
+    public void setPlayerCritDamage(UUID playerUUID, double critDamage) {
+        playerCritDamage.put(playerUUID, critDamage);
+    }
 }

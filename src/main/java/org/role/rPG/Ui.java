@@ -18,10 +18,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
 
 import java.util.Collections;
+import java.util.UUID;
 
 public class Ui implements Listener {
 
-
+    private static final PER_DATA data = PER_DATA.getInstance();
 
     /**
      * Ui 시스템(이벤트, 스케줄러)을 서버에 등록합니다.
@@ -86,9 +87,11 @@ public class Ui implements Listener {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
+                    UUID  playerUUID = player.getUniqueId();
+
                     int currentHealth = (int) player.getHealth();
                     int maxHealth = (int) player.getAttribute(Attribute.MAX_HEALTH).getValue();
-                    int defense = (int) player.getAttribute(Attribute.ARMOR).getValue();
+                    int defense = (int) data.getPlayerDefense(playerUUID);
                     int mp = 100;
                     String message = String.format("§c❤ %d/%d  §b|  MP %d  §a|  DF %d",
                             currentHealth, maxHealth, mp, defense);

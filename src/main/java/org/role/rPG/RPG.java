@@ -9,7 +9,6 @@ import org.bukkit.command.CommandExecutor;
 public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
 
     public static NamespacedKey SUCHECK_VALUE_KEY;
-    public final double MAX_HEALTH = 100.0;
 
     @Override
     public void onEnable() {

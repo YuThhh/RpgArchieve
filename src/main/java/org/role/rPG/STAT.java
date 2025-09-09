@@ -4,11 +4,12 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Objects;
+import java.util.Random;
 import java.util.UUID;
 
 
@@ -40,25 +41,35 @@ public class STAT implements Listener {
     }
 
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        // PER_DATA의 메서드를 호출하여 데이터 제거
-        data.removePlayerDefense(event.getPlayer().getUniqueId());
-    }
-
-    @EventHandler
     public void onDamage(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player p) {
             double def = data.getPlayerDefense(p.getUniqueId());
 
             if (def > 0.0) {
                 double original_damage = e.getDamage();
-                double DR = (-100*(Math.pow(0.5,def/500)+100));
-                double final_damage = original_damage * (1-DR);
+                double DR = -Math.pow(0.5,def/500);
+                double final_damage = original_damage * DR;
 
                 e.setDamage(final_damage);
             }
         }
     }
 
+    @EventHandler
+    public void EntityDamageByEntity(EntityDamageByEntityEvent e) {
+        if (e.getDamager() instanceof Player p) {
+            double cirt = data.getPlayerCritDamage(p.getUniqueId());
+            double critDamage = data.getPlayerCritDamage(p.getUniqueId());
 
+            if (cirt > 0.0) {
+                int random = new Random().nextInt(100) + 1;
+                if (random <= cirt) {
+                    double original_damage = e.getDamage();
+                    double final_damage = original_damage * critDamage * 0.01;
+
+                    e.setDamage(final_damage);
+                }
+            }
+        }
+    }
 }
