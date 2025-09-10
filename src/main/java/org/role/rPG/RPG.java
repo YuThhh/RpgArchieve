@@ -23,7 +23,7 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
         Cash.register(this);
         CommandManager.register(this);
 
-        getServer().getPluginManager().registerEvents(new STAT(), this);
+        getServer().getPluginManager().registerEvents(new Stat(), this);
 
         getLogger().info("RPG Plugin has been enabled!");
     }

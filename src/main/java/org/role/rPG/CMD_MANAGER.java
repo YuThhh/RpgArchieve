@@ -40,7 +40,7 @@ public class CMD_MANAGER implements CommandExecutor {
                 return true; // 명령어 실행은 성공적으로 끝났으므로 true 반환
             }
 
-            new MENU_UI().openInventory(player);
+            new Menu_UI().openInventory(player);
             PER_DATA.getInstance().setLastUi(player.getUniqueId(), "none");
             return true;
         }

@@ -14,7 +14,7 @@ public class LIS_MANAGER {
     }
 
     public void registerListeners() {
-        pm.registerEvents(new MENU_UI(), plugin);
-        pm.registerEvents(new STORAGE_UI(null), plugin);
+        pm.registerEvents(new Menu_UI(), plugin);
+        pm.registerEvents(new Storage_UI(null), plugin);
     }
 }

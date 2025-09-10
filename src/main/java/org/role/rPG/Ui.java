@@ -93,7 +93,7 @@ public class Ui implements Listener {
                     int maxHealth = (int) player.getAttribute(Attribute.MAX_HEALTH).getValue();
                     int defense = (int) data.getPlayerDefense(playerUUID);
                     int mp = 100;
-                    String message = String.format("§c❤ %d/%d  §b|  MP %d  §a|  DF %d",
+                    String message = String.format("§c❤ %d/%d  §aDEF %d  §bMP %d",
                             currentHealth, maxHealth, mp, defense);
                     sendActionBar(player, message);
                 }
