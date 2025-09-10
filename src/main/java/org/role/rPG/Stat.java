@@ -20,7 +20,6 @@ public class Stat implements Listener {
     private static final Random RANDOM = new Random();
 
     // [수정] 코드의 가독성과 유지보수를 위해 '매직 넘버'들을 상수로 정의합니다.
-    private static final double CUSTOM_MAX_HEALTH = 100.0;
     private static final double VANILLA_HEALTH_SCALE = 20.0;
     private static final double VANILLA_CRIT_MULTIPLIER = 1.5;
     private static final double DEFENSE_CONSTANT = 500.0;
@@ -33,8 +32,8 @@ public class Stat implements Listener {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
 
-        Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(CUSTOM_MAX_HEALTH);
-        player.setHealth(CUSTOM_MAX_HEALTH);
+        Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(data.getPlayerHealth(playerUUID));
+        player.setHealth(data.getPlayerHealth(playerUUID));
 
         player.setHealthScale(VANILLA_HEALTH_SCALE);
         player.setHealthScaled(true);

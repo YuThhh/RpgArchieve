@@ -22,3 +22,5 @@ commands:
     usage: /setcirt
   setcritdmg:
     usage: /setcritdmg
+  sethp:
+    usage: /sethp

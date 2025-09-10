@@ -11,6 +11,7 @@ public class PER_DATA{
 
     private final Map<UUID, String> lastUiMap = new HashMap<>(); // GUI 뒤로가기 창
     private final Map<UUID,ItemStack[]> p_storage = new HashMap<>(); // GUI 창고 스토리지
+    private final Map<UUID,Double> playerHealth = new HashMap<>();
     private final Map<UUID, Double> playerDefense = new HashMap<>(); // 방어력 스탯
     private final Map<UUID, Double> playerCrit = new HashMap<>();
     private final Map<UUID, Double> playerCritDamage = new HashMap<>();
@@ -40,6 +41,14 @@ public class PER_DATA{
 
     public String getLastUi(UUID playerUUID) {
         return lastUiMap.getOrDefault(playerUUID, "none");
+    }
+
+    public double getPlayerHealth(UUID playerUUID) {
+        return playerHealth.getOrDefault(playerUUID, 100.0);
+    }
+
+    public void setPlayerHealth(UUID playerUUID, double health) {
+        playerHealth.put(playerUUID, health);
     }
 
     // --- 방어력 데이터 관리 메서드 추가 ---
