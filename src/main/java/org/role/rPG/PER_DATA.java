@@ -11,10 +11,10 @@ public class PER_DATA{
 
     private final Map<UUID, String> lastUiMap = new HashMap<>(); // GUI 뒤로가기 창
     private final Map<UUID,ItemStack[]> p_storage = new HashMap<>(); // GUI 창고 스토리지
-    private final Map<UUID,Double> playerHealth = new HashMap<>();
+    private final Map<UUID,Double> playerHealth = new HashMap<>(); // 체력 스탯
     private final Map<UUID, Double> playerDefense = new HashMap<>(); // 방어력 스탯
-    private final Map<UUID, Double> playerCrit = new HashMap<>();
-    private final Map<UUID, Double> playerCritDamage = new HashMap<>();
+    private final Map<UUID, Double> playerCrit = new HashMap<>(); // 크리티컬 스탯
+    private final Map<UUID, Double> playerCritDamage = new HashMap<>(); // 크리티컬 대미지 스탯
 
     // 생성자: new PER_DATA()를 할 때 instance에 자기 자신을 저장합니다.
     public PER_DATA() {

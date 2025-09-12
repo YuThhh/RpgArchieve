@@ -18,6 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Ui implements Listener {
@@ -90,7 +91,7 @@ public class Ui implements Listener {
                     UUID  playerUUID = player.getUniqueId();
 
                     int currentHealth = (int) player.getHealth();
-                    int maxHealth = (int) player.getAttribute(Attribute.MAX_HEALTH).getValue();
+                    int maxHealth = (int) Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
                     int defense = (int) data.getPlayerDefense(playerUUID);
                     int mp = 100;
                     String message = String.format("§c❤ %d/%d  §aDEF %d  §bMP %d",
@@ -109,7 +110,6 @@ public class Ui implements Listener {
     // ================= 스코어보드 =================
     public static void setScoreboard(Player player) {
         ScoreboardManager bukkitScoreboardManager = Bukkit.getScoreboardManager();
-        if (bukkitScoreboardManager == null) return;
 
         Scoreboard board = bukkitScoreboardManager.getNewScoreboard();
         Objective objective = board.registerNewObjective("rpg_info", "dummy", "§e§lMY INFO");
