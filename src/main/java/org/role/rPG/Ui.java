@@ -16,10 +16,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.Collections;
+import java.util.Objects;
+import java.util.UUID;
 
 public class Ui implements Listener {
+
+    private static final PER_DATA data = PER_DATA.getInstance();
 
     /**
      * Ui 시스템(이벤트, 스케줄러)을 서버에 등록합니다.
@@ -28,13 +34,14 @@ public class Ui implements Listener {
     public static void register(JavaPlugin plugin) {
         // Ui 클래스의 이벤트 핸들러(onPlayerJoin 등)를 등록합니다.
         plugin.getServer().getPluginManager().registerEvents(new Ui(), plugin);
+
         // 액션바와 스코어보드 업데이트를 시작합니다.
         startActionBarUpdater(plugin);
         startScoreboardUpdater(plugin);
     }
 
     // --- GUI 메뉴 관련 코드 (그대로 유지) ---
-    private Inventory inv;
+    private final Inventory inv;
 
     public Ui() {
         this.inv = Bukkit.createInventory(null, 27, "메뉴");
@@ -83,11 +90,13 @@ public class Ui implements Listener {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
+                    UUID  playerUUID = player.getUniqueId();
+
                     int currentHealth = (int) player.getHealth();
-                    int maxHealth = (int) player.getAttribute(Attribute.MAX_HEALTH).getValue();
-                    int defense = (int) player.getAttribute(Attribute.ARMOR).getValue();
+                    int maxHealth = (int) Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
+                    int defense = (int) data.getPlayerDefense(playerUUID);
                     int mp = 100;
-                    String message = String.format("§c❤ %d/%d  §b|  MP %d  §a|  DF %d",
+                    String message = String.format("§c❤ %d/%d  §aDEF %d  §bMP %d",
                             currentHealth, maxHealth, mp, defense);
                     sendActionBar(player, message);
                 }
@@ -103,7 +112,6 @@ public class Ui implements Listener {
     // ================= 스코어보드 =================
     public static void setScoreboard(Player player) {
         ScoreboardManager bukkitScoreboardManager = Bukkit.getScoreboardManager();
-        if (bukkitScoreboardManager == null) return;
 
         Scoreboard board = bukkitScoreboardManager.getNewScoreboard();
         Objective objective = board.registerNewObjective("rpg_info", "dummy", "§e§lMY INFO");
@@ -138,5 +146,10 @@ public class Ui implements Listener {
                 }
             }
         }.runTaskTimer(plugin, 0L, 20L);
+    }
+
+    // ================= 탭 리스트 =================
+    public static void startTabListUpdater(JavaPlugin plugin) {
+
     }
 }

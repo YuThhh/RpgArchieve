@@ -15,11 +15,11 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-public class MENU_UI implements InventoryHolder, Listener {
+public class Menu_UI implements InventoryHolder, Listener {
 
     private final Inventory inv;
 
-    public MENU_UI() {
+    public Menu_UI() {
         // InventoryHolder 인터페이스의 메서드인 getInventory()만 @Override를 사용합니다.
         Component titleComponent = Component.text("메뉴", NamedTextColor.BLUE);
         inv = Bukkit.createInventory(this, 54, titleComponent);
@@ -113,12 +113,12 @@ public class MENU_UI implements InventoryHolder, Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         Player player =  (Player) event.getWhoClicked();
         // 클릭된 인벤토리가 현재 GUI 클래스의 인스턴스인지 확인
-        if (event.getInventory().getHolder() instanceof MENU_UI) {
+        if (event.getInventory().getHolder() instanceof Menu_UI) {
             // 이벤트 취소하여 아이템 이동 방지
             event.setCancelled(true);
 
             if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
-                PROFILE_UI profile = new PROFILE_UI(); // 프로필 UI 열기
+                Profile_UI profile = new Profile_UI(); // 프로필 UI 열기
                 profile.openInventory(player);
 
             } else if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.END_CRYSTAL) {
@@ -135,7 +135,7 @@ public class MENU_UI implements InventoryHolder, Listener {
                 ItemStack[] playerData = PER_DATA.getInstance().getPlayerStorage(player.getUniqueId());
 
                 // 2. 받아온 데이터를 '청사진'처럼 STORAGE_UI의 생성자로 전달
-                STORAGE_UI storage = new STORAGE_UI(playerData);
+                Storage_UI storage = new Storage_UI(playerData);
 
                 // 3. '청사진'대로 만들어진 UI를 플레이어에게 보여줌
                 storage.openInventory(player);

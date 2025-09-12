@@ -9,8 +9,12 @@ public class PER_DATA{
 
     private  static PER_DATA instance;
 
-    private final Map<UUID, String> lastUiMap = new HashMap<>();
-    private final Map<UUID,ItemStack[]> p_storage = new HashMap<>();
+    private final Map<UUID, String> lastUiMap = new HashMap<>(); // GUI 뒤로가기 창
+    private final Map<UUID,ItemStack[]> p_storage = new HashMap<>(); // GUI 창고 스토리지
+    private final Map<UUID,Double> playerHealth = new HashMap<>(); // 체력 스탯
+    private final Map<UUID, Double> playerDefense = new HashMap<>(); // 방어력 스탯
+    private final Map<UUID, Double> playerCrit = new HashMap<>(); // 크리티컬 스탯
+    private final Map<UUID, Double> playerCritDamage = new HashMap<>(); // 크리티컬 대미지 스탯
 
     // 생성자: new PER_DATA()를 할 때 instance에 자기 자신을 저장합니다.
     public PER_DATA() {
@@ -39,4 +43,41 @@ public class PER_DATA{
         return lastUiMap.getOrDefault(playerUUID, "none");
     }
 
+    public double getPlayerHealth(UUID playerUUID) {
+        return playerHealth.getOrDefault(playerUUID, 100.0);
+    }
+
+    public void setPlayerHealth(UUID playerUUID, double health) {
+        playerHealth.put(playerUUID, health);
+    }
+
+    // --- 방어력 데이터 관리 메서드 추가 ---
+    public double getPlayerDefense(UUID playerUUID) {
+        // 방어력 데이터가 없으면 기본값 0.0 반환
+        return playerDefense.getOrDefault(playerUUID, 0.0);
+    }
+
+    public void setPlayerDefense(UUID playerUUID, double defense) {
+        playerDefense.put(playerUUID, defense);
+    }
+
+    public void removePlayerDefense(UUID playerUUID) {
+        playerDefense.remove(playerUUID);
+    }
+
+    public double getPlayerCrit(UUID playerUUID) {
+        return playerCrit.getOrDefault(playerUUID, 0.0);
+    }
+
+    public void setPlayerCrit(UUID playerUUID, double cirt) {
+        playerCrit.put(playerUUID, cirt);
+    }
+
+    public double getPlayerCritDamage(UUID playerUUID) {
+        return playerCritDamage.getOrDefault(playerUUID, 50.0);
+    }
+
+    public void setPlayerCritDamage(UUID playerUUID, double critDamage) {
+        playerCritDamage.put(playerUUID, critDamage);
+    }
 }

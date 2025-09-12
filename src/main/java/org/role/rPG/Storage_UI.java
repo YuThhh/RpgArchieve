@@ -15,12 +15,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-public class STORAGE_UI implements Listener, InventoryHolder {
+public class Storage_UI implements Listener, InventoryHolder {
 
     private final Inventory inv;
     private final ItemStack[] storage;
 
-    public STORAGE_UI(ItemStack[] playerStorageData) {
+    public Storage_UI(ItemStack[] playerStorageData) {
         Component titleComponent = Component.text("프로필", NamedTextColor.BLUE); //GUI 이름
         inv = Bukkit.createInventory(this, 54, titleComponent); // GUI 칸 개수
         // 주입받은 데이터를 클래스 내부 변수(storage)에 저장
@@ -65,7 +65,7 @@ public class STORAGE_UI implements Listener, InventoryHolder {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
 
-        if (!(event.getInventory().getHolder() instanceof STORAGE_UI)) {
+        if (!(event.getInventory().getHolder() instanceof Storage_UI)) {
             return;
         }
 
@@ -80,7 +80,7 @@ public class STORAGE_UI implements Listener, InventoryHolder {
         // 1. 뒤로가기 버튼(BARRIER)을 클릭했을 때
         if (clickedType == Material.BARRIER) {
             event.setCancelled(true); // 아이템 이동 방지
-            MENU_UI menu = new MENU_UI();
+            Menu_UI menu = new Menu_UI();
             menu.openInventory(player);
             return; // 다른 검사를 할 필요가 없으므로 여기서 종료
         }
@@ -95,7 +95,7 @@ public class STORAGE_UI implements Listener, InventoryHolder {
     public void InventoryCloseEvent(InventoryCloseEvent event) {
         Player player =  (Player) event.getPlayer();
 
-        if (event.getInventory().getHolder() instanceof STORAGE_UI) {
+        if (event.getInventory().getHolder() instanceof Storage_UI) {
             // 중앙 관리소(RPG)에 접근해서 "이 플레이어의 창고는 이제 이 상태입니다"라고 알려줌
             PER_DATA.getInstance().savePlayerStorage(player.getUniqueId(), event.getInventory().getContents());
         }
