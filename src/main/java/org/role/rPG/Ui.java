@@ -22,18 +22,22 @@ import java.util.*;
 public class Ui implements Listener {
 
     private static final PER_DATA data = PER_DATA.getInstance();
+    private static TablistManager tabListManager;
 
     /**
      * Ui 시스템(이벤트, 스케줄러)을 서버에 등록합니다.
      * @param plugin 메인 클래스 인스턴스
      */
-    public static void register(JavaPlugin plugin) {
+    public static void register(JavaPlugin plugin, TablistManager manager) {
         // Ui 클래스의 이벤트 핸들러(onPlayerJoin 등)를 등록합니다.
         plugin.getServer().getPluginManager().registerEvents(new Ui(), plugin);
+        tabListManager = manager; // [추가]
+
 
         // 액션바와 스코어보드 업데이트를 시작합니다.
         startActionBarUpdater(plugin);
         startScoreboardUpdater(plugin);
+//        startTabListUpdater(plugin);
     }
 
     // --- GUI 메뉴 관련 코드 (그대로 유지) ---
@@ -82,6 +86,12 @@ public class Ui implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Cash.unloadPlayerData(event.getPlayer());
+        event.getPlayer().sendPlayerListHeaderAndFooter(Component.empty(),Component.empty());
+
+        // [추가] 플레이어가 나갈 때 생성된 가짜 플레이어를 제거합니다.
+        if (tabListManager != null) {
+            tabListManager.removeFakePlayers(event.getPlayer());
+        }
     }
 
 
@@ -99,9 +109,9 @@ public class Ui implements Listener {
                     int maxHealth = (int) Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
                     int defense = (int) data.getPlayerDefense(playerUUID);
                     int mp = 100;
-                    Component message = Component.text(currentHealth + "/" + maxHealth, NamedTextColor.RED)
-                            .append(Component.text("DEF" + " " + defense, NamedTextColor.GREEN))
-                            .append(Component.text(" MP" + " " + mp, NamedTextColor.BLUE));
+                    Component message = Component.text("♥"+currentHealth + "/" + maxHealth, NamedTextColor.RED)
+                            .append(Component.text("  DEF" + " " + defense, NamedTextColor.GREEN))
+                            .append(Component.text("  MP" + " " + mp, NamedTextColor.AQUA));
                     sendActionBar(player, message);
                 }
             }
@@ -156,7 +166,27 @@ public class Ui implements Listener {
     }
 
     // ================= 탭 리스트 =================
-    public static void startTabListUpdater(JavaPlugin plugin) {
-
-    }
+//    public static void startTabListUpdater(JavaPlugin plugin) {
+//        new BukkitRunnable() {
+//            @Override
+//            public void run() {
+//                for (Player player : Bukkit.getOnlinePlayers()) {
+//                    // 탭 리스트에 넣을 변수들
+//                    UUID playerUUID = player.getUniqueId();
+//
+//                    double crit = PER_DATA.getInstance().getPlayerCrit(playerUUID);
+//                    double critdmg = PER_DATA.getInstance().getPlayerCritDamage(playerUUID);
+//
+//                    Component header = Component.text("\n 서버 탭리스트 만드는 중 \n",NamedTextColor.AQUA);
+//                    Component footer = Component.text("크리티컬 " + crit + "%", NamedTextColor.BLUE)
+//                            .append(Component.text("크리티컬 피해 " + critdmg + "%", NamedTextColor.BLUE));
+//
+//                    player.sendPlayerListHeaderAndFooter(header, footer);
+//
+//                    // TabListManager 초기화 및 스케줄러 시작
+//
+//                }
+//            }
+//        }.runTaskTimer(plugin, 0L, 10L);
+//    }
 }

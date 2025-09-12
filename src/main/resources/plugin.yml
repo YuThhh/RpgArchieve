@@ -2,6 +2,7 @@ name: RPG
 version: 1.0
 main: org.role.rPG.RPG
 api-version: '1.21'
+depend: [ProtocolLib]
 commands:
   myinfo:
     description: 내 정보 UI를 엽니다.
