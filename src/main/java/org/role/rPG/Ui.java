@@ -1,7 +1,5 @@
 package org.role.rPG;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -19,9 +17,7 @@ import org.bukkit.scoreboard.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class Ui implements Listener {
 
@@ -44,21 +40,28 @@ public class Ui implements Listener {
     private final Inventory inv;
 
     public Ui() {
-        this.inv = Bukkit.createInventory(null, 27, "메뉴");
+        this.inv = Bukkit.createInventory(null, 27, Component.text("메뉴"));
         this.initializeItems();
     }
 
     public void initializeItems() {
         ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta swordMeta = sword.getItemMeta();
-        swordMeta.setDisplayName("§b공격 스킬");
-        swordMeta.setLore(Collections.singletonList("§7클릭하여 스킬 목록을 봅니다."));
+        List<Component> swordlore = new ArrayList<>();
+        swordlore.add(Component.text("§7클릭하여 스킬 목록을 봅니다."));
+
+        swordMeta.displayName(Component.text("§b공격 스킬"));
+        swordMeta.lore(swordlore);
         sword.setItemMeta(swordMeta);
 
         ItemStack shield = new ItemStack(Material.SHIELD);
         ItemMeta shieldMeta = shield.getItemMeta();
-        shieldMeta.setDisplayName("§a방어 스킬");
-        shieldMeta.setLore(Collections.singletonList("§7클릭하여 스킬 목록을 봅니다."));
+        List<Component> shieldlore = new ArrayList<>();
+        swordlore.add(Component.text("§7클릭하여 스킬 목록을 봅니다."));
+
+        shieldMeta.displayName(Component.text("§a방어 스킬"));
+        shieldMeta.lore(shieldlore);
+        shieldMeta.lore();
         shield.setItemMeta(shieldMeta);
 
         inv.setItem(11, sword);
@@ -96,16 +99,17 @@ public class Ui implements Listener {
                     int maxHealth = (int) Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
                     int defense = (int) data.getPlayerDefense(playerUUID);
                     int mp = 100;
-                    String message = String.format("§c❤ %d/%d  §aDEF %d  §bMP %d",
-                            currentHealth, maxHealth, mp, defense);
+                    Component message = Component.text(currentHealth + "/" + maxHealth, NamedTextColor.RED)
+                            .append(Component.text("DEF" + " " + defense, NamedTextColor.GREEN))
+                            .append(Component.text(" MP" + " " + mp, NamedTextColor.BLUE));
                     sendActionBar(player, message);
                 }
             }
         }.runTaskTimerAsynchronously(plugin, 0L, 1L);
     }
 
-    private static void sendActionBar(Player player, String message) {
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+    private static void sendActionBar(Player player, Component message) {
+        player.sendActionBar(message);
     }
 
 
@@ -114,7 +118,7 @@ public class Ui implements Listener {
         ScoreboardManager bukkitScoreboardManager = Bukkit.getScoreboardManager();
 
         Scoreboard board = bukkitScoreboardManager.getNewScoreboard();
-        Objective objective = board.registerNewObjective("rpg_info", "dummy", "§e§lMY INFO");
+        Objective objective = board.registerNewObjective("rpg_info", Criteria.DUMMY, Component.text("§e§lMY INFO"));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         objective.getScore("§a").setScore(5);
@@ -141,7 +145,10 @@ public class Ui implements Listener {
 
                     Team moneyTeam = board.getTeam("rpg_money");
                     if (moneyTeam != null) {
-                        moneyTeam.setPrefix("§6" + String.format("%,d", currentMoney) + " G");
+                        Component prefix = Component.text(currentMoney,NamedTextColor.YELLOW)
+                                .append(Component.text("G"));
+
+                        moneyTeam.prefix(prefix);
                     }
                 }
             }
