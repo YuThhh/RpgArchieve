@@ -77,7 +77,7 @@ public class Stat implements Listener {
                 !attacker.hasPotionEffect(PotionEffectType.BLINDNESS)) {
 
             // 크리티컬 무효화 → 일반 공격으로 바꾸기
-            double baseDamage = event.getDamage() / 1.5; // 1.5배 증가 제거
+            double baseDamage = event.getDamage() / VANILLA_CRIT_MULTIPLIER; // 1.5배 증가 제거
             event.setDamage(baseDamage);
 
         }

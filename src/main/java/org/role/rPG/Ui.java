@@ -16,6 +16,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -144,5 +146,10 @@ public class Ui implements Listener {
                 }
             }
         }.runTaskTimer(plugin, 0L, 20L);
+    }
+
+    // ================= 탭 리스트 =================
+    public static void startTabListUpdater(JavaPlugin plugin) {
+
     }
 }
