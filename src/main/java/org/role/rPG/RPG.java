@@ -15,6 +15,7 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
 
     public static NamespacedKey SUCHECK_VALUE_KEY;
     private TablistManager tablistManager;
+    private IndicatorManager indicatorManager;
 
     @Override
     public void onEnable() {
@@ -22,9 +23,12 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
         // 데이터 관리자 초기화
         new PER_DATA();
 
+        this.indicatorManager = new IndicatorManager(this);
+
         // TabListManager 초기화 및 스케줄러 시작
         this.tablistManager = new TablistManager(this);
         this.tablistManager.startUpdater();
+
 
         // 각 기능 클래스의 register 메소드를 호출하여 시스템을 활성화합니다.
         new CMD_manager(this).registerCommands();
@@ -34,6 +38,7 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
 
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new Stat(this), this);
+        getServer().getPluginManager().registerEvents(new Indicater(indicatorManager), this);
 
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
 
