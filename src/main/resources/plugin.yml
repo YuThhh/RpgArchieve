@@ -25,3 +25,7 @@ commands:
     usage: /setcritdmg
   sethp:
     usage: /sethp
+  setpower:
+    usage: /setpower
+  setattackspeed:
+    usage: /setattackspeed
