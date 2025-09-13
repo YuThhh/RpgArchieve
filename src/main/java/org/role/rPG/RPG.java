@@ -29,6 +29,7 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
         this.tablistManager = new TablistManager(this);
         this.tablistManager.startUpdater();
 
+        this.startStartUpdater();
 
         // 각 기능 클래스의 register 메소드를 호출하여 시스템을 활성화합니다.
         new CMD_manager(this).registerCommands();
@@ -39,7 +40,6 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new Stat(this), this);
         getServer().getPluginManager().registerEvents(new Indicater(indicatorManager), this);
-
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
 
         getLogger().info("RPG Plugin has been enabled!");
@@ -86,13 +86,16 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
                     PER_DATA data = PER_DATA.getInstance();
 
                     // 1. 이동 속도 스탯을 가져옵니다.
-                    double speedStat = data.getPlayerSpeed(player.getUniqueId());
-                    float targetSpeed = (speedStat > 0) ? (float) speedStat : 0.2f; // 0.2f는 바닐라 기본 속도
+                    float targetSpeed = data.getPlayerSpeed(player.getUniqueId()); // 0.2f는 바닐라 기본 속도
+
+                    if (targetSpeed >= 400) {
+                        data.setPlayerSpeed(player.getUniqueId(), 400f);
+                    }
 
                     // 2. 현재 플레이어의 실제 이동 속도와 스탯이 다른지 확인합니다.
                     //    (불필요한 변경을 막기 위해 값이 다를 때만 적용하는 것이 중요합니다)
                     if (Math.abs(player.getWalkSpeed() - targetSpeed) > 0.001f) {
-                        player.setWalkSpeed(targetSpeed);
+                        player.setWalkSpeed(0.2f * targetSpeed * 0.01f);
                     }
 
                     // 여기에 나중에 체력, 방어력 등 다른 스탯도 추가할 수 있습니다.
