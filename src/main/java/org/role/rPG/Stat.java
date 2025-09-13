@@ -95,6 +95,7 @@ public class Stat implements Listener {
         // 크리티컬 조건
         //noinspection deprecation
         if (event.getDamager() instanceof Player &&
+                !attacker.isFlying() &&
                 attacker.getAttackCooldown() >= 0.849 &&
                 !attacker.isOnGround() &&
                 !attacker.isInWater() &&
