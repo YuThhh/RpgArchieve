@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.List;
 
-public class CMD_MANAGER implements CommandExecutor {
+public class CMD_manager implements CommandExecutor {
 
     private final MiniMessage mm = MiniMessage.miniMessage();
     private final JavaPlugin plugin;
 
-    public CMD_MANAGER(JavaPlugin plugin) {
+    public CMD_manager(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 

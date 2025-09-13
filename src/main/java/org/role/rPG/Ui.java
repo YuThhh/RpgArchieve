@@ -1,16 +1,12 @@
 package org.role.rPG;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
@@ -39,43 +35,6 @@ public class Ui implements Listener {
         startScoreboardUpdater(plugin);
 //        startTabListUpdater(plugin);
     }
-
-    // --- GUI 메뉴 관련 코드 (그대로 유지) ---
-    private final Inventory inv;
-
-    public Ui() {
-        this.inv = Bukkit.createInventory(null, 27, Component.text("메뉴"));
-        this.initializeItems();
-    }
-
-    public void initializeItems() {
-        ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
-        ItemMeta swordMeta = sword.getItemMeta();
-        List<Component> swordlore = new ArrayList<>();
-        swordlore.add(Component.text("§7클릭하여 스킬 목록을 봅니다."));
-
-        swordMeta.displayName(Component.text("§b공격 스킬"));
-        swordMeta.lore(swordlore);
-        sword.setItemMeta(swordMeta);
-
-        ItemStack shield = new ItemStack(Material.SHIELD);
-        ItemMeta shieldMeta = shield.getItemMeta();
-        List<Component> shieldlore = new ArrayList<>();
-        swordlore.add(Component.text("§7클릭하여 스킬 목록을 봅니다."));
-
-        shieldMeta.displayName(Component.text("§a방어 스킬"));
-        shieldMeta.lore(shieldlore);
-        shieldMeta.lore();
-        shield.setItemMeta(shieldMeta);
-
-        inv.setItem(11, sword);
-        inv.setItem(15, shield);
-    }
-
-    public void open(Player player) {
-        player.openInventory(inv);
-    }
-
 
     // ================= 이벤트 핸들러 =================
     @EventHandler

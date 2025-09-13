@@ -26,8 +26,8 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
         this.tablistManager.startUpdater();
 
         // 각 기능 클래스의 register 메소드를 호출하여 시스템을 활성화합니다.
-        new CMD_MANAGER(this).registerCommands();
-        new LIS_MANAGER(this).registerListeners();
+        new CMD_manager(this).registerCommands();
+        new LIS_manager(this).registerListeners();
         Ui.register(this, tablistManager);
         Cash.register(this);
 
@@ -59,9 +59,8 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         // 살짝 딜레이를 주어 다른 플러그인과 충돌 방지 및 안정성 확보
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            tablistManager.createFakePlayers(event.getPlayer());
-        }, 20L); // 1초 딜레이
+        Bukkit.getScheduler().runTaskLater(this, () ->
+                tablistManager.createFakePlayers(event.getPlayer()), 20L); // 1초 딜레이
     }
 
     // [추가] 플레이어 퇴장 시 탭리스트 즉시 제거
