@@ -92,22 +92,7 @@ public class Stat implements Listener {
             return;
         }
 
-        // 크리티컬 조건
-        //noinspection deprecation
-        if (event.getDamager() instanceof Player &&
-                !attacker.isFlying() &&
-                attacker.getAttackCooldown() >= 0.849 &&
-                !attacker.isOnGround() &&
-                !attacker.isInWater() &&
-                !attacker.isInsideVehicle() &&
-                !attacker.hasPotionEffect(PotionEffectType.BLINDNESS)) {
-
-            // 크리티컬 무효화 → 일반 공격으로 바꾸기
-            final_damage /= VANILLA_CRIT_MULTIPLIER; // 1.5배 증가 제거
-        }
-
         // 힘 스탯 적용
-
         double str = data.getPlayerStrength(attacker.getUniqueId());
         if (str > 0.0) {
                 final_damage *= (1 + str * STRENGTH_MUPLTPLIER);
