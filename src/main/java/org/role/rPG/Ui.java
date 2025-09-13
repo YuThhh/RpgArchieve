@@ -33,7 +33,7 @@ public class Ui implements Listener {
         // 액션바와 스코어보드 업데이트를 시작합니다.
         startActionBarUpdater(plugin);
         startScoreboardUpdater(plugin);
-//        startTabListUpdater(plugin);
+        startTabListUpdater(plugin);
     }
 
     // ================= 이벤트 핸들러 =================
@@ -68,9 +68,14 @@ public class Ui implements Listener {
                     int maxHealth = (int) Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
                     int defense = (int) data.getPlayerDefense(playerUUID);
                     int mp = 100;
-                    Component message = Component.text("♥"+currentHealth + "/" + maxHealth, NamedTextColor.RED)
-                            .append(Component.text("  DEF" + " " + defense, NamedTextColor.GREEN))
-                            .append(Component.text("  MP" + " " + mp, NamedTextColor.AQUA));
+                    int str = (int) data.getPlayerStrength(playerUUID);
+                    int atkspd = (int) data.getPlayerAttactSpeed(playerUUID);
+
+                    Component message = Component.text("♥ "+currentHealth + "/" + maxHealth, NamedTextColor.RED)
+                            .append(Component.text("  DEF " + defense, NamedTextColor.GREEN))
+                            .append(Component.text("  MP " + mp, NamedTextColor.AQUA))
+                            .append(Component.text("  STR " + str, NamedTextColor.RED))
+                            .append(Component.text("  ATKSPD " + atkspd, NamedTextColor.YELLOW));
                     sendActionBar(player, message);
                 }
             }
@@ -125,27 +130,27 @@ public class Ui implements Listener {
     }
 
     // ================= 탭 리스트 =================
-//    public static void startTabListUpdater(JavaPlugin plugin) {
-//        new BukkitRunnable() {
-//            @Override
-//            public void run() {
-//                for (Player player : Bukkit.getOnlinePlayers()) {
-//                    // 탭 리스트에 넣을 변수들
-//                    UUID playerUUID = player.getUniqueId();
-//
-//                    double crit = PER_DATA.getInstance().getPlayerCrit(playerUUID);
-//                    double critdmg = PER_DATA.getInstance().getPlayerCritDamage(playerUUID);
-//
-//                    Component header = Component.text("\n 서버 탭리스트 만드는 중 \n",NamedTextColor.AQUA);
-//                    Component footer = Component.text("크리티컬 " + crit + "%", NamedTextColor.BLUE)
-//                            .append(Component.text("크리티컬 피해 " + critdmg + "%", NamedTextColor.BLUE));
-//
-//                    player.sendPlayerListHeaderAndFooter(header, footer);
-//
-//                    // TabListManager 초기화 및 스케줄러 시작
-//
-//                }
-//            }
-//        }.runTaskTimer(plugin, 0L, 10L);
-//    }
+    public static void startTabListUpdater(JavaPlugin plugin) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    // 탭 리스트에 넣을 변수들
+                    UUID playerUUID = player.getUniqueId();
+
+                    double crit = PER_DATA.getInstance().getPlayerCrit(playerUUID);
+                    double critdmg = PER_DATA.getInstance().getPlayerCritDamage(playerUUID);
+
+                    Component header = Component.text("\n 서버 탭리스트 만드는 중 \n",NamedTextColor.AQUA);
+                    Component footer = Component.text("크리티컬 " + crit + "%  ", NamedTextColor.BLUE)
+                            .append(Component.text("크리티컬 피해 " + critdmg + "%", NamedTextColor.BLUE));
+
+                    player.sendPlayerListHeaderAndFooter(header, footer);
+
+                    // TabListManager 초기화 및 스케줄러 시작
+
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 10L);
+    }
 }

@@ -1,13 +1,19 @@
 package org.role.rPG;
 
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.Objects;
 import java.util.Random;
@@ -24,8 +30,14 @@ public class Stat implements Listener {
     private static final double VANILLA_CRIT_MULTIPLIER = 1.5;
     private static final double DEFENSE_CONSTANT = 500.0;
     private static final double PERCENTAGE_CONSTANT = 100.0;
+    private static final double STRENGTH_MUPLTPLIER = 0.001;
 
+    private final JavaPlugin plugin;
     private final PER_DATA data = PER_DATA.getInstance();
+
+    public Stat(JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -38,6 +50,8 @@ public class Stat implements Listener {
         player.setHealthScale(VANILLA_HEALTH_SCALE);
         player.setHealthScaled(true);
 
+
+
         // 참고: 현재 로직은 플레이어의 방어력 데이터가 없을 때 기본값 0을 반환한다고 가정합니다.
         // PER_DATA 클래스의 구현에 따라 이 부분은 달라질 수 있습니다.
         if (data.getPlayerDefense(playerUUID) == 0.0) {
@@ -45,7 +59,7 @@ public class Stat implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamage(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player p) {
             double def = data.getPlayerDefense(p.getUniqueId());
@@ -61,26 +75,43 @@ public class Stat implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player attacker)) {
+
+        Player attacker = null;
+        double final_damage = event.getDamage();
+
+        if (event.getDamager() instanceof Player) {
+            attacker = (Player) event.getDamager();
+        } else if (event.getDamager() instanceof Projectile projectile) {
+            ProjectileSource shooter = projectile.getShooter();
+            attacker = (Player) shooter;
+        }
+
+        if (attacker == null) {
             return;
         }
 
-        double damage = event.getDamage();
-
         // 크리티컬 조건
-        if (attacker.getAttackCooldown() >= 0.849 &&
+        //noinspection deprecation
+        if (event.getDamager() instanceof Player &&
+                attacker.getAttackCooldown() >= 0.849 &&
                 !attacker.isOnGround() &&
                 !attacker.isInWater() &&
                 !attacker.isInsideVehicle() &&
                 !attacker.hasPotionEffect(PotionEffectType.BLINDNESS)) {
 
             // 크리티컬 무효화 → 일반 공격으로 바꾸기
-            double baseDamage = event.getDamage() / VANILLA_CRIT_MULTIPLIER; // 1.5배 증가 제거
-            event.setDamage(baseDamage);
-
+            final_damage /= VANILLA_CRIT_MULTIPLIER; // 1.5배 증가 제거
         }
+
+        // 힘 스탯 적용
+
+        double str = data.getPlayerStrength(attacker.getUniqueId());
+        if (str > 0.0) {
+                final_damage *= (1 + str * STRENGTH_MUPLTPLIER);
+        }
+
 
         // 2. 커스텀 치명타 계산
         double critChance = data.getPlayerCrit(attacker.getUniqueId());
@@ -93,11 +124,20 @@ public class Stat implements Listener {
                 double critDamage = data.getPlayerCritDamage(attacker.getUniqueId());
                 // 치명타 발동!
                 // [수정] 상수를 사용하여 가독성 향상
-                damage *= (1.0 + critDamage / PERCENTAGE_CONSTANT);
+                final_damage *= (1.0 + critDamage / PERCENTAGE_CONSTANT);
 
             }
         }
 
-        event.setDamage(damage);
+        event.setDamage(final_damage);
+
+        if (event.getEntity() instanceof LivingEntity livingEntity) {
+            double atkspd = data.getPlayerAttactSpeed(attacker.getUniqueId());
+                if (atkspd > 0.0) {
+                    final int ticks = (int) (10 * 100 / (100 + atkspd));
+                    // 1틱(0.05초) 뒤에 livingEntity의 무적 시간을 ticks로 설정하는 작업을 예약합니다.
+                    Bukkit.getScheduler().runTask(plugin, () -> livingEntity.setNoDamageTicks(ticks));
+                }
+        }
     }
 }

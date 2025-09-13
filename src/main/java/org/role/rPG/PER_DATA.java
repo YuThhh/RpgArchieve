@@ -15,6 +15,9 @@ public class PER_DATA{
     private final Map<UUID, Double> playerDefense = new HashMap<>(); // 방어력 스탯
     private final Map<UUID, Double> playerCrit = new HashMap<>(); // 크리티컬 스탯
     private final Map<UUID, Double> playerCritDamage = new HashMap<>(); // 크리티컬 대미지 스탯
+    private final Map<UUID, Double> playerStrength = new HashMap<>(); //힘 스탯
+    private final Map<UUID, Double> playerAttackSpeed = new HashMap<>();
+    private final Map<UUID, Float> playerSpeed = new HashMap<>();
 
     // 생성자: new PER_DATA()를 할 때 instance에 자기 자신을 저장합니다.
     public PER_DATA() {
@@ -79,5 +82,29 @@ public class PER_DATA{
 
     public void setPlayerCritDamage(UUID playerUUID, double critDamage) {
         playerCritDamage.put(playerUUID, critDamage);
+    }
+
+    public double getPlayerStrength(UUID playerUUID) {
+        return playerStrength.getOrDefault(playerUUID, 0.0);
+    }
+
+    public void setPlayerStrength(UUID playerUUID, double strength) {
+        playerStrength.put(playerUUID, strength);
+    }
+
+    public double getPlayerAttactSpeed(UUID playerUUID) {
+        return playerAttackSpeed.getOrDefault(playerUUID, 0.0);
+    }
+
+    public void setPlayerAttackSpeed(UUID playerUUID, double attackspeed) {
+        playerAttackSpeed.put(playerUUID, attackspeed);
+    }
+
+    public double getPlayerSpeed(UUID playerUUID) {
+        return playerSpeed.getOrDefault(playerUUID, 0.2f);
+    }
+
+    public void setPlayerSpeed(UUID playerUUID, float speed) {
+        playerSpeed.put(playerUUID, speed);
     }
 }

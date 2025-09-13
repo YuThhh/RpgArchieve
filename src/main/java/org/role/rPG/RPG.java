@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
 
@@ -32,7 +33,7 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
         Cash.register(this);
 
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new Stat(), this);
+        getServer().getPluginManager().registerEvents(new Stat(this), this);
 
         getLogger().info("RPG Plugin has been enabled!");
 
@@ -67,5 +68,30 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         tablistManager.removeFakePlayers(event.getPlayer());
+    }
+
+    public void startStartUpdater() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    PER_DATA data = PER_DATA.getInstance();
+
+                    // 1. 이동 속도 스탯을 가져옵니다.
+                    double speedStat = data.getPlayerSpeed(player.getUniqueId());
+                    float targetSpeed = (speedStat > 0) ? (float) speedStat : 0.2f; // 0.2f는 바닐라 기본 속도
+
+                    // 2. 현재 플레이어의 실제 이동 속도와 스탯이 다른지 확인합니다.
+                    //    (불필요한 변경을 막기 위해 값이 다를 때만 적용하는 것이 중요합니다)
+                    if (Math.abs(player.getWalkSpeed() - targetSpeed) > 0.001f) {
+                        player.setWalkSpeed(targetSpeed);
+                    }
+
+                    // 여기에 나중에 체력, 방어력 등 다른 스탯도 추가할 수 있습니다.
+                    // 예: applyPlayerMaxHealth(player);
+                }
+            }
+        }.runTaskTimer(this, 0L, 10L);
     }
 }
