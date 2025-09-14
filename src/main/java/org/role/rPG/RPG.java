@@ -27,7 +27,6 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
 
         // TabListManager 초기화 및 스케줄러 시작
         this.tablistManager = new TablistManager(this);
-        this.tablistManager.startUpdater();
 
         this.startStartUpdater();
 
@@ -46,19 +45,14 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
 
         // 서버 리로드 시 온라인 상태인 플레이어에게도 탭리스트 적용
         for (Player player : Bukkit.getOnlinePlayers()) {
-            tablistManager.createFakePlayers(player);
+            tablistManager.setupPlayer(player);
         }
-
     }
 
     @Override
     public void onDisable() {
         // 서버 종료 시 모든 플레이어의 탭리스트 제거
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (tablistManager != null) {
-                tablistManager.removeFakePlayers(player);
-            }
-        }
+
         Bukkit.getScheduler().cancelTasks(this);
         getLogger().info("RPG Plugin Disabled.");
     }
@@ -67,14 +61,15 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         // 살짝 딜레이를 주어 다른 플러그인과 충돌 방지 및 안정성 확보
+        getLogger().info("RPG - onPlayerJoin 이벤트 발생! " + event.getPlayer().getName()); // 로그 추가
         Bukkit.getScheduler().runTaskLater(this, () ->
-                tablistManager.createFakePlayers(event.getPlayer()), 20L); // 1초 딜레이
+                tablistManager.setupPlayer(event.getPlayer()), 20L);
     }
 
     // [추가] 플레이어 퇴장 시 탭리스트 즉시 제거
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        tablistManager.removeFakePlayers(event.getPlayer());
+        tablistManager.removePlayer(event.getPlayer());
     }
 
     public void startStartUpdater() {
