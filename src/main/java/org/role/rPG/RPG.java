@@ -6,7 +6,6 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.CommandExecutor;
@@ -21,8 +20,8 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
     private TablistManager tablistManager;
     private IndicatorManager indicatorManager;
 
-    private static final double NormalHpRegen = 0.01;
-    private static final double NormalMpRegen = 0.05;
+    private static final double NormalHpRegen = 1;
+    private static final double NormalMpRegen = 3;
 
     @Override
     public void onEnable() {
@@ -88,12 +87,16 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     PER_DATA data = PER_DATA.getInstance();
+                    UUID playerUUID = player.getUniqueId();
 
-                    float speedStat = data.getPlayerSpeed(player.getUniqueId());
+                    float speedStat = data.getPlayerSpeed(playerUUID);
 
                     if (speedStat > 400) { // 아동 속도 최대 제한
                         speedStat = 400f;
-                        data.setPlayerSpeed(player.getUniqueId(), 400f);
+                        data.setPlayerSpeed(playerUUID, 400f);
+                    } else if (speedStat < 0) { // 이동 속도 최소 제한
+                        speedStat = 0;
+                        data.setPlayerSpeed(playerUUID, speedStat);
                     }
 
                     // 실제 적용될 속도를 계산
@@ -102,6 +105,17 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
                     // 계산된 속도와 현재 속도를 비교
                     if (Math.abs(player.getWalkSpeed() - calculatedSpeed) > 0.0001f) {
                         player.setWalkSpeed(calculatedSpeed);
+                    }
+
+                    double maxHealthStat = data.getplayerMaxHealth(playerUUID);
+
+                    if (maxHealthStat <= 0) {
+                        maxHealthStat = 1;
+                        data.setplayerMaxHealth(playerUUID, maxHealthStat);
+                    }
+
+                    if (Math.abs(Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue() - maxHealthStat) > 0.01) {
+                        Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(maxHealthStat);
                     }
 
                     // 여기에 나중에 체력, 방어력 등 다른 스탯도 추가할 수 있습니다.
@@ -123,12 +137,12 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
                     // HP 재생 로직
                     double maxHealth = Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
                     double currentHealth = player.getHealth();
+                    double vital = data.getPlayerHpRegenarationBonus(playerUUID);
 
                     if (currentHealth < maxHealth) {
-                        double vital = data.getPlayerHpRegenaration(playerUUID); // 오타 주의: getPlayerHpRegeneration
-                        double hpRegenAmount = maxHealth * NormalHpRegen * vital * 0.01;
-                        double newHealth = Math.min(maxHealth, currentHealth + hpRegenAmount);
-                        player.setHealth(newHealth); // 실제 체력 적용
+                            double hpRegenAmount = 0.5 * (maxHealth * 0.01 + NormalHpRegen * (1 + vital * 0.01));
+                            double newHealth = Math.min(maxHealth, currentHealth + hpRegenAmount);
+                            player.setHealth(newHealth); // 실제 체력 적용
                     }
 
                     // MP 재생 로직 (10틱마다 실행되도록)
@@ -137,7 +151,7 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
                         double currentMp = data.getPlayerCurrentMana(playerUUID);
 
                         if (currentMp < maxMp) {
-                            double mpRegenAmount = maxMp * NormalMpRegen;
+                            double mpRegenAmount = (maxMp * 0.02 + NormalMpRegen);
                             double newMp = Math.min(maxMp, currentMp + mpRegenAmount);
                             data.setPlayerCurrentMana(playerUUID, newMp); // 데이터 업데이트
                         }

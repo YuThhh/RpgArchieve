@@ -188,7 +188,7 @@ public class CMD_manager implements CommandExecutor {
 
             try {
                 double hp = Double.parseDouble(args[1]);
-                PER_DATA.getInstance().setPlayerHealth(target.getUniqueId(), hp);
+                PER_DATA.getInstance().setplayerMaxHealth(target.getUniqueId(), hp);
 
                 // [개선 3] 메시지 형식을 MiniMessage로 통일
                 String senderMessage = String.format("<green>%s님의 크리티컬 피해를 <white>%.1f</white>로 설정했습니다.</green>", target.getName(), hp);
@@ -331,7 +331,7 @@ public class CMD_manager implements CommandExecutor {
 
             try {
                 double vital = Double.parseDouble(args[1]);
-                PER_DATA.getInstance().setPlayerHpRegenaration(target.getUniqueId(), (float) vital);
+                PER_DATA.getInstance().setPlayerHpRegenarationBonus(target.getUniqueId(), (float) vital);
 
                 // [개선 3] 메시지 형식을 MiniMessage로 통일
                 String senderMessage = String.format("<green>%s님의 체력 재생을 <white>%.1f</white>로 설정했습니다.</green>", target.getName(), vital);
@@ -346,6 +346,7 @@ public class CMD_manager implements CommandExecutor {
             return true;
 
         }
+
 
 
 

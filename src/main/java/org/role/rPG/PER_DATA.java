@@ -11,14 +11,18 @@ public class PER_DATA{
 
     private final Map<UUID, String> lastUiMap = new HashMap<>(); // GUI 뒤로가기 창
     private final Map<UUID,ItemStack[]> p_storage = new HashMap<>(); // GUI 창고 스토리지
-    private final Map<UUID,Double> playerHealth = new HashMap<>(); // 체력 스탯
+
+    private final Map<UUID,Double> playerMaxHealth = new HashMap<>(); // 체력 스탯
     private final Map<UUID, Double> playerHpRegenaration = new HashMap<>();
     private final Map<UUID, Double> playerDefense = new HashMap<>(); // 방어력 스탯
+
     private final Map<UUID, Double> playerCrit = new HashMap<>(); // 크리티컬 스탯
     private final Map<UUID, Double> playerCritDamage = new HashMap<>(); // 크리티컬 대미지 스탯
     private final Map<UUID, Double> playerStrength = new HashMap<>(); //힘 스탯
     private final Map<UUID, Double> playerAttackSpeed = new HashMap<>(); // 공격 속도 스탯
+
     private final Map<UUID, Float> playerSpeed = new HashMap<>(); // 이동 속도 스탯
+
     private final Map<UUID, Double> playerMaxMana = new HashMap<>(); // 최대 마나
     private final Map<UUID, Double> playerCurrentMana = new HashMap<>(); // 현재 마나
 
@@ -49,19 +53,19 @@ public class PER_DATA{
         return lastUiMap.getOrDefault(playerUUID, "none");
     }
 
-    public double getPlayerHealth(UUID playerUUID) {
-        return playerHealth.getOrDefault(playerUUID, 100.0);
+    public double getplayerMaxHealth(UUID playerUUID) {
+        return playerMaxHealth.getOrDefault(playerUUID, 100.0);
     }
 
-    public void setPlayerHealth(UUID playerUUID, double health) {
-        playerHealth.put(playerUUID, health);
+    public void setplayerMaxHealth(UUID playerUUID, double health) {
+        playerMaxHealth.put(playerUUID, health);
     }
 
-    public double getPlayerHpRegenaration(UUID playerUUID) {
-        return playerHpRegenaration.getOrDefault(playerUUID, 100.0);
+    public double getPlayerHpRegenarationBonus(UUID playerUUID) {
+        return playerHpRegenaration.getOrDefault(playerUUID, 0.0);
     }
 
-    public void setPlayerHpRegenaration(UUID playerUUID, double hpRegenaration) {
+    public void setPlayerHpRegenarationBonus(UUID playerUUID, double hpRegenaration) {
         playerHpRegenaration.put(playerUUID, hpRegenaration);
     }
 

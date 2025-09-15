@@ -42,8 +42,8 @@ public class Stat implements Listener {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
 
-        Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(data.getPlayerHealth(playerUUID));
-        player.setHealth(data.getPlayerHealth(playerUUID));
+        Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(data.getplayerMaxHealth(playerUUID));
+        player.setHealth(data.getplayerMaxHealth(playerUUID));
 
         player.setHealthScale(VANILLA_HEALTH_SCALE);
         player.setHealthScaled(true);
