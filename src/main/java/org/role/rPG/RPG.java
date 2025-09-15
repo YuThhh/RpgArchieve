@@ -109,11 +109,10 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
         }.runTaskTimer(this, 0L, 10L);
     }
 
-    public void Regeneration(Player player) {
+    public void hpRegeneration(Player player) {
         new BukkitRunnable() {
             @Override
             public void run() {
-
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     UUID playerUUID = player.getUniqueId();
@@ -123,15 +122,29 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
                     double currentHealth = player.getHealth();
                     double vital = data.getPlayerHpRegenaration(playerUUID);
 
-                    double maxMp = data.getPlayerMaxMana(playerUUID);
-                    double currentMp = data.getPlayerCurrentMana(playerUUID);
-
                     if (currentHealth < maxHealth) {
                         double hpRegen = maxHealth * NormalHpRegen * vital * 0.01;
 
                         currentHealth += hpRegen;
                         data.setPlayerHpRegenaration(playerUUID, currentHealth);
                     }
+                }
+            }
+        }.runTaskTimer(this, 0, 15);
+    }
+
+    public void mpRegeneration(Player player) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+
+
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    UUID playerUUID = player.getUniqueId();
+                    PER_DATA data = PER_DATA.getInstance();
+
+                    double maxMp = data.getPlayerMaxMana(playerUUID);
+                    double currentMp = data.getPlayerCurrentMana(playerUUID);
 
                     if (currentMp < maxMp) {
                         double mpRegen = maxMp * NormalMpRegen;
