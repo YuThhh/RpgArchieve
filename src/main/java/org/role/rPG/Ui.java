@@ -71,7 +71,7 @@ public class Ui implements Listener {
     public static void setScoreboard(Player player) {
         ScoreboardManager bukkitScoreboardManager = Bukkit.getScoreboardManager();
         Scoreboard board = bukkitScoreboardManager.getNewScoreboard();
-        Objective objective = board.registerNewObjective("rpg_info", Criteria.DUMMY, Component.text("§e§lMY INFO"));
+        Objective objective = board.registerNewObjective("rpg_info", Criteria.DUMMY, Component.text("§e§l내 정보"));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.getScore("§a").setScore(5);
         objective.getScore("§f보유 중인 돈").setScore(4);
