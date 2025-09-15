@@ -67,13 +67,14 @@ public class Ui implements Listener {
                     int currentHealth = (int) player.getHealth();
                     int maxHealth = (int) Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
                     int defense = (int) data.getPlayerDefense(playerUUID);
-                    int mp = 100;
+                    int maxMp = (int) data.getPlayerMaxMana(playerUUID);
+                    int currentMp = (int) data.getPlayerCurrentMana(playerUUID);
                     int str = (int) data.getPlayerStrength(playerUUID);
                     int atkspd = (int) data.getPlayerAttactSpeed(playerUUID);
 
                     Component message = Component.text("♥ "+currentHealth + "/" + maxHealth, NamedTextColor.RED)
                             .append(Component.text("  DEF " + defense, NamedTextColor.GREEN))
-                            .append(Component.text("  MP " + mp, NamedTextColor.AQUA))
+                            .append(Component.text("  MP " + currentMp + "/" + maxMp, NamedTextColor.AQUA))
                             .append(Component.text("  STR " + str, NamedTextColor.RED))
                             .append(Component.text("  ATKSPD " + atkspd, NamedTextColor.YELLOW));
                     sendActionBar(player, message);

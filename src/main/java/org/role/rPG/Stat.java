@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 import java.util.Random;
@@ -31,6 +32,7 @@ public class Stat implements Listener {
     private static final double DEFENSE_CONSTANT = 500.0;
     private static final double PERCENTAGE_CONSTANT = 100.0;
     private static final double STRENGTH_MUPLTPLIER = 0.001;
+
 
     private final JavaPlugin plugin;
     private final PER_DATA data = PER_DATA.getInstance();
@@ -58,6 +60,8 @@ public class Stat implements Listener {
             data.setPlayerDefense(playerUUID, 0.0);
         }
     }
+
+
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamage(EntityDamageEvent e) {

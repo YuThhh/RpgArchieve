@@ -2,6 +2,7 @@ package org.role.rPG;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,11 +12,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Objects;
+import java.util.UUID;
+
 public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
 
     public static NamespacedKey SUCHECK_VALUE_KEY;
     private TablistManager tablistManager;
     private IndicatorManager indicatorManager;
+
+    private static final double NormalHpRegen = 0.02;
+    private static final double NormalMpRegen = 0.05;
 
     @Override
     public void onEnable() {
@@ -39,8 +46,9 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new Stat(this), this);
         getServer().getPluginManager().registerEvents(new Indicater(indicatorManager), this);
-
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
+
+
 
         getLogger().info("RPG Plugin has been enabled!");
 
@@ -100,5 +108,40 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
                 }
             }
         }.runTaskTimer(this, 0L, 10L);
+    }
+
+    public void Regeneration(Player player) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+
+
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    UUID playerUUID = player.getUniqueId();
+                    PER_DATA data = PER_DATA.getInstance();
+
+                    double maxHealth = Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
+                    double currentHealth = player.getHealth();
+                    double vital = data.getPlayerHpRegenaration(playerUUID);
+
+                    double maxMp = data.getPlayerMaxMana(playerUUID);
+                    double currentMp = data.getPlayerCurrentMana(playerUUID);
+
+                    if (currentHealth < maxHealth) {
+                        double hpRegen = maxHealth * NormalHpRegen * vital * 0.01;
+
+                        currentHealth += hpRegen;
+                        data.setPlayerHpRegenaration(playerUUID, currentHealth);
+                    }
+
+                    if (currentMp < maxMp) {
+                        double mpRegen = maxMp * NormalMpRegen;
+
+                        currentMp += mpRegen;
+                        data.setPlayerCurrentMana(playerUUID, currentMp);
+                    }
+                }
+            }
+        }.runTaskTimer(this, 0, 10);
     }
 }
