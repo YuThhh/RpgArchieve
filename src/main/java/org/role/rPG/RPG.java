@@ -27,6 +27,7 @@ public final class RPG extends JavaPlugin implements Listener {
         Cash.initializeAndLoad(this);
 
         SUCHECK_VALUE_KEY = new NamespacedKey(this, "sucheck_value");
+        // 데이터 관리자 초기화
         new PER_DATA();
         this.indicatorManager = new IndicatorManager(this);
 
@@ -41,6 +42,12 @@ public final class RPG extends JavaPlugin implements Listener {
 
         startStartUpdater();
         Regeneration();
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlaceHolder(this).register();
+            getLogger().info("RPG's PlaceholderAPI Expansion has been registered.");
+        }
+
         getLogger().info("RPG Plugin has been enabled!");
     }
 
@@ -65,14 +72,15 @@ public final class RPG extends JavaPlugin implements Listener {
         // Cash.unloadPlayerData(event.getPlayer()); // 이 줄을 제거!
     }
 
-    // (startStartUpdater, Regeneration 메서드는 변경 없음)
     public void startStartUpdater() {
         new BukkitRunnable() {
             @Override
             public void run() {
+
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     PER_DATA data = PER_DATA.getInstance();
                     UUID playerUUID = player.getUniqueId();
+
                     float speedStat = data.getPlayerSpeed(playerUUID);
                     if (speedStat > 400) speedStat = 400f;
                     else if (speedStat < 0) speedStat = 0;
@@ -87,6 +95,9 @@ public final class RPG extends JavaPlugin implements Listener {
                     if (Math.abs(Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue() - maxHealthStat) > 0.01) {
                         Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(maxHealthStat);
                     }
+
+                    // 여기에 나중에 체력, 방어력 등 다른 스탯도 추가할 수 있습니다.
+                    // 예: applyPlayerMaxHealth(player);
                 }
             }
         }.runTaskTimer(this, 0L, 10L);
@@ -102,7 +113,7 @@ public final class RPG extends JavaPlugin implements Listener {
                     // HP 재생 로직
                     double maxHealth = data.getplayerMaxHealth(playerUUID);
                     double currentHealth = player.getHealth();
-                  
+
                     if (currentHealth < maxHealth) {
                         double vital = data.getPlayerHpRegenarationBonus(playerUUID);
                         double hpRegenAmount = 0.5 * (NormalHpRegen + maxHealth * 0.01 * (1 + vital * 0.01));
