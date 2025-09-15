@@ -98,8 +98,11 @@ public final class RPG extends JavaPlugin implements Listener {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     UUID playerUUID = player.getUniqueId();
                     PER_DATA data = PER_DATA.getInstance();
-                    double maxHealth = Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
+
+                    // HP 재생 로직
+                    double maxHealth = data.getplayerMaxHealth(playerUUID);
                     double currentHealth = player.getHealth();
+                  
                     if (currentHealth < maxHealth) {
                         double vital = data.getPlayerHpRegenarationBonus(playerUUID);
                         double hpRegenAmount = 0.5 * (NormalHpRegen + maxHealth * 0.01 * (1 + vital * 0.01));
