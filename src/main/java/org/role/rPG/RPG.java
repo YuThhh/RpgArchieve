@@ -140,7 +140,7 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
                     double vital = data.getPlayerHpRegenarationBonus(playerUUID);
 
                     if (currentHealth < maxHealth) {
-                            double hpRegenAmount = 0.5 * (maxHealth * 0.01 + NormalHpRegen * (1 + vital * 0.01));
+                            double hpRegenAmount = 0.5 * (NormalHpRegen + maxHealth * 0.01 * (1 + vital * 0.01));
                             double newHealth = Math.min(maxHealth, currentHealth + hpRegenAmount);
                             player.setHealth(newHealth); // 실제 체력 적용
                     }
@@ -151,7 +151,7 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
                         double currentMp = data.getPlayerCurrentMana(playerUUID);
 
                         if (currentMp < maxMp) {
-                            double mpRegenAmount = (maxMp * 0.02 + NormalMpRegen);
+                            double mpRegenAmount = (NormalMpRegen + maxMp * 0.02);
                             double newMp = Math.min(maxMp, currentMp + mpRegenAmount);
                             data.setPlayerCurrentMana(playerUUID, newMp); // 데이터 업데이트
                         }
