@@ -135,7 +135,7 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
                     PER_DATA data = PER_DATA.getInstance();
 
                     // HP 재생 로직
-                    double maxHealth = Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
+                    double maxHealth = data.getplayerMaxHealth(playerUUID);
                     double currentHealth = player.getHealth();
                     double vital = data.getPlayerHpRegenarationBonus(playerUUID);
 
