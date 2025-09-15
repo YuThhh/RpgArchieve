@@ -1,5 +1,6 @@
 package org.role.rPG; // 본인의 패키지 경로에 맞게 설정해주세요.
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,16 +18,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Cooked implements Listener {
 
     private final JavaPlugin plugin;
-    private final String GUI_TITLE = "§6모닥불 요리";
-    private final String MEATBALL_NAME = "§e§l미트볼";
+    private final Component GUI_TITLE = Component.text("§6모닥불 요리");
+    private final Component MEATBALL_NAME = Component.text("§e§l미트볼");
     private final Map<UUID, Long> eatCooldowns = new HashMap<>();
     private final Map<UUID, Integer> activeStrengthBuffs = new HashMap<>();
 
@@ -49,7 +47,7 @@ public class Cooked implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (itemInHand.getType() == Material.COCOA_BEANS && itemInHand.hasItemMeta() &&
-                itemInHand.getItemMeta().getDisplayName().equals(MEATBALL_NAME)) {
+                Objects.requireNonNull(itemInHand.getItemMeta().displayName()).equals(MEATBALL_NAME)) {
 
             event.setCancelled(true);
 
@@ -102,7 +100,7 @@ public class Cooked implements Listener {
 
     @EventHandler
     public void onGuiClose(InventoryCloseEvent event) {
-        if (!event.getView().getTitle().equals(GUI_TITLE)) {
+        if (!event.getInventory().equals(GUI_TITLE)) {
             return;
         }
         Player player = (Player) event.getPlayer();
@@ -127,7 +125,7 @@ public class Cooked implements Listener {
 
     @EventHandler
     public void onGuiClick(InventoryClickEvent event) {
-        if (!event.getView().getTitle().equals(GUI_TITLE)) {
+        if (!event.getInventory().equals(GUI_TITLE)) {
             return;
         }
         Player player = (Player) event.getWhoClicked();
@@ -160,8 +158,7 @@ public class Cooked implements Listener {
             }
             ItemStack currentItem = event.getCurrentItem();
             ItemStack cursorItem = event.getCursor();
-            if (currentItem != null && currentItem.getType() != Material.AIR &&
-                    cursorItem != null && cursorItem.getType() != Material.AIR) {
+            if (currentItem != null && currentItem.getType() != Material.AIR && cursorItem.getType() != Material.AIR) {
                 event.setCancelled(true);
             }
             if (event.getClick() == ClickType.DOUBLE_CLICK) {
@@ -174,11 +171,11 @@ public class Cooked implements Listener {
         Inventory campfireGui = Bukkit.createInventory(player, 9, GUI_TITLE);
         ItemStack cancelItem = new ItemStack(Material.RED_STAINED_GLASS_PANE);
         ItemMeta cancelMeta = cancelItem.getItemMeta();
-        cancelMeta.setDisplayName("§c취소");
+        cancelMeta.displayName(Component.text("§c취소"));
         cancelItem.setItemMeta(cancelMeta);
         ItemStack cookItem = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
         ItemMeta cookMeta = cookItem.getItemMeta();
-        cookMeta.setDisplayName("§a조리");
+        cookMeta.displayName(Component.text("§a조리"));
         cookItem.setItemMeta(cookMeta);
         campfireGui.setItem(0, cancelItem);
         campfireGui.setItem(8, cookItem);
@@ -212,8 +209,11 @@ public class Cooked implements Listener {
     private ItemStack createMeatball() {
         ItemStack meatball = new ItemStack(Material.COCOA_BEANS);
         ItemMeta meta = meatball.getItemMeta();
-        meta.setDisplayName(MEATBALL_NAME);
-        meta.setLore(Collections.singletonList("§7잘 다져진 고기를 뭉쳐 만들었다."));
+        meta.displayName(MEATBALL_NAME);
+
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("§7잘 다져진 고기를 뭉쳐 만들었다."));
+        meta.lore(lore);
         meatball.setItemMeta(meta);
         return meatball;
     }
