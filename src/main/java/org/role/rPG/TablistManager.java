@@ -8,128 +8,119 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class TablistManager {
 
-    private final JavaPlugin plugin;
+    private final RPG plugin;
     private final ProtocolManager protocolManager;
-    private final Map<UUID, List<UUID>> fakePlayerMap = new HashMap<>(); // <실제 플레이어, 생성된 가짜 플레이어 목록>
-    private final Logger logger;
+    private final Map<UUID, BukkitTask> playerTasks = new HashMap<>();
+    private final List<PlayerInfoData> fakePlayers = new ArrayList<>();
+    private final List<UUID> fakePlayerUUIDs = new ArrayList<>();
 
-    // [수정] 최신 버전에 필요한 PlayerInfoAction EnumSet을 미리 정의합니다.
-    private final EnumSet<EnumWrappers.PlayerInfoAction> ADD_PLAYER_ACTIONS = EnumSet.of(
-            EnumWrappers.PlayerInfoAction.ADD_PLAYER,
-            EnumWrappers.PlayerInfoAction.UPDATE_DISPLAY_NAME,
-            EnumWrappers.PlayerInfoAction.UPDATE_LATENCY,
-            EnumWrappers.PlayerInfoAction.UPDATE_GAME_MODE
-    );
+    private static final int TAB_LIST_SIZE = 80;
 
-    public TablistManager(JavaPlugin plugin) {
+    public TablistManager(RPG plugin) {
         this.plugin = plugin;
         this.protocolManager = ProtocolLibrary.getProtocolManager();
-        this.logger = plugin.getLogger();
+        initializeFakePlayers();
     }
 
-    public void startUpdater() {
-        new BukkitRunnable() {
+    private void initializeFakePlayers() {
+        for (int i = 0; i < TAB_LIST_SIZE; i++) {
+            UUID randomUUID = UUID.randomUUID();
+            this.fakePlayerUUIDs.add(randomUUID);
+            WrappedGameProfile gameProfile = new WrappedGameProfile(randomUUID, "cell_" + i);
+            PlayerInfoData data = new PlayerInfoData(
+                    gameProfile, 0, EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText("")
+            );
+            fakePlayers.add(data);
+        }
+    }
+
+    // ▼▼▼ [수정됨] 패킷 생성 방식을 변경하여 final 오류를 해결합니다. ▼▼▼
+    public void setupPlayer(Player player) {
+        // 패킷을 생성할 때부터 필요한 데이터를 모두 담아서 만듭니다.
+        PacketContainer addPlayerPacket = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+        addPlayerPacket.getPlayerInfoActions().write(0, EnumSet.of(EnumWrappers.PlayerInfoAction.ADD_PLAYER));
+        addPlayerPacket.getPlayerInfoDataLists().write(0, fakePlayers);
+
+        protocolManager.sendServerPacket(player, addPlayerPacket);
+
+        BukkitTask task = new BukkitRunnable() {
             @Override
             public void run() {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (!fakePlayerMap.containsKey(player.getUniqueId())) {
-                        createFakePlayers(player);
-                    } else { // [개선] else를 사용하여 불필요한 중복 업데이트 방지
-                        updateFakePlayers(player);
-                    }
-                }
+                updateTabList(player);
             }
-        }.runTaskTimer(plugin, 0L, 20L); // 1초마다 업데이트
+        }.runTaskTimerAsynchronously(plugin, 20L, 20L);
+
+        playerTasks.put(player.getUniqueId(), task);
     }
 
-    public void createFakePlayers(Player player) {
-        List<UUID> fakePlayerUUIDs = new ArrayList<>();
-        List<PlayerInfoData> newPlayersData = new ArrayList<>();
-
-        for (int i = 0; i < 80; i++) { // 탭리스트 슬롯 최대 80개
-            UUID fakeUUID = UUID.randomUUID();
-            // [수정] 이름은 16자를 넘지 않도록 하고, 고유성을 위해 UUID 일부를 사용
-            String fakeName = "§0" + UUID.randomUUID().toString().substring(0, 14);
-            WrappedGameProfile gameProfile = new WrappedGameProfile(fakeUUID, fakeName);
-
-            WrappedChatComponent displayName = WrappedChatComponent.fromText("");
-
-            // [수정] 최신 PlayerInfoData 생성자는 추가 인자(RemoteChatSessionData)가 필요할 수 있습니다. null로 처리합니다.
-            newPlayersData.add(new PlayerInfoData(gameProfile, 1, EnumWrappers.NativeGameMode.SURVIVAL, displayName, null));
-            fakePlayerUUIDs.add(fakeUUID);
+    public void removePlayer(Player player) {
+        BukkitTask task = playerTasks.remove(player.getUniqueId());
+        if (task != null) {
+            task.cancel();
         }
 
-        // [수정] 새로운 방식으로 패킷 전송
-        PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO);
-        packet.getPlayerInfoActions().write(0, ADD_PLAYER_ACTIONS);
-        packet.getPlayerInfoDataLists().write(1, newPlayersData); // 인덱스가 1로 변경됨
-        sendPacket(player, packet);
-
-        fakePlayerMap.put(player.getUniqueId(), fakePlayerUUIDs);
+        PacketContainer removePlayerPacket = new PacketContainer(PacketType.Play.Server.PLAYER_INFO_REMOVE);
+        removePlayerPacket.getUUIDLists().write(0, fakePlayerUUIDs);
+        protocolManager.sendServerPacket(player, removePlayerPacket);
     }
 
-    public void updateFakePlayers(Player player) {
-        List<UUID> fakePlayerUUIDs = fakePlayerMap.get(player.getUniqueId());
-        if (fakePlayerUUIDs == null) return;
+    // ▼▼▼ [수정됨] 패킷 생성 방식을 변경하여 final 오류를 해결합니다. ▼▼▼
+    private void updateTabList(Player player) {
+        List<PlayerInfoData> updatedData = new ArrayList<>();
+        List<Component> content = getTablistContent(player);
 
-        List<PlayerInfoData> updatedPlayersData = new ArrayList<>();
 
-        String serverName = "§e§lMY AWESOME SERVER";
-        String onlinePlayers = "§f온라인: §a" + Bukkit.getOnlinePlayers().size() + "명";
-        String serverTime = "§f서버 시간: §a" + new Date().toString(); // 날짜 포맷은 원하는 대로 변경
 
-        updateLine(updatedPlayersData, fakePlayerUUIDs.get(0), serverName);
-        updateLine(updatedPlayersData, fakePlayerUUIDs.get(1), onlinePlayers);
-        updateLine(updatedPlayersData, fakePlayerUUIDs.get(2), serverTime);
-        // ... 나머지 라인은 공백으로 채워 깔끔하게 보이도록 할 수 있습니다.
-        for (int i = 3; i < fakePlayerUUIDs.size(); i++) {
-            updateLine(updatedPlayersData, fakePlayerUUIDs.get(i), "");
+        for (int i = 0; i < TAB_LIST_SIZE; i++) {
+            UUID entryId = fakePlayerUUIDs.get(i);
+            WrappedGameProfile profile = fakePlayers.get(i).getProfile();
+            Component displayName = (i < content.size()) ? content.get(i) : Component.empty();
+
+            String legacyText = LegacyComponentSerializer.legacySection().serialize(displayName);
+            WrappedChatComponent chatComponent = WrappedChatComponent.fromLegacyText(legacyText);
+
+            // Component를 직접 사용하는 생성자로 변경
+            PlayerInfoData newData = new PlayerInfoData(
+                    entryId, 0, false, EnumWrappers.NativeGameMode.SURVIVAL, profile, chatComponent
+            );
+            updatedData.add(newData);
         }
 
+        // 패킷을 생성할 때부터 필요한 데이터를 모두 담아서 만듭니다.
+        PacketContainer updatePacket = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+        updatePacket.getPlayerInfoActions().write(0, EnumSet.of(EnumWrappers.PlayerInfoAction.UPDATE_DISPLAY_NAME));
+        updatePacket.getPlayerInfoDataLists().write(0, updatedData);
 
-        // [수정] 업데이트 패킷 생성
-        PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO);
-        packet.getPlayerInfoActions().write(0, EnumSet.of(EnumWrappers.PlayerInfoAction.UPDATE_DISPLAY_NAME));
-        packet.getPlayerInfoDataLists().write(1, updatedPlayersData); // 인덱스가 1로 변경됨
-        sendPacket(player, packet);
+        protocolManager.sendServerPacket(player, updatePacket);
     }
 
-    private void updateLine(List<PlayerInfoData> list, UUID uuid, String text) {
-        WrappedGameProfile gameProfile = new WrappedGameProfile(uuid, "");
-        WrappedChatComponent displayName = WrappedChatComponent.fromText(text);
-        // [수정] 최신 PlayerInfoData 생성자 사용
-        list.add(new PlayerInfoData(gameProfile, 1, EnumWrappers.NativeGameMode.SURVIVAL, displayName, null));
-    }
+    // 이 부분은 그대로 유지됩니다.
+    private List<Component> getTablistContent(Player player) {
+        List<Component> lines = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일");
+        String date = sdf.format(new Date());
 
-    public void removeFakePlayers(Player player) {
-        List<UUID> fakePlayerUUIDs = fakePlayerMap.remove(player.getUniqueId());
-        if (fakePlayerUUIDs == null || fakePlayerUUIDs.isEmpty()) {
-            return;
-        }
+        lines.add(Component.text(""));
+        lines.add(Component.text("MY-SERVER").color(NamedTextColor.YELLOW).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD));
+        lines.add(Component.text(""));
+        lines.add(Component.text("플레이어: ").color(NamedTextColor.WHITE).append(Component.text(player.getName()).color(NamedTextColor.GREEN)));
+        lines.add(Component.text("위치: ").color(NamedTextColor.WHITE).append(Component.text(player.getWorld().getName()).color(NamedTextColor.GREEN)));
+        lines.add(Component.text(""));
+        lines.add(Component.text(date).color(NamedTextColor.GRAY));
+        lines.add(Component.text(""));
 
-        // [수정] 새로운 PLAYER_INFO_REMOVE 패킷을 생성하고 전송합니다. 이 방식이 맞습니다!
-        PacketContainer removePacket = protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO_REMOVE);
-        removePacket.getUUIDLists().write(0, fakePlayerUUIDs);
-        sendPacket(player, removePacket);
-    }
-
-    // [수정] 패킷 전송 메소드를 PacketContainer를 직접 받도록 변경
-    private void sendPacket(Player player, PacketContainer packet) {
-        try {
-            protocolManager.sendServerPacket(player, packet);
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "플레이어 정보 패킷 전송 중 오류가 발생했습니다!", e);
-        }
+        return lines;
     }
 }

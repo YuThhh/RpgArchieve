@@ -32,7 +32,7 @@ public class IndicatorManager {
             armorStand.setMarker(true); // Makes it have a very small hitbox and not interact with the world
             armorStand.setInvulnerable(true); // Prevents it from being destroyed
             armorStand.setCustomNameVisible(true); // Makes the name always visible
-            armorStand.customName(Component.text(damage, NamedTextColor.RED)); // Set the name to the damage value
+            armorStand.customName(Component.text(String.format("%.1f", damage), NamedTextColor.RED)); // Set the name to the damage value
 
             // Create a task to move the indicator up and then remove it
             new BukkitRunnable() {
