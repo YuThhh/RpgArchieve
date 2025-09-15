@@ -49,6 +49,11 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
 
         Regeneration();
 
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlaceHolder(this).register();
+            getLogger().info("RPG's PlaceholderAPI Expansion has been registered.");
+        }
+
         getLogger().info("RPG Plugin has been enabled!");
 
         // 서버 리로드 시 온라인 상태인 플레이어에게도 탭리스트 적용
