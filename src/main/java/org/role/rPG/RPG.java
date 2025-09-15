@@ -21,7 +21,7 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
     private TablistManager tablistManager;
     private IndicatorManager indicatorManager;
 
-    private static final double NormalHpRegen = 0.02;
+    private static final double NormalHpRegen = 0.01;
     private static final double NormalMpRegen = 0.05;
 
     @Override
@@ -48,14 +48,14 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
         getServer().getPluginManager().registerEvents(new Indicater(indicatorManager), this);
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
 
-
+        Regeneration();
 
         getLogger().info("RPG Plugin has been enabled!");
 
         // 서버 리로드 시 온라인 상태인 플레이어에게도 탭리스트 적용
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            tablistManager.setupPlayer(player);
-        }
+//        for (Player player : Bukkit.getOnlinePlayers()) {
+//            tablistManager.setupPlayer(player);
+//        }
     }
 
     @Override
@@ -67,13 +67,13 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
     }
 
     // [추가] 플레이어 접속 시 탭리스트 즉시 생성
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        // 살짝 딜레이를 주어 다른 플러그인과 충돌 방지 및 안정성 확보
-        getLogger().info("RPG - onPlayerJoin 이벤트 발생! " + event.getPlayer().getName()); // 로그 추가
-        Bukkit.getScheduler().runTaskLater(this, () ->
-                tablistManager.setupPlayer(event.getPlayer()), 20L);
-    }
+//    @EventHandler
+//    public void onPlayerJoin(PlayerJoinEvent event) {
+//        // 살짝 딜레이를 주어 다른 플러그인과 충돌 방지 및 안정성 확보
+//        getLogger().info("RPG - onPlayerJoin 이벤트 발생! " + event.getPlayer().getName()); // 로그 추가
+//        Bukkit.getScheduler().runTaskLater(this, () ->
+//                tablistManager.setupPlayer(event.getPlayer()), 20L);
+//    }
 
     // [추가] 플레이어 퇴장 시 탭리스트 즉시 제거
     @EventHandler
@@ -89,17 +89,19 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     PER_DATA data = PER_DATA.getInstance();
 
-                    // 1. 이동 속도 스탯을 가져옵니다.
-                    float targetSpeed = data.getPlayerSpeed(player.getUniqueId()); // 0.2f는 바닐라 기본 속도
+                    float speedStat = data.getPlayerSpeed(player.getUniqueId());
 
-                    if (targetSpeed >= 400) {
+                    if (speedStat > 400) { // 아동 속도 최대 제한
+                        speedStat = 400f;
                         data.setPlayerSpeed(player.getUniqueId(), 400f);
                     }
 
-                    // 2. 현재 플레이어의 실제 이동 속도와 스탯이 다른지 확인합니다.
-                    //    (불필요한 변경을 막기 위해 값이 다를 때만 적용하는 것이 중요합니다)
-                    if (Math.abs(player.getWalkSpeed() - targetSpeed) > 0.001f) {
-                        player.setWalkSpeed(0.2f * targetSpeed * 0.01f);
+                    // 실제 적용될 속도를 계산
+                    float calculatedSpeed = 0.2f * speedStat * 0.01f;
+
+                    // 계산된 속도와 현재 속도를 비교
+                    if (Math.abs(player.getWalkSpeed() - calculatedSpeed) > 0.0001f) {
+                        player.setWalkSpeed(calculatedSpeed);
                     }
 
                     // 여기에 나중에 체력, 방어력 등 다른 스탯도 추가할 수 있습니다.
@@ -109,7 +111,7 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
         }.runTaskTimer(this, 0L, 10L);
     }
 
-    public void hpRegeneration(Player player) {
+    public void Regeneration() {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -118,42 +120,30 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
                     UUID playerUUID = player.getUniqueId();
                     PER_DATA data = PER_DATA.getInstance();
 
+                    // HP 재생 로직
                     double maxHealth = Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
                     double currentHealth = player.getHealth();
-                    double vital = data.getPlayerHpRegenaration(playerUUID);
 
                     if (currentHealth < maxHealth) {
-                        double hpRegen = maxHealth * NormalHpRegen * vital * 0.01;
+                        double vital = data.getPlayerHpRegenaration(playerUUID); // 오타 주의: getPlayerHpRegeneration
+                        double hpRegenAmount = maxHealth * NormalHpRegen * vital * 0.01;
+                        double newHealth = Math.min(maxHealth, currentHealth + hpRegenAmount);
+                        player.setHealth(newHealth); // 실제 체력 적용
+                    }
 
-                        currentHealth += hpRegen;
-                        data.setPlayerHpRegenaration(playerUUID, currentHealth);
+                    // MP 재생 로직 (10틱마다 실행되도록)
+                    if (getServer().getScheduler().isCurrentlyRunning(getTaskId()) && getServer().getCurrentTick() % 10 == 0) {
+                        double maxMp = data.getPlayerMaxMana(playerUUID);
+                        double currentMp = data.getPlayerCurrentMana(playerUUID);
+
+                        if (currentMp < maxMp) {
+                            double mpRegenAmount = maxMp * NormalMpRegen;
+                            double newMp = Math.min(maxMp, currentMp + mpRegenAmount);
+                            data.setPlayerCurrentMana(playerUUID, newMp); // 데이터 업데이트
+                        }
                     }
                 }
             }
-        }.runTaskTimer(this, 0, 15);
-    }
-
-    public void mpRegeneration(Player player) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-
-
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    UUID playerUUID = player.getUniqueId();
-                    PER_DATA data = PER_DATA.getInstance();
-
-                    double maxMp = data.getPlayerMaxMana(playerUUID);
-                    double currentMp = data.getPlayerCurrentMana(playerUUID);
-
-                    if (currentMp < maxMp) {
-                        double mpRegen = maxMp * NormalMpRegen;
-
-                        currentMp += mpRegen;
-                        data.setPlayerCurrentMana(playerUUID, currentMp);
-                    }
-                }
-            }
-        }.runTaskTimer(this, 0, 10);
+        }.runTaskTimer(this, 0, 20);
     }
 }

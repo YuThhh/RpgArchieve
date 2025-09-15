@@ -32,3 +32,5 @@ commands:
     usage: /setattackspeed
   setspeed:
     usage: /setspeed
+  setvital:
+    usage: /setvital

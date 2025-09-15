@@ -3,6 +3,7 @@ version: 1.0
 main: org.role.rPG.RPG
 api-version: '1.21'
 depend: [ProtocolLib]
+softdepend: [PlaceholderAPI]
 commands:
   myinfo:
     description: 내 정보 UI를 엽니다.
@@ -31,3 +32,5 @@ commands:
     usage: /setattackspeed
   setspeed:
     usage: /setspeed
+  setvital:
+    usage: /setvital
