@@ -127,8 +127,8 @@ public class PER_DATA{
         playerAttackSpeed.put(playerUUID, attackspeed);
     }
 
-    public double getPlayerSpeed(UUID playerUUID) {
-        return playerSpeed.getOrDefault(playerUUID, 0.2f);
+    public float getPlayerSpeed(UUID playerUUID) {
+        return playerSpeed.getOrDefault(playerUUID, 100f);
     }
 
     public void setPlayerSpeed(UUID playerUUID, float speed) {

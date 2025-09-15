@@ -31,7 +31,7 @@ public class Stat implements Listener {
     private static final double VANILLA_CRIT_MULTIPLIER = 1.5;
     private static final double DEFENSE_CONSTANT = 500.0;
     private static final double PERCENTAGE_CONSTANT = 100.0;
-    private static final double STRENGTH_MUPLTPLIER = 0.001;
+    private static final double STRENGTH_MUPLTPLIER = 0.003;
 
 
     private final JavaPlugin plugin;

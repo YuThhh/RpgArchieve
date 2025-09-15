@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" build-on-make="true" name="rpgplugin:jar">
-    <output-path>$USER_HOME$/Documents/ServerEngine/servers/server_781527032/plugins</output-path>
+    <output-path>$USER_HOME$/Documents/ServerEngine/servers/server_441974653/plugins</output-path>
     <root id="archive" name="rpgplugin.jar">
       <element id="module-output" name="rpgplugin" />
     </root>

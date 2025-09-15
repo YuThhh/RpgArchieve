@@ -30,3 +30,5 @@ commands:
     usage: /setpower
   setattackspeed:
     usage: /setattackspeed
+  setspeed:
+    usage: /setspeed
