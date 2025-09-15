@@ -12,9 +12,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 import java.util.Random;
@@ -28,9 +26,7 @@ public class Stat implements Listener {
 
     // [수정] 코드의 가독성과 유지보수를 위해 '매직 넘버'들을 상수로 정의합니다.
     private static final double VANILLA_HEALTH_SCALE = 20.0;
-    private static final double VANILLA_CRIT_MULTIPLIER = 1.5;
     private static final double DEFENSE_CONSTANT = 500.0;
-    private static final double PERCENTAGE_CONSTANT = 100.0;
     private static final double STRENGTH_MUPLTPLIER = 0.003;
 
 
@@ -114,7 +110,7 @@ public class Stat implements Listener {
                 double critDamage = data.getPlayerCritDamage(attacker.getUniqueId());
                 // 치명타 발동!
                 // [수정] 상수를 사용하여 가독성 향상
-                final_damage *= (1.0 + critDamage / PERCENTAGE_CONSTANT);
+                final_damage *= (1.0 + critDamage / 0.01);
 
             }
         }
