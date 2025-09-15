@@ -1,9 +1,6 @@
 package org.role.rPG;
 
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -25,7 +22,7 @@ public class Indicater implements Listener {
         }
 
         // We also only want to show it on living entities that are not Armor Stands
-        if (!(event.getEntity() instanceof LivingEntity) || event.getEntity() instanceof ArmorStand) {
+        if (!(event.getEntity() instanceof LivingEntity) || event.getEntity() instanceof TextDisplay) {
             return;
         }
 
