@@ -2,7 +2,6 @@ name: RPG
 version: 1.0
 main: org.role.rPG.RPG
 api-version: '1.21'
-depend: [ProtocolLib]
 softdepend: [PlaceholderAPI]
 commands:
   myinfo:
