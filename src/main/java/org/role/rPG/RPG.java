@@ -47,7 +47,6 @@ public final class RPG extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new Indicater(indicatorManager), this);
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
 
-        startStartUpdater();
         Regeneration();
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
