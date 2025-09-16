@@ -27,20 +27,33 @@ public final class RPG extends JavaPlugin implements Listener {
         Cash.initializeAndLoad(this);
 
         SUCHECK_VALUE_KEY = new NamespacedKey(this, "sucheck_value");
+        // 데이터 관리자 초기화
         new PER_DATA();
+
         this.indicatorManager = new IndicatorManager(this);
 
+        StatDataManager.initialize(this);
+        StatDataManager.loadAllStats();
+
+        this.startStartUpdater();
+
+        // 각 기능 클래스의 register 메소드를 호출하여 시스템을 활성화합니다.
         new CMD_manager(this).registerCommands();
         new LIS_manager(this).registerListeners();
-        Ui.register(this, null);
+        Ui.register(this);
 
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new Stat(this), this);
         getServer().getPluginManager().registerEvents(new Indicater(indicatorManager), this);
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
 
-        startStartUpdater();
         Regeneration();
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlaceHolder(this).register();
+            getLogger().info("RPG's PlaceholderAPI Expansion has been registered.");
+        }
+
         getLogger().info("RPG Plugin has been enabled!");
     }
 
@@ -61,18 +74,20 @@ public final class RPG extends JavaPlugin implements Listener {
         // --- ▼▼▼ 여기가 수정되었습니다 ▼▼▼ ---
         // 플레이어가 나갈 때 데이터를 파일에 저장만 합니다.
         Cash.saveAllPlayerData();
+        StatDataManager.saveAllStats();
         // 메모리에서 데이터를 지우는 unloadPlayerData()를 호출하지 않습니다.
         // Cash.unloadPlayerData(event.getPlayer()); // 이 줄을 제거!
     }
 
-    // (startStartUpdater, Regeneration 메서드는 변경 없음)
     public void startStartUpdater() {
         new BukkitRunnable() {
             @Override
             public void run() {
+
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     PER_DATA data = PER_DATA.getInstance();
                     UUID playerUUID = player.getUniqueId();
+
                     float speedStat = data.getPlayerSpeed(playerUUID);
                     if (speedStat > 400) speedStat = 400f;
                     else if (speedStat < 0) speedStat = 0;
@@ -87,6 +102,9 @@ public final class RPG extends JavaPlugin implements Listener {
                     if (Math.abs(Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue() - maxHealthStat) > 0.01) {
                         Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(maxHealthStat);
                     }
+
+                    // 여기에 나중에 체력, 방어력 등 다른 스탯도 추가할 수 있습니다.
+                    // 예: applyPlayerMaxHealth(player);
                 }
             }
         }.runTaskTimer(this, 0L, 10L);
@@ -102,7 +120,7 @@ public final class RPG extends JavaPlugin implements Listener {
                     // HP 재생 로직
                     double maxHealth = data.getplayerMaxHealth(playerUUID);
                     double currentHealth = player.getHealth();
-                  
+
                     if (currentHealth < maxHealth) {
                         double vital = data.getPlayerHpRegenarationBonus(playerUUID);
                         double hpRegenAmount = 0.5 * (NormalHpRegen + maxHealth * 0.01 * (1 + vital * 0.01));

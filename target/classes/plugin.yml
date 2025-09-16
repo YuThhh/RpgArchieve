@@ -2,6 +2,8 @@ name: RPG
 version: 1.0
 main: org.role.rPG.RPG
 api-version: '1.21'
+depend:
+  - packetevents
 softdepend: [PlaceholderAPI]
 commands:
   myinfo:
