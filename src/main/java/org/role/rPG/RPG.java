@@ -17,7 +17,6 @@ import java.util.UUID;
 public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
 
     public static NamespacedKey SUCHECK_VALUE_KEY;
-    private TablistManager tablistManager;
     private IndicatorManager indicatorManager;
 
     private static final double NormalHpRegen = 1;
@@ -25,22 +24,23 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
 
     @Override
     public void onEnable() {
+        Cash.initializeAndLoad(this);
+
         SUCHECK_VALUE_KEY = new NamespacedKey(this, "sucheck_value");
         // 데이터 관리자 초기화
         new PER_DATA();
 
         this.indicatorManager = new IndicatorManager(this);
 
-        // TabListManager 초기화 및 스케줄러 시작
-        this.tablistManager = new TablistManager(this);
+        StatDataManager.initialize(this);
+        StatDataManager.loadAllStats();
 
         this.startStartUpdater();
 
         // 각 기능 클래스의 register 메소드를 호출하여 시스템을 활성화합니다.
         new CMD_manager(this).registerCommands();
         new LIS_manager(this).registerListeners();
-        Ui.register(this, tablistManager);
-        Cash.register(this);
+        Ui.register(this);
 
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new Stat(this), this);
@@ -82,7 +82,12 @@ public final class RPG extends JavaPlugin implements CommandExecutor, Listener {
     // [추가] 플레이어 퇴장 시 탭리스트 즉시 제거
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        tablistManager.removePlayer(event.getPlayer());
+        // --- ▼▼▼ 여기가 수정되었습니다 ▼▼▼ ---
+        // 플레이어가 나갈 때 데이터를 파일에 저장만 합니다.
+        Cash.saveAllPlayerData();
+        StatDataManager.saveAllStats();
+        // 메모리에서 데이터를 지우는 unloadPlayerData()를 호출하지 않습니다.
+        // Cash.unloadPlayerData(event.getPlayer()); // 이 줄을 제거!
     }
 
     public void startStartUpdater() {

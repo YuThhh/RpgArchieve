@@ -23,7 +23,7 @@ public class Ui implements Listener {
      * Ui 시스템(이벤트, 스케줄러)을 서버에 등록합니다.
      * @param plugin 메인 클래스 인스턴스
      */
-    public static void register(JavaPlugin plugin, TablistManager manager) {
+    public static void register(JavaPlugin plugin) {
         // Ui 클래스의 이벤트 핸들러(onPlayerJoin 등)를 등록합니다.
         plugin.getServer().getPluginManager().registerEvents(new Ui(), plugin);
 
