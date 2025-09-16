@@ -3,11 +3,16 @@ package org.role.rPG;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class PER_DATA{
 
-    private  static PER_DATA instance;
+    private static PER_DATA instance;
+    private static JavaPlugin plugin;
 
     private final Map<UUID, String> lastUiMap = new HashMap<>(); // GUI 뒤로가기 창
     private final Map<UUID,ItemStack[]> p_storage = new HashMap<>(); // GUI 창고 스토리지
@@ -93,10 +98,6 @@ public class PER_DATA{
 
     public void setPlayerDefense(UUID playerUUID, double defense) {
         playerDefense.put(playerUUID, defense);
-    }
-
-    public void removePlayerDefense(UUID playerUUID) {
-        playerDefense.remove(playerUUID);
     }
 
     public double getPlayerCrit(UUID playerUUID) {

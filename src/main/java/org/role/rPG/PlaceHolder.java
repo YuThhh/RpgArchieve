@@ -5,9 +5,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.DecimalFormat;
+
 public class PlaceHolder extends PlaceholderExpansion {
 
     private final RPG plugin;
+    private final DecimalFormat decimalFormat = new DecimalFormat("#.#");
 
     public PlaceHolder(RPG plugin) {
         this.plugin = plugin;
@@ -41,11 +44,15 @@ public class PlaceHolder extends PlaceholderExpansion {
         }
 
         return switch (params) {
-            case "currentmana" -> String.valueOf(data.getPlayerCurrentMana(player.getUniqueId()));
-            case "maxmana" -> String.valueOf(data.getPlayerMaxMana(player.getUniqueId()));
-            case "maxhealth" -> String.valueOf(data.getplayerMaxHealth(player.getUniqueId()));
-            case "hpregenbonus" -> String.valueOf(data.getPlayerHpRegenarationBonus(player.getUniqueId()));
-            case "speed" -> String.valueOf(data.getPlayerSpeed(player.getUniqueId()));
+            case "currentmana" -> decimalFormat.format(data.getPlayerCurrentMana(player.getUniqueId()));
+            case "maxmana" -> decimalFormat.format(data.getPlayerMaxMana(player.getUniqueId()));
+            case "maxhealth" -> decimalFormat.format(data.getplayerMaxHealth(player.getUniqueId()));
+            case "vital" -> decimalFormat.format(data.getPlayerHpRegenarationBonus(player.getUniqueId()));
+            case "speed" -> decimalFormat.format(data.getPlayerSpeed(player.getUniqueId()));
+            case "strength" -> decimalFormat.format(data.getPlayerStrength(player.getUniqueId()));
+            case "atkspd" -> decimalFormat.format(data.getPlayerAttactSpeed(player.getUniqueId()));
+            case "crit" -> decimalFormat.format(data.getPlayerCrit(player.getUniqueId()));
+            case "critdmg" -> decimalFormat.format(data.getPlayerCritDamage(player.getUniqueId()));
             default -> null;
         };
     }

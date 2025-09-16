@@ -29,11 +29,18 @@ public final class RPG extends JavaPlugin implements Listener {
         SUCHECK_VALUE_KEY = new NamespacedKey(this, "sucheck_value");
         // 데이터 관리자 초기화
         new PER_DATA();
+
         this.indicatorManager = new IndicatorManager(this);
 
+        StatDataManager.initialize(this);
+        StatDataManager.loadAllStats();
+
+        this.startStartUpdater();
+
+        // 각 기능 클래스의 register 메소드를 호출하여 시스템을 활성화합니다.
         new CMD_manager(this).registerCommands();
         new LIS_manager(this).registerListeners();
-        Ui.register(this, null);
+        Ui.register(this);
 
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new Stat(this), this);
@@ -68,6 +75,7 @@ public final class RPG extends JavaPlugin implements Listener {
         // --- ▼▼▼ 여기가 수정되었습니다 ▼▼▼ ---
         // 플레이어가 나갈 때 데이터를 파일에 저장만 합니다.
         Cash.saveAllPlayerData();
+        StatDataManager.saveAllStats();
         // 메모리에서 데이터를 지우는 unloadPlayerData()를 호출하지 않습니다.
         // Cash.unloadPlayerData(event.getPlayer()); // 이 줄을 제거!
     }
