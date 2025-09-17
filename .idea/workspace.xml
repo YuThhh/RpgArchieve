@@ -4,15 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="클래스 파일 패키지로 정리">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Item.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="투사체 관련 오류 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/CMD_manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/CMD_manager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemUpdateListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemUpdateListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/CMD_manager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/CMD_manager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Cash.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Cooked.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/GUI_manager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Indicater.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/IndicatorManager$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/IndicatorManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/LIS_manager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/LIS_manager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Menu_UI.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/PER_DATA.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Profile_UI.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Recipe.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RecipeManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Storage_UI.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Ui$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Ui$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Ui.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +62,9 @@
     &quot;accountId&quot;: &quot;1f073aea-be47-4c32-acc4-5890d47373a6&quot;
   }
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 0
@@ -113,7 +131,23 @@
       <option name="project" value="LOCAL" />
       <updated>1758069745616</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="아이템 추가 코드 제작 중">
+      <option name="closed" value="true" />
+      <created>1758071590541</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1758071590541</updated>
+    </task>
+    <task id="LOCAL-00003" summary="투사체 관련 오류 수정">
+      <option name="closed" value="true" />
+      <created>1758072562985</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1758072562985</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -141,6 +175,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="클래스 파일 패키지로 정리" />
-    <option name="LAST_COMMIT_MESSAGE" value="클래스 파일 패키지로 정리" />
+    <MESSAGE value="아이템 추가 코드 제작 중" />
+    <MESSAGE value="투사체 관련 오류 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="투사체 관련 오류 수정" />
   </component>
 </project>

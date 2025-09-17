@@ -16,10 +16,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.role.rPG.RPG;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ItemManager {
@@ -43,7 +47,6 @@ public class ItemManager {
         createItemConfigFile();
     }
 
-    // Item.yml 파일을 로드하거나, 없으면 새로 생성합니다.
     private void createItemConfigFile() {
         itemConfigFile = new File(plugin.getDataFolder(), "Item.yml");
         if (!itemConfigFile.exists()) {
@@ -53,10 +56,8 @@ public class ItemManager {
     }
 
     public void reloadItems() {
-        // 설정 파일을 다시 로드합니다.
         itemConfig = YamlConfiguration.loadConfiguration(itemConfigFile);
-
-        customItems.clear(); // 기존 아이템 정보를 비웁니다.
+        customItems.clear();
 
         ConfigurationSection itemsSection = itemConfig.getConfigurationSection("items");
         if (itemsSection == null) {
@@ -71,14 +72,18 @@ public class ItemManager {
             try {
                 int version = config.getInt("version", 1);
                 Material material = Material.matchMaterial(config.getString("material", "STONE"));
+                if (material == null) {
+                    plugin.getLogger().warning(itemId + " 아이템의 material을 찾을 수 없습니다: " + config.getString("material"));
+                    continue;
+                }
 
-                // MiniMessage를 사용해 이름과 설명을 Component로 변환
-                Component name = MINI_MESSAGE.deserialize(config.getString("name", ""));
+                Component name = MINI_MESSAGE.deserialize(config.getString("name", ""))
+                        .decoration(TextDecoration.ITALIC, false);
                 List<Component> lore = config.getStringList("lore").stream()
                         .map(MINI_MESSAGE::deserialize)
                         .collect(Collectors.toList());
 
-                ItemStack item = new ItemStack(Objects.requireNonNull(material));
+                ItemStack item = new ItemStack(material);
                 ItemMeta meta = item.getItemMeta();
 
                 if (meta != null) {
@@ -95,26 +100,36 @@ public class ItemManager {
                         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
                         for (String attrKey : attributesSection.getKeys(false)) {
                             Attribute attribute = Registry.ATTRIBUTE.get(NamespacedKey.minecraft(attrKey.toLowerCase()));
+                            if (attribute == null) {
+                                plugin.getLogger().warning(itemId + " 아이템의 attribute를 찾을 수 없습니다: " + attrKey);
+                                continue;
+                            }
                             double amount = attributesSection.getDouble(attrKey);
+
+                            // ▼▼▼ [수정된 부분] AttributeModifier를 최신 방식으로 생성 ▼▼▼
+                            NamespacedKey modifierKey = new NamespacedKey(plugin, itemId + "_" + attrKey.replace('.', '_'));
                             AttributeModifier modifier = new AttributeModifier(
-                                    CUSTOM_ITEM_ID_KEY, // 이름은 이제 디버깅용으로만 사용됩니다.
+                                    modifierKey,
                                     amount,
                                     AttributeModifier.Operation.ADD_NUMBER,
-                                    EquipmentSlot.HAND.getGroup() // 슬롯을 직접 지정 (필요에 따라 변경 가능)
+                                    EquipmentSlot.HAND.getGroup() // 적용될 슬롯 그룹 지정
                             );
-                            meta.addAttributeModifier(Objects.requireNonNull(attribute), modifier);
+                            meta.addAttributeModifier(attribute, modifier);
                         }
                     }
                     item.setItemMeta(meta);
                 }
                 customItems.put(itemId, item);
             } catch (Exception e) {
-                plugin.getLogger().warning(itemId + " 아이템 로딩 중 오류 발생: " + e.getMessage());
+                // 오류 발생 시 더 자세한 정보를 출력하도록 변경
+                plugin.getLogger().warning(itemId + " 아이템 로딩 중 오류 발생:");
+                e.printStackTrace();
             }
         }
         plugin.getLogger().info(customItems.size() + "개의 커스텀 아이템을 로드했습니다.");
     }
 
+    // 이하 다른 메소드들은 변경 없음
     public boolean updateItemIfNecessary(ItemStack item) {
         if (item == null || item.getItemMeta() == null) return false;
 
@@ -132,8 +147,8 @@ public class ItemManager {
         ItemMeta latestMeta = latestItem.getItemMeta();
         int latestVersion = latestMeta.getPersistentDataContainer().getOrDefault(CUSTOM_ITEM_VERSION_KEY, PersistentDataType.INTEGER, 1);
 
-        if (itemVersion < latestVersion) {
-            item.setItemMeta(latestMeta); // 메타데이터를 최신 버전으로 교체
+        if (itemVersion != latestVersion) {
+            item.setItemMeta(latestMeta);
             return true;
         }
 
