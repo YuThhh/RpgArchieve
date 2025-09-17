@@ -1,4 +1,4 @@
-package org.role.rPG;
+package org.role.rPG.UI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
@@ -12,6 +12,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.role.rPG.Player.Cash;
+import org.role.rPG.Player.PER_DATA;
 
 import java.util.*;
 

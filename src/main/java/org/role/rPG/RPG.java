@@ -10,6 +10,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.role.rPG.Food.Cooked;
+import org.role.rPG.Indicator.Indicator;
+import org.role.rPG.Indicator.IndicatorManager;
+import org.role.rPG.Item.EquipmentListener;
+import org.role.rPG.Item.ItemManager;
+import org.role.rPG.Player.*;
+import org.role.rPG.UI.Ui;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -18,6 +25,8 @@ public final class RPG extends JavaPlugin implements Listener {
 
     public static NamespacedKey SUCHECK_VALUE_KEY;
     private IndicatorManager indicatorManager;
+    private ItemManager itemManager;
+    private StatManager statManager;
 
     private static final double NormalHpRegen = 1;
     private static final double NormalMpRegen = 3;
@@ -31,26 +40,28 @@ public final class RPG extends JavaPlugin implements Listener {
         new PER_DATA();
 
         this.indicatorManager = new IndicatorManager(this);
+        this.itemManager = new ItemManager(this);
+        this.statManager = new StatManager(this, this.itemManager);
+        this.itemManager.reloadItems();
 
         StatDataManager.initialize(this);
         StatDataManager.loadAllStats();
 
-        this.startStartUpdater();
-
         // 각 기능 클래스의 register 메소드를 호출하여 시스템을 활성화합니다.
-        new CMD_manager(this).registerCommands();
+        new CMD_manager(this, this.itemManager).registerCommands();
         new LIS_manager(this).registerListeners();
         Ui.register(this);
 
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new Stat(this), this);
-        getServer().getPluginManager().registerEvents(new Indicater(indicatorManager), this);
+        getServer().getPluginManager().registerEvents(new Stat(this, this.statManager), this);
+        getServer().getPluginManager().registerEvents(new Indicator(indicatorManager), this);
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
+        getServer().getPluginManager().registerEvents(new EquipmentListener(this, this.statManager), this);
 
         Regeneration();
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new PlaceHolder(this).register();
+            new PlaceHolder(this,this.statManager).register();
             getLogger().info("RPG's PlaceholderAPI Expansion has been registered.");
         }
 
@@ -67,6 +78,8 @@ public final class RPG extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         // 데이터는 이미 메모리에 있으므로 별도의 로딩이 필요 없습니다.
+        Cash.loadAllPlayerData();
+        StatDataManager.loadAllStats();
     }
 
     @EventHandler
@@ -79,36 +92,6 @@ public final class RPG extends JavaPlugin implements Listener {
         // Cash.unloadPlayerData(event.getPlayer()); // 이 줄을 제거!
     }
 
-    public void startStartUpdater() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    PER_DATA data = PER_DATA.getInstance();
-                    UUID playerUUID = player.getUniqueId();
-
-                    float speedStat = data.getPlayerSpeed(playerUUID);
-                    if (speedStat > 400) speedStat = 400f;
-                    else if (speedStat < 0) speedStat = 0;
-                    data.setPlayerSpeed(playerUUID, speedStat);
-                    float calculatedSpeed = 0.2f * (1 + speedStat * 0.01f);
-                    if (Math.abs(player.getWalkSpeed() - calculatedSpeed) > 0.0001f) {
-                        player.setWalkSpeed(calculatedSpeed);
-                    }
-                    double maxHealthStat = data.getplayerMaxHealth(playerUUID);
-                    if (maxHealthStat <= 0) maxHealthStat = 1;
-                    data.setplayerMaxHealth(playerUUID, maxHealthStat);
-                    if (Math.abs(Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue() - maxHealthStat) > 0.01) {
-                        Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(maxHealthStat);
-                    }
-
-                    // 여기에 나중에 체력, 방어력 등 다른 스탯도 추가할 수 있습니다.
-                    // 예: applyPlayerMaxHealth(player);
-                }
-            }
-        }.runTaskTimer(this, 0L, 10L);
-    }
     public void Regeneration() {
         new BukkitRunnable() {
             @Override
@@ -118,19 +101,21 @@ public final class RPG extends JavaPlugin implements Listener {
                     PER_DATA data = PER_DATA.getInstance();
 
                     // HP 재생 로직
-                    double maxHealth = data.getplayerMaxHealth(playerUUID);
+                    double maxHealth = statManager.getFinalStat(playerUUID, "MAX_HEALTH");
                     double currentHealth = player.getHealth();
 
                     if (currentHealth < maxHealth) {
-                        double vital = data.getPlayerHpRegenarationBonus(playerUUID);
+                        // vital 스탯도 StatManager를 통해 가져와야 하지만, 현재 구조상 PER_DATA에서 가져옵니다.
+                        // 추후 vital도 장비 스탯으로 관리하려면 StatManager에 추가해야 합니다.
+                        double vital = PER_DATA.getInstance().getPlayerHpRegenarationBonus(playerUUID);
                         double hpRegenAmount = 0.5 * (NormalHpRegen + maxHealth * 0.01 * (1 + vital * 0.01));
                         player.setHealth(Math.min(maxHealth, currentHealth + hpRegenAmount));
                     }
-                    double maxMp = data.getPlayerMaxMana(playerUUID);
-                    double currentMp = data.getPlayerCurrentMana(playerUUID);
+                    double maxMp = PER_DATA.getInstance().getPlayerMaxMana(playerUUID); // 마나도 동일하게 수정 가능
+                    double currentMp = PER_DATA.getInstance().getPlayerCurrentMana(playerUUID);
                     if (currentMp < maxMp) {
                         double mpRegenAmount = (NormalMpRegen + maxMp * 0.02);
-                        data.setPlayerCurrentMana(playerUUID, Math.min(maxMp, currentMp + mpRegenAmount));
+                        PER_DATA.getInstance().setPlayerCurrentMana(playerUUID, Math.min(maxMp, currentMp + mpRegenAmount));
                     }
                 }
             }

@@ -1,4 +1,4 @@
-package org.role.rPG;
+package org.role.rPG.Indicator;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

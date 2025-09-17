@@ -35,3 +35,5 @@ commands:
     usage: /setspeed
   setvital:
     usage: /setvital
+  rpgitem:
+    usage: /rpgitem

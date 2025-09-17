@@ -1,4 +1,4 @@
-package org.role.rPG;
+package org.role.rPG.Food;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

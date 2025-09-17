@@ -1,0 +1,7 @@
+﻿items:
+  legendary_sword:
+    material: DIAMOND_SWORD
+    name: "<i:false><gold><bold>테스트용 무기</bold></gold>"
+    lore:
+      - "<i:false><red>피해량: +15</red>" # 바닐라 공격 피해
+      - "<i:false><green>힘: +10</green>"   # 커스텀 스탯

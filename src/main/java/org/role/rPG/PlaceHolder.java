@@ -4,6 +4,8 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.role.rPG.Player.PER_DATA;
+import org.role.rPG.Player.StatManager;
 
 import java.text.DecimalFormat;
 
@@ -11,9 +13,11 @@ public class PlaceHolder extends PlaceholderExpansion {
 
     private final RPG plugin;
     private final DecimalFormat decimalFormat = new DecimalFormat("#.#");
+    private StatManager statManager;
 
-    public PlaceHolder(RPG plugin) {
+    public PlaceHolder(RPG plugin, StatManager statManager) {
         this.plugin = plugin;
+        this.statManager =  statManager;
     }
 
     @Override
@@ -51,8 +55,8 @@ public class PlaceHolder extends PlaceholderExpansion {
             case "speed" -> decimalFormat.format(data.getPlayerSpeed(player.getUniqueId()));
             case "strength" -> decimalFormat.format(data.getPlayerStrength(player.getUniqueId()));
             case "atkspd" -> decimalFormat.format(data.getPlayerAttactSpeed(player.getUniqueId()));
-            case "crit" -> decimalFormat.format(data.getPlayerCrit(player.getUniqueId()));
-            case "critdmg" -> decimalFormat.format(data.getPlayerCritDamage(player.getUniqueId()));
+            case "crit" -> decimalFormat.format(statManager.getFinalStat(player.getUniqueId(),"CRIT_CHANCE"));
+            case "critdmg" -> decimalFormat.format(statManager.getFinalStat(player.getUniqueId(),"CRIT_DAMAGE"));
             default -> null;
         };
     }

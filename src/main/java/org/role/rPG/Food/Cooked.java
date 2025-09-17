@@ -1,4 +1,4 @@
-package org.role.rPG;
+package org.role.rPG.Food;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -15,6 +15,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.role.rPG.Player.PER_DATA;
 
 import java.util.*;
 
