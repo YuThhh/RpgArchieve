@@ -147,22 +147,29 @@ public class ItemManager {
     public boolean updateItemIfNecessary(ItemStack item) {
         if (item == null || item.getItemMeta() == null) return false;
 
-        ItemMeta meta = item.getItemMeta();
-        PersistentDataContainer container = meta.getPersistentDataContainer();
+        ItemMeta currentMeta = item.getItemMeta();
+        PersistentDataContainer container = currentMeta.getPersistentDataContainer();
 
+        // 우리 플러그인이 만든 커스텀 아이템인지 확인
         if (!container.has(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING)) return false;
 
         String itemId = container.get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
-        int itemVersion = container.getOrDefault(CUSTOM_ITEM_VERSION_KEY, PersistentDataType.INTEGER, 0);
-
         ItemStack latestItem = customItems.get(itemId);
+
+        // 현재 서버에 해당 아이템 ID의 정보가 없으면 업데이트하지 않음
         if (latestItem == null) return false;
 
         ItemMeta latestMeta = latestItem.getItemMeta();
-        int latestVersion = latestMeta.getPersistentDataContainer().getOrDefault(CUSTOM_ITEM_VERSION_KEY, PersistentDataType.INTEGER, 1);
 
-        if (itemVersion != latestVersion) {
-            item.setItemMeta(latestMeta);
+        // 이름, 로어, 속성(AttributeModifiers), 파괴불가 상태 등을 직접 비교합니다.
+        // 하나라도 다르면 업데이트가 필요한 것으로 간주합니다.
+        boolean needsUpdate = !Objects.equals(currentMeta.displayName(), latestMeta.displayName()) ||
+                !Objects.equals(currentMeta.lore(), latestMeta.lore()) ||
+                !Objects.equals(currentMeta.getAttributeModifiers(), latestMeta.getAttributeModifiers()) ||
+                currentMeta.isUnbreakable() != latestMeta.isUnbreakable();
+
+        if (needsUpdate) {
+            item.setItemMeta(latestMeta); // 아이템 정보를 최신 버전으로 덮어씁니다.
             return true;
         }
 

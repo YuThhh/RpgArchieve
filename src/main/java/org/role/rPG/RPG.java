@@ -61,7 +61,7 @@ public final class RPG extends JavaPlugin implements Listener {
         Regeneration();
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new PlaceHolder(this).register();
+            new PlaceHolder(this,this.statManager).register();
             getLogger().info("RPG's PlaceholderAPI Expansion has been registered.");
         }
 
