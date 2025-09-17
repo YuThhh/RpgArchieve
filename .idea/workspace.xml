@@ -4,15 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/ItemManager.java" afterDir="false" />
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="클래스 파일 패키지로 정리">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Item.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/CMD_manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/CMD_manager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemUpdateListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemUpdateListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Ui$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/Ui$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Ui$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/Ui$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,13 +65,18 @@
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/koppo/IdeaProjects/Rpgplugin/pom.xml",
+    "last_opened_file_path": "C:/Users/chldn/IdeaProjects/Rpgplugin/src/main/resources",
     "project.structure.last.edited": "아티팩트",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.2",
     "to.speed.mode.migration.done": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\chldn\IdeaProjects\Rpgplugin\src\main\resources" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="Rpgplugin" />
@@ -100,6 +105,15 @@
       <option name="presentableId" value="Default" />
       <updated>1757935570345</updated>
     </task>
+    <task id="LOCAL-00001" summary="클래스 파일 패키지로 정리">
+      <option name="closed" value="true" />
+      <created>1758069745616</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1758069745616</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -113,7 +127,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="origin/Cooked&amp;&amp;Recipe" />
+                        <option value="Item" />
                       </list>
                     </value>
                   </entry>
@@ -124,5 +138,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="클래스 파일 패키지로 정리" />
+    <option name="LAST_COMMIT_MESSAGE" value="클래스 파일 패키지로 정리" />
   </component>
 </project>

@@ -1,0 +1,14 @@
+﻿items:
+  legendary_sword:
+    version: 1
+    material: DIAMOND_SWORD
+    name: "&9테스트 무기"
+    lore:
+      - ""
+      - ""
+      - "<red>공격 피해: <white>+15</white></red>"
+      - "<green>공격 속도: <white>+1.6</white></green>"
+    attributes:
+      generic.attack_damage: 15.0
+      generic.attack_speed: -2.4
+    unbreakable: true

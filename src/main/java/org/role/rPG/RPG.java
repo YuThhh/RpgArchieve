@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.role.rPG.Food.Cooked;
 import org.role.rPG.Indicator.Indicator;
 import org.role.rPG.Indicator.IndicatorManager;
+import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Player.Cash;
 import org.role.rPG.Player.PER_DATA;
 import org.role.rPG.Player.Stat;
@@ -26,6 +27,7 @@ public final class RPG extends JavaPlugin implements Listener {
 
     public static NamespacedKey SUCHECK_VALUE_KEY;
     private IndicatorManager indicatorManager;
+    private ItemManager itemManager;
 
     private static final double NormalHpRegen = 1;
     private static final double NormalMpRegen = 3;
@@ -39,6 +41,8 @@ public final class RPG extends JavaPlugin implements Listener {
         new PER_DATA();
 
         this.indicatorManager = new IndicatorManager(this);
+        this.itemManager = new ItemManager(this);
+        this.itemManager.reloadItems();
 
         StatDataManager.initialize(this);
         StatDataManager.loadAllStats();
@@ -46,7 +50,7 @@ public final class RPG extends JavaPlugin implements Listener {
         this.startStartUpdater();
 
         // 각 기능 클래스의 register 메소드를 호출하여 시스템을 활성화합니다.
-        new CMD_manager(this).registerCommands();
+        new CMD_manager(this, this.itemManager).registerCommands();
         new LIS_manager(this).registerListeners();
         Ui.register(this);
 

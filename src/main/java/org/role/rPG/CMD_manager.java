@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Player.Cash;
 import org.role.rPG.Player.PER_DATA;
 import org.role.rPG.UI.Menu_UI;
@@ -26,9 +27,11 @@ public class CMD_manager implements CommandExecutor {
 
     private final MiniMessage mm = MiniMessage.miniMessage();
     private final JavaPlugin plugin;
+    private final ItemManager itemManager;
 
-    public CMD_manager(JavaPlugin plugin) {
+    public CMD_manager(JavaPlugin plugin, ItemManager itemManager) {
         this.plugin = plugin;
+        this.itemManager = itemManager;
     }
 
     // 명령어 등록
@@ -45,6 +48,7 @@ public class CMD_manager implements CommandExecutor {
         Objects.requireNonNull(plugin.getCommand("setattackspeed")).setExecutor(this);
         Objects.requireNonNull(plugin.getCommand("setspeed")).setExecutor(this);
         Objects.requireNonNull(plugin.getCommand("setvital")).setExecutor(this);
+        Objects.requireNonNull(plugin.getCommand("rpgitem")).setExecutor(this);
     }
 
     @Override
@@ -349,7 +353,48 @@ public class CMD_manager implements CommandExecutor {
             return true;
 
         }
+        else if (command.getName().equalsIgnoreCase("rpgitem")) {
+            if (args.length == 0) {
+                sender.sendMessage(Component.text("/rpgitem give <ID> - 아이템을 받습니다.", NamedTextColor.YELLOW));
+                sender.sendMessage(Component.text("/rpgitem reload - Item.yml을 리로드합니다.", NamedTextColor.YELLOW));
+                return true;
+            }
 
+            switch (args[0].toLowerCase()) {
+                case "give":
+                    if (!(sender instanceof Player player)) {
+                        sender.sendMessage(Component.text("플레이어만 사용 가능합니다.", NamedTextColor.RED));
+                        return true;
+                    }
+                    if (args.length < 2) {
+                        player.sendMessage(Component.text("아이템 ID를 입력해주세요.", NamedTextColor.RED));
+                        player.sendMessage(Component.text("사용 가능: " + String.join(", ", itemManager.getAllItemIds()), NamedTextColor.GRAY));
+                        return true;
+                    }
+                    ItemStack item = itemManager.getItem(args[1]);
+                    if (item == null) {
+                        player.sendMessage(Component.text("'" + args[1] + "' 아이템을 찾을 수 없습니다.", NamedTextColor.RED));
+                        return true;
+                    }
+                    player.getInventory().addItem(item);
+                    player.sendMessage(Component.text().append(item.displayName()).append(Component.text(" 아이템을 획득했습니다.", NamedTextColor.GREEN)));
+                    break;
+
+                case "reload":
+                    if (!sender.hasPermission("rpg.item.reload")) {
+                        sender.sendMessage(Component.text("권한이 없습니다.", NamedTextColor.RED));
+                        return true;
+                    }
+                    itemManager.reloadItems();
+                    sender.sendMessage(Component.text("Item.yml 설정을 리로드했습니다.", NamedTextColor.GREEN));
+                    break;
+
+                default:
+                    sender.sendMessage(Component.text("알 수 없는 명령어입니다.", NamedTextColor.RED));
+                    break;
+            }
+            return true;
+        }
 
 
 
