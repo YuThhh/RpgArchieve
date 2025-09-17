@@ -14,6 +14,7 @@ import org.role.rPG.Food.Cooked;
 import org.role.rPG.Indicator.Indicator;
 import org.role.rPG.Indicator.IndicatorManager;
 import org.role.rPG.Item.ItemManager;
+import org.role.rPG.Item.ItemUpdateListener;
 import org.role.rPG.Player.Cash;
 import org.role.rPG.Player.PER_DATA;
 import org.role.rPG.Player.Stat;
@@ -58,6 +59,7 @@ public final class RPG extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new Stat(this), this);
         getServer().getPluginManager().registerEvents(new Indicator(indicatorManager), this);
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
+        getServer().getPluginManager().registerEvents(new ItemUpdateListener(itemManager), this);
 
         Regeneration();
 

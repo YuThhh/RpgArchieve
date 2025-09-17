@@ -4,30 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="투사체 관련 오류 수정">
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="커스텀 아이템 제작 중&#10;아이템 불러오기까지 완료">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/CMD_manager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/CMD_manager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Cash.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Cooked.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/GUI_manager.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Indicater.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/IndicatorManager$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/IndicatorManager.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/LIS_manager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/LIS_manager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Menu_UI.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/PER_DATA.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Profile_UI.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Recipe.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RecipeManager.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Storage_UI.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Ui$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Ui$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/Ui.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,22 +53,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Item",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/chldn/IdeaProjects/Rpgplugin/src/main/resources",
-    "project.structure.last.edited": "아티팩트",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Item&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/chldn/IdeaProjects/Rpgplugin/src/main/resources&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;아티팩트&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\chldn\IdeaProjects\Rpgplugin\src\main\resources" />
@@ -147,7 +126,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758072562985</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="커스텀 아이템 제작 중&#10;아이템 불러오기까지 완료">
+      <option name="closed" value="true" />
+      <created>1758072859673</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1758072859673</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -177,6 +164,7 @@
     <MESSAGE value="클래스 파일 패키지로 정리" />
     <MESSAGE value="아이템 추가 코드 제작 중" />
     <MESSAGE value="투사체 관련 오류 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="투사체 관련 오류 수정" />
+    <MESSAGE value="커스텀 아이템 제작 중&#10;아이템 불러오기까지 완료" />
+    <option name="LAST_COMMIT_MESSAGE" value="커스텀 아이템 제작 중&#10;아이템 불러오기까지 완료" />
   </component>
 </project>
