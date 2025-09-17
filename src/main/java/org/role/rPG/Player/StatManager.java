@@ -106,7 +106,7 @@ public class StatManager {
 
         // 이동 속도 적용 (기존 startStartUpdater의 로직을 가져옴)
         double speedStat = finalStats.getOrDefault("SPEED", 100.0); // ItemManager에 SPEED 파싱 추가 필요
-        float calculatedSpeed = 0.1f * (float)(speedStat / 100.0); // 기본값 0.1, 스탯 100당 0.1 증가
+        float calculatedSpeed = 0.2f * (float)(speedStat / 100.0); // 기본값 0.2, 스탯 100당 0.1 증가
         player.setWalkSpeed(calculatedSpeed);
     }
 }

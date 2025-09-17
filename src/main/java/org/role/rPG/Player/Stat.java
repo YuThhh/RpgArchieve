@@ -1,6 +1,5 @@
 package org.role.rPG.Player;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -98,7 +97,7 @@ public class Stat implements Listener {
                 if (atkspd > 0.0) {
                     final int ticks = (int) (10 * 100 / (100 + atkspd));
                     // 1틱(0.05초) 뒤에 livingEntity의 무적 시간을 ticks로 설정하는 작업을 예약합니다.
-                    Bukkit.getScheduler().runTask(plugin, () -> livingEntity.setNoDamageTicks(ticks));
+                    livingEntity.setNoDamageTicks(ticks);
                 }
         }
     }

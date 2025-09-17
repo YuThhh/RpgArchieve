@@ -1,6 +1,7 @@
 package org.role.rPG.Item;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -9,16 +10,17 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.inventory.EquipmentSlotGroup;
 import org.role.rPG.RPG;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ItemManager {
 
@@ -49,6 +51,7 @@ public class ItemManager {
         itemConfig = YamlConfiguration.loadConfiguration(itemConfigFile);
     }
 
+    // ▼▼▼ [수정됨] 누락된 로직이 모두 추가된 메소드 ▼▼▼
     public void reloadItems() {
         itemConfig = YamlConfiguration.loadConfiguration(itemConfigFile);
         customItems.clear();
@@ -74,13 +77,32 @@ public class ItemManager {
                 ItemMeta meta = item.getItemMeta();
 
                 if (meta != null) {
-                    // ...
+                    // [복구] 아이템 이름 설정
+                    Component name = MINI_MESSAGE.deserialize(config.getString("name", ""))
+                            .decoration(TextDecoration.ITALIC, false);
+                    meta.displayName(name);
+
+                    // [복구] 아이템 로어 설정
+                    List<String> originalLoreStrings = config.getStringList("lore");
+                    List<Component> loreForDisplay = originalLoreStrings.stream()
+                            .map(line -> MINI_MESSAGE.deserialize(line).decoration(TextDecoration.ITALIC, false))
+                            .collect(Collectors.toList());
+                    meta.lore(loreForDisplay);
+
+                    // [복구] 파괴 불가 설정
+                    meta.setUnbreakable(config.getBoolean("unbreakable", false));
+
+                    // [복구] 커스텀 아이템 ID 태그 저장 (자동 업데이트 및 스탯 적용에 필수)
+                    PersistentDataContainer container = meta.getPersistentDataContainer();
+                    container.set(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING, itemId);
+
+                    // 로어를 분석하여 Minecraft 기본 속성(AttributeModifier) 적용
                     meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 
-                    List<String> originalLoreStrings = config.getStringList("lore");
                     for (String loreLine : originalLoreStrings) {
                         String cleanLine = MINI_MESSAGE.stripTags(loreLine);
-                        if (cleanLine.startsWith("피해량:")) {
+                        // [수정] Attribute.ATTACK_DAMAGE -> Attribute.GENERIC_ATTACK_DAMAGE
+                        if (cleanLine.startsWith("공격 피해:")) {
                             try {
                                 double value = parseValueFromLore(cleanLine);
                                 NamespacedKey key = new NamespacedKey(plugin, itemId + "_attack_damage");
@@ -88,25 +110,21 @@ public class ItemManager {
                                 meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier);
                             } catch (NumberFormatException ignored) {}
                         }
-                        // 다른 바닐라 Attribute들도 이런 방식으로 추가 가능
+                        // 여기에 '방어구 강도' 등 다른 바닐라 속성 로직 추가 가능
                     }
+
                     item.setItemMeta(meta);
                 }
                 customItems.put(itemId, item);
             } catch (Exception e) {
-                // 오류 발생 시 더 자세한 정보를 출력하도록 변경
                 plugin.getLogger().warning(itemId + " 아이템 로딩 중 오류 발생:");
                 e.printStackTrace();
             }
         }
         plugin.getLogger().info(customItems.size() + "개의 커스텀 아이템을 로드했습니다.");
     }
+    // ▲▲▲ 메소드 수정 완료 ▲▲▲
 
-    /**
-     * 아이템의 로어를 분석하여 스탯 맵을 반환합니다.
-     * @param item 스탯을 추출할 아이템
-     * @return 스탯 이름과 값으로 구성된 맵
-     */
     public Map<String, Double> getStatsFromItem(ItemStack item) {
         Map<String, Double> stats = new HashMap<>();
         if (item == null || item.getItemMeta() == null || item.getItemMeta().lore() == null) {
@@ -118,8 +136,8 @@ public class ItemManager {
             String cleanLine = MINI_MESSAGE.stripTags(MINI_MESSAGE.serialize(lineComponent));
 
             try {
-                if (cleanLine.startsWith("피해량:")) {
-                    // "피해량"는 Bukkit의 GENERIC_ATTACK_DAMAGE에 해당하므로 별도 처리
+                if (cleanLine.startsWith("공격 피해:")) {
+                    // "공격 피해"는 AttributeModifier로 직접 처리되므로 여기서는 제외합니다.
                 } else if (cleanLine.startsWith("체력:")) {
                     stats.put("MAX_HEALTH", parseValueFromLore(cleanLine));
                 } else if (cleanLine.startsWith("방어력:")) {
@@ -130,9 +148,12 @@ public class ItemManager {
                     stats.put("CRIT_CHANCE", parseValueFromLore(cleanLine));
                 } else if (cleanLine.startsWith("크리티컬 피해:")) {
                     stats.put("CRIT_DAMAGE", parseValueFromLore(cleanLine));
+                } else if (cleanLine.startsWith("이동 속도:")) {
+                    stats.put("SPEED", parseValueFromLore(cleanLine));
+                }else if (cleanLine.startsWith("공격 속도:")) {
+                    stats.put("ATTACK_SPEED", parseValueFromLore(cleanLine));
                 }
             } catch (NumberFormatException ignored) {
-                // 숫자 파싱 실패 시 무시
             }
         }
         return stats;
@@ -143,36 +164,25 @@ public class ItemManager {
         return Double.parseDouble(valueString);
     }
 
-    // 이하 다른 메소드들은 변경 없음
     public boolean updateItemIfNecessary(ItemStack item) {
         if (item == null || item.getItemMeta() == null) return false;
-
         ItemMeta currentMeta = item.getItemMeta();
         PersistentDataContainer container = currentMeta.getPersistentDataContainer();
-
-        // 우리 플러그인이 만든 커스텀 아이템인지 확인
         if (!container.has(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING)) return false;
-
         String itemId = container.get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
         ItemStack latestItem = customItems.get(itemId);
-
-        // 현재 서버에 해당 아이템 ID의 정보가 없으면 업데이트하지 않음
         if (latestItem == null) return false;
-
         ItemMeta latestMeta = latestItem.getItemMeta();
 
-        // 이름, 로어, 속성(AttributeModifiers), 파괴불가 상태 등을 직접 비교합니다.
-        // 하나라도 다르면 업데이트가 필요한 것으로 간주합니다.
         boolean needsUpdate = !Objects.equals(currentMeta.displayName(), latestMeta.displayName()) ||
                 !Objects.equals(currentMeta.lore(), latestMeta.lore()) ||
                 !Objects.equals(currentMeta.getAttributeModifiers(), latestMeta.getAttributeModifiers()) ||
                 currentMeta.isUnbreakable() != latestMeta.isUnbreakable();
 
         if (needsUpdate) {
-            item.setItemMeta(latestMeta); // 아이템 정보를 최신 버전으로 덮어씁니다.
+            item.setItemMeta(latestMeta);
             return true;
         }
-
         return false;
     }
 

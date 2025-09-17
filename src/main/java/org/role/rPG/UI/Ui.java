@@ -14,27 +14,30 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.role.rPG.Player.Cash;
 import org.role.rPG.Player.PER_DATA;
+import org.role.rPG.Player.StatManager;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.UUID;
 
 public class Ui implements Listener {
 
-    private static final PER_DATA data = PER_DATA.getInstance();
+    // ▼▼▼ [수정] 필드에 plugin과 statManager 추가 ▼▼▼
+    private final JavaPlugin plugin;
+    private final StatManager statManager;
+    private final PER_DATA data = PER_DATA.getInstance(); // 마나처럼 StatManager가 관리하지 않는 데이터용
 
-    /**
-     * Ui 시스템(이벤트, 스케줄러)을 서버에 등록합니다.
-     * @param plugin 메인 클래스 인스턴스
-     */
-    public static void register(JavaPlugin plugin) {
-        // Ui 클래스의 이벤트 핸들러(onPlayerJoin 등)를 등록합니다.
-        plugin.getServer().getPluginManager().registerEvents(new Ui(), plugin);
+    // ▼▼▼ [수정] 생성자를 통해 필요한 인스턴스를 받아옵니다 ▼▼▼
+    public Ui(JavaPlugin plugin, StatManager statManager) {
+        this.plugin = plugin;
+        this.statManager = statManager;
 
-
-        // 액션바와 스코어보드 업데이트를 시작합니다.
-        startActionBarUpdater(plugin);
-        startScoreboardUpdater(plugin);
-
+        // 생성자에서 직접 스케줄러를 시작합니다.
+        startActionBarUpdater();
+        startScoreboardUpdater();
     }
+
+    // ▼▼▼ [삭제] register 메소드는 더 이상 필요 없으므로 삭제합니다 ▼▼▼
+    // public static void register(...) { ... }
 
     // ================= 이벤트 핸들러 =================
     @EventHandler
@@ -44,49 +47,53 @@ public class Ui implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        Cash.unloadPlayerData(event.getPlayer());
+        // Cash.unloadPlayerData(event.getPlayer()); // 이 부분은 RPG.java에서 관리하므로 중복
         event.getPlayer().sendPlayerListHeaderAndFooter(Component.empty(),Component.empty());
-
-
     }
 
-
-    // --- 정적(전역 UI) 관련 코드 ---
-
     // ================= 액션바 =================
-    public static void startActionBarUpdater(JavaPlugin plugin) {
+    // ▼▼▼ [수정] static 제거, 메소드 내부 로직 변경 ▼▼▼
+    public void startActionBarUpdater() {
         new BukkitRunnable() {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    UUID  playerUUID = player.getUniqueId();
+                    UUID playerUUID = player.getUniqueId();
 
+                    // 체력은 플레이어 객체에서 직접 가져오는 것이 가장 정확합니다.
                     int currentHealth = (int) player.getHealth();
                     int maxHealth = (int) Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
-                    int defense = (int) data.getPlayerDefense(playerUUID);
+
+                    // ▼▼▼ [핵심 수정] PER_DATA 대신 StatManager에서 최종 스탯을 가져옵니다 ▼▼▼
+                    int defense = (int) statManager.getFinalStat(playerUUID, "DEFENSE");
+                    int str = (int) statManager.getFinalStat(playerUUID, "STRENGTH");
+                    // 공격속도는 Attribute를 직접 가져오는 것이 더 정확합니다.
+                    double atkSpdValue = statManager.getFinalStat(playerUUID, "ATTACK_SPEED");
+
+                    // 마나는 아직 StatManager에서 관리하지 않으므로 PER_DATA를 유지합니다.
                     int maxMp = (int) data.getPlayerMaxMana(playerUUID);
                     int currentMp = (int) data.getPlayerCurrentMana(playerUUID);
-                    int str = (int) data.getPlayerStrength(playerUUID);
-                    int atkspd = (int) data.getPlayerAttactSpeed(playerUUID);
 
-                    Component message = Component.text("♥ "+currentHealth + "/" + maxHealth, NamedTextColor.RED)
-                            .append(Component.text("  DEF " + defense, NamedTextColor.GREEN))
-                            .append(Component.text("  MP " + currentMp + "/" + maxMp, NamedTextColor.AQUA))
-                            .append(Component.text("  STR " + str, NamedTextColor.RED))
-                            .append(Component.text("  ATKSPD " + atkspd, NamedTextColor.YELLOW));
+                    Component message = Component.text("♥ " + currentHealth + "/" + maxHealth, NamedTextColor.RED)
+                            .append(Component.text("  \uD83D\uDEE1 " + defense, NamedTextColor.GREEN)) // 방패 아이콘 추가
+                            .append(Component.text("  \uD83D\uDCA7 " + currentMp + "/" + maxMp, NamedTextColor.AQUA)) // 물방울 아이콘 추가
+                            .append(Component.text("  \uD83D\uDCAA " + str, NamedTextColor.RED)) // 근육 아이콘 추가
+                            .append(Component.text("  ⚔ " + String.format("%.2f", atkSpdValue), NamedTextColor.YELLOW)); // 칼 아이콘 추가
+
                     sendActionBar(player, message);
                 }
             }
-        }.runTaskTimerAsynchronously(plugin, 0L, 1L);
+        }.runTaskTimer(plugin, 0L, 2L); // 비동기(Async) 대신 동기 방식으로 변경하여 안정성 확보
     }
 
-    private static void sendActionBar(Player player, Component message) {
+    private void sendActionBar(Player player, Component message) {
         player.sendActionBar(message);
     }
 
 
     // ================= 스코어보드 =================
-    public static void setScoreboard(Player player) {
+    // ▼▼▼ [수정] static 제거 ▼▼▼
+    public void setScoreboard(Player player) {
         ScoreboardManager bukkitScoreboardManager = Bukkit.getScoreboardManager();
 
         Scoreboard board = bukkitScoreboardManager.getNewScoreboard();
@@ -105,7 +112,7 @@ public class Ui implements Listener {
         player.setScoreboard(board);
     }
 
-    public static void startScoreboardUpdater(JavaPlugin plugin) {
+    public void startScoreboardUpdater() {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -117,8 +124,8 @@ public class Ui implements Listener {
 
                     Team moneyTeam = board.getTeam("rpg_money");
                     if (moneyTeam != null) {
-                        Component prefix = Component.text(currentMoney,NamedTextColor.YELLOW)
-                                .append(Component.text("G"));
+                        Component prefix = Component.text(String.format("%,d", currentMoney),NamedTextColor.YELLOW)
+                                .append(Component.text(" G"));
 
                         moneyTeam.prefix(prefix);
                     }
@@ -126,6 +133,4 @@ public class Ui implements Listener {
             }
         }.runTaskTimer(plugin, 0L, 20L);
     }
-
-
 }

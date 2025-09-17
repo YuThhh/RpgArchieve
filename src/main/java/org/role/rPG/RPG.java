@@ -50,13 +50,13 @@ public final class RPG extends JavaPlugin implements Listener {
         // 각 기능 클래스의 register 메소드를 호출하여 시스템을 활성화합니다.
         new CMD_manager(this, this.itemManager).registerCommands();
         new LIS_manager(this).registerListeners();
-        Ui.register(this);
 
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new Stat(this, this.statManager), this);
         getServer().getPluginManager().registerEvents(new Indicator(indicatorManager), this);
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
         getServer().getPluginManager().registerEvents(new EquipmentListener(this, this.statManager), this);
+        getServer().getPluginManager().registerEvents(new Ui(this, this.statManager), this);
 
         Regeneration();
 
