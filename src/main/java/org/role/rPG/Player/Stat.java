@@ -85,7 +85,9 @@ public class Stat implements Listener {
             attacker = (Player) event.getDamager();
         } else if (event.getDamager() instanceof Projectile projectile) {
             ProjectileSource shooter = projectile.getShooter();
-            attacker = (Player) shooter;
+            if (shooter instanceof Player) {
+                attacker = (Player) shooter;
+            }
         }
 
         if (attacker == null) {
