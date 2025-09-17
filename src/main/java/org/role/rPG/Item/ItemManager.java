@@ -4,27 +4,21 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.role.rPG.RPG;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class ItemManager {
 
@@ -70,52 +64,31 @@ public class ItemManager {
             if (config == null) continue;
 
             try {
-                int version = config.getInt("version", 1);
                 Material material = Material.matchMaterial(config.getString("material", "STONE"));
                 if (material == null) {
                     plugin.getLogger().warning(itemId + " 아이템의 material을 찾을 수 없습니다: " + config.getString("material"));
                     continue;
                 }
 
-                Component name = MINI_MESSAGE.deserialize(config.getString("name", ""))
-                        .decoration(TextDecoration.ITALIC, false);
-                List<Component> lore = config.getStringList("lore").stream()
-                        .map(MINI_MESSAGE::deserialize)
-                        .collect(Collectors.toList());
-
                 ItemStack item = new ItemStack(material);
                 ItemMeta meta = item.getItemMeta();
 
                 if (meta != null) {
-                    meta.displayName(name);
-                    meta.lore(lore);
-                    meta.setUnbreakable(config.getBoolean("unbreakable", false));
+                    // ...
+                    meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 
-                    PersistentDataContainer container = meta.getPersistentDataContainer();
-                    container.set(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING, itemId);
-                    container.set(CUSTOM_ITEM_VERSION_KEY, PersistentDataType.INTEGER, version);
-
-                    ConfigurationSection attributesSection = config.getConfigurationSection("attributes");
-                    if (attributesSection != null) {
-                        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                        for (String attrKey : attributesSection.getKeys(false)) {
-                            Attribute attribute = Registry.ATTRIBUTE.get(NamespacedKey.minecraft(attrKey.toLowerCase()));
-                            if (attribute == null) {
-                                plugin.getLogger().warning(itemId + " 아이템의 attribute를 찾을 수 없습니다: " + attrKey);
-                                continue;
-                            }
-                            double amount = attributesSection.getDouble(attrKey);
-
-                            // ▼▼▼ [수정된 부분] AttributeModifier를 최신 방식으로 생성 ▼▼▼
-                            NamespacedKey modifierKey = new NamespacedKey(plugin, itemId + "_" + attrKey.replace('.', '_'));
-                            AttributeModifier modifier = new AttributeModifier(
-                                    modifierKey,
-                                    amount,
-                                    AttributeModifier.Operation.ADD_NUMBER,
-                                    EquipmentSlot.HAND.getGroup() // 적용될 슬롯 그룹 지정
-                            );
-                            meta.addAttributeModifier(attribute, modifier);
+                    List<String> originalLoreStrings = config.getStringList("lore");
+                    for (String loreLine : originalLoreStrings) {
+                        String cleanLine = MINI_MESSAGE.stripTags(loreLine);
+                        if (cleanLine.startsWith("피해량:")) {
+                            try {
+                                double value = parseValueFromLore(cleanLine);
+                                NamespacedKey key = new NamespacedKey(plugin, itemId + "_attack_damage");
+                                AttributeModifier modifier = new AttributeModifier(key, value, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+                                meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier);
+                            } catch (NumberFormatException ignored) {}
                         }
+                        // 다른 바닐라 Attribute들도 이런 방식으로 추가 가능
                     }
                     item.setItemMeta(meta);
                 }
@@ -127,6 +100,47 @@ public class ItemManager {
             }
         }
         plugin.getLogger().info(customItems.size() + "개의 커스텀 아이템을 로드했습니다.");
+    }
+
+    /**
+     * 아이템의 로어를 분석하여 스탯 맵을 반환합니다.
+     * @param item 스탯을 추출할 아이템
+     * @return 스탯 이름과 값으로 구성된 맵
+     */
+    public Map<String, Double> getStatsFromItem(ItemStack item) {
+        Map<String, Double> stats = new HashMap<>();
+        if (item == null || item.getItemMeta() == null || item.getItemMeta().lore() == null) {
+            return stats;
+        }
+
+        List<Component> lore = item.getItemMeta().lore();
+        for (Component lineComponent : Objects.requireNonNull(lore)) {
+            String cleanLine = MINI_MESSAGE.stripTags(MINI_MESSAGE.serialize(lineComponent));
+
+            try {
+                if (cleanLine.startsWith("피해량:")) {
+                    // "피해량"는 Bukkit의 GENERIC_ATTACK_DAMAGE에 해당하므로 별도 처리
+                } else if (cleanLine.startsWith("체력:")) {
+                    stats.put("MAX_HEALTH", parseValueFromLore(cleanLine));
+                } else if (cleanLine.startsWith("방어력:")) {
+                    stats.put("DEFENSE", parseValueFromLore(cleanLine));
+                } else if (cleanLine.startsWith("힘:")) {
+                    stats.put("STRENGTH", parseValueFromLore(cleanLine));
+                } else if (cleanLine.startsWith("크리티컬 확률:")) {
+                    stats.put("CRIT_CHANCE", parseValueFromLore(cleanLine));
+                } else if (cleanLine.startsWith("크리티컬 피해:")) {
+                    stats.put("CRIT_DAMAGE", parseValueFromLore(cleanLine));
+                }
+            } catch (NumberFormatException ignored) {
+                // 숫자 파싱 실패 시 무시
+            }
+        }
+        return stats;
+    }
+
+    private double parseValueFromLore(String cleanLine) throws NumberFormatException {
+        String valueString = cleanLine.substring(cleanLine.indexOf(":") + 1).trim();
+        return Double.parseDouble(valueString);
     }
 
     // 이하 다른 메소드들은 변경 없음

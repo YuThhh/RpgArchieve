@@ -4,9 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="커스텀 아이템 제작 중&#10;아이템 불러오기까지 완료">
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="커스텀 아이템 제작 중&#10;아이템을 클릭하거나 들고 있으면 자동으로 최신 아이템으로 동기화">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/EquipmentListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/StatManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/Stat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/Stat.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Item.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Item.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,7 +142,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758072859673</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="커스텀 아이템 제작 중&#10;아이템을 클릭하거나 들고 있으면 자동으로 최신 아이템으로 동기화">
+      <option name="closed" value="true" />
+      <created>1758088523122</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1758088523122</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -165,6 +181,7 @@
     <MESSAGE value="아이템 추가 코드 제작 중" />
     <MESSAGE value="투사체 관련 오류 수정" />
     <MESSAGE value="커스텀 아이템 제작 중&#10;아이템 불러오기까지 완료" />
-    <option name="LAST_COMMIT_MESSAGE" value="커스텀 아이템 제작 중&#10;아이템 불러오기까지 완료" />
+    <MESSAGE value="커스텀 아이템 제작 중&#10;아이템을 클릭하거나 들고 있으면 자동으로 최신 아이템으로 동기화" />
+    <option name="LAST_COMMIT_MESSAGE" value="커스텀 아이템 제작 중&#10;아이템을 클릭하거나 들고 있으면 자동으로 최신 아이템으로 동기화" />
   </component>
 </project>
