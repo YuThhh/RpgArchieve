@@ -10,6 +10,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.role.rPG.Food.Cooked;
+import org.role.rPG.Indicator.Indicator;
+import org.role.rPG.Indicator.IndicatorManager;
+import org.role.rPG.Player.Cash;
+import org.role.rPG.Player.PER_DATA;
+import org.role.rPG.Player.Stat;
+import org.role.rPG.Player.StatDataManager;
+import org.role.rPG.UI.Ui;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -44,7 +52,7 @@ public final class RPG extends JavaPlugin implements Listener {
 
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new Stat(this), this);
-        getServer().getPluginManager().registerEvents(new Indicater(indicatorManager), this);
+        getServer().getPluginManager().registerEvents(new Indicator(indicatorManager), this);
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
 
         Regeneration();
@@ -67,6 +75,8 @@ public final class RPG extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         // 데이터는 이미 메모리에 있으므로 별도의 로딩이 필요 없습니다.
+        Cash.loadAllPlayerData();
+        StatDataManager.loadAllStats();
     }
 
     @EventHandler
@@ -92,7 +102,7 @@ public final class RPG extends JavaPlugin implements Listener {
                     if (speedStat > 400) speedStat = 400f;
                     else if (speedStat < 0) speedStat = 0;
                     data.setPlayerSpeed(playerUUID, speedStat);
-                    float calculatedSpeed = 0.2f * (1 + speedStat * 0.01f);
+                    float calculatedSpeed = 0.1f * (1 + speedStat * 0.01f);
                     if (Math.abs(player.getWalkSpeed() - calculatedSpeed) > 0.0001f) {
                         player.setWalkSpeed(calculatedSpeed);
                     }

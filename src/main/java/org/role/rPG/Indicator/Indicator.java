@@ -1,4 +1,4 @@
-package org.role.rPG;
+package org.role.rPG.Indicator;
 
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -6,11 +6,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-public class Indicater implements Listener {
+public class Indicator implements Listener {
 
     private final IndicatorManager indicatorManager;
 
-    public Indicater(IndicatorManager indicatorManager) {
+    public Indicator(IndicatorManager indicatorManager) {
         this.indicatorManager = indicatorManager;
     }
 

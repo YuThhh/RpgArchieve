@@ -1,4 +1,4 @@
-package org.role.rPG;
+package org.role.rPG.Food;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;

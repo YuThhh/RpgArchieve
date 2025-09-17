@@ -1,4 +1,4 @@
-package org.role.rPG;
+package org.role.rPG.Player;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,6 +14,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Sound;
+import org.role.rPG.RPG;
 
 import java.util.HashMap;
 import java.util.Map;

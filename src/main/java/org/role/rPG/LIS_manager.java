@@ -2,6 +2,8 @@ package org.role.rPG;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
+import org.role.rPG.UI.Menu_UI;
+import org.role.rPG.UI.Storage_UI;
 
 public class LIS_manager {
 

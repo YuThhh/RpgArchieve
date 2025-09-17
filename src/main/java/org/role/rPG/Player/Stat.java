@@ -1,4 +1,4 @@
-package org.role.rPG;
+package org.role.rPG.Player;
 
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
