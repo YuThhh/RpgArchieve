@@ -173,18 +173,31 @@ public class ItemManager {
 
     public boolean updateItemIfNecessary(ItemStack item) {
         if (isNotCustomItem(item)) return false;
+
         ItemMeta currentMeta = item.getItemMeta();
         String itemId = currentMeta.getPersistentDataContainer().get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
         ItemStack latestItemTemplate = customItems.get(itemId);
         if (latestItemTemplate == null) return false;
+
         Map<String, Double> currentBaseStats = getBaseStats(item);
         Map<String, Double> latestBaseStats = getBaseStats(latestItemTemplate);
+
+        // --- ▼▼▼ 디버그 메시지 출력 부분 ▼▼▼ ---
+        System.out.println("----- 아이템 업데이트 확인 -----");
+        System.out.println("아이템 ID: " + itemId);
+        System.out.println("플레이어가 가진 아이템의 기본 스탯: " + currentBaseStats);
+        System.out.println("Item.yml의 최신 기본 스탯: " + latestBaseStats);
+        System.out.println("두 스탯이 동일한가? " + currentBaseStats.equals(latestBaseStats));
+        // --- ▲▲▲ 여기까지 ▲▲▲ ---
+
         if (!currentBaseStats.equals(latestBaseStats)) {
+            System.out.println("결과: 기본 스탯 불일치. 아이템을 업데이트합니다.");
             currentMeta.getPersistentDataContainer().set(BASE_STATS_KEY, new StatMapDataType(), latestBaseStats);
             item.setItemMeta(currentMeta);
             updateLoreAndStats(item);
             return true;
         }
+        System.out.println("결과: 기본 스탯 일치. 업데이트하지 않습니다.");
         return false;
     }
 

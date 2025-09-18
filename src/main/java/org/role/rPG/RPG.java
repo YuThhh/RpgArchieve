@@ -14,6 +14,7 @@ import org.role.rPG.Indicator.Indicator;
 import org.role.rPG.Indicator.IndicatorManager;
 import org.role.rPG.Item.EquipmentListener;
 import org.role.rPG.Item.ItemManager;
+import org.role.rPG.Item.ItemUpdateListener;
 import org.role.rPG.Player.*;
 import org.role.rPG.UI.Ui;
 import org.role.rPG.Reforge.ReforgeCommand;
@@ -60,6 +61,7 @@ public final class RPG extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
         getServer().getPluginManager().registerEvents(new EquipmentListener(this, this.statManager), this);
         getServer().getPluginManager().registerEvents(new Ui(this, this.statManager), this);
+        getServer().getPluginManager().registerEvents(new ItemUpdateListener(this.itemManager), this);
 
         Objects.requireNonNull(getCommand("리포지")).setExecutor(new ReforgeCommand(this.itemManager, this.statManager, this.reforgeManager));
 
