@@ -21,7 +21,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.role.rPG.Player.StatMapDataType;
 import org.role.rPG.RPG;
-import org.role.rPG.Reforge.ReforgeManager; // ReforgeManager 임포트
+import org.role.rPG.Reforge.ReforgeManager;
 
 import java.io.File;
 import java.util.*;
@@ -32,14 +32,13 @@ import java.util.stream.Collectors;
 public class ItemManager {
 
     private final RPG plugin;
-    private final ReforgeManager reforgeManager; // ReforgeManager 주입을 위한 필드
+    private final ReforgeManager reforgeManager;
     private final Map<String, ItemStack> customItems = new HashMap<>();
     private FileConfiguration itemConfig;
     private File itemConfigFile;
 
     public static final NamespacedKey CUSTOM_ITEM_ID_KEY;
     private static final NamespacedKey BASE_STATS_KEY = new NamespacedKey("rpg", "base_stats");
-    // [수정] PREFIX_KEY -> REFORGE_KEY 로 변경하여 리포지 ID를 직접 저장
     private static final NamespacedKey REFORGE_KEY = new NamespacedKey("rpg", "reforge_id");
     private static final Pattern LORE_STAT_PATTERN = Pattern.compile("([^:]+): ([+\\-]?\\d+(\\.\\d+)?)");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
@@ -48,7 +47,6 @@ public class ItemManager {
         CUSTOM_ITEM_ID_KEY = new NamespacedKey("rpg", "custom_item_id");
     }
 
-    // [수정] 생성자에서 ReforgeManager를 받도록 변경
     public ItemManager(RPG plugin, ReforgeManager reforgeManager) {
         this.plugin = plugin;
         this.reforgeManager = reforgeManager;
@@ -66,28 +64,23 @@ public class ItemManager {
     public void reloadItems() {
         itemConfig = YamlConfiguration.loadConfiguration(itemConfigFile);
         customItems.clear();
-
         ConfigurationSection itemsSection = itemConfig.getConfigurationSection("items");
         if (itemsSection == null) {
             plugin.getLogger().warning("Item.yml에서 'items' 섹션을 찾을 수 없습니다.");
             return;
         }
-
         for (String itemId : itemsSection.getKeys(false)) {
             ConfigurationSection config = itemsSection.getConfigurationSection(itemId);
             if (config == null) continue;
-
             try {
                 Material material = Material.matchMaterial(config.getString("material", "STONE"));
                 if (material == null) {
                     plugin.getLogger().warning(itemId + " 아이템의 material을 찾을 수 없습니다.");
                     continue;
                 }
-
                 ItemStack item = new ItemStack(material);
                 ItemMeta meta = buildMetaFromConfig(itemId, config);
                 item.setItemMeta(meta);
-
                 customItems.put(itemId, item);
             } catch (Exception e) {
                 plugin.getLogger().warning(itemId + " 아이템 로딩 중 오류 발생:");
@@ -100,17 +93,14 @@ public class ItemManager {
     private ItemMeta buildMetaFromConfig(String itemId, ConfigurationSection config) {
         Material material = Material.matchMaterial(config.getString("material", "STONE"));
         ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Objects.requireNonNull(material));
-
         Component name = MINI_MESSAGE.deserialize(config.getString("name", "")).decoration(TextDecoration.ITALIC, false);
         meta.displayName(name);
-
         List<String> originalLoreStrings = config.getStringList("lore");
         List<Component> loreForDisplay = originalLoreStrings.stream()
                 .map(line -> MINI_MESSAGE.deserialize(line).decoration(TextDecoration.ITALIC, false))
                 .collect(Collectors.toList());
         meta.lore(loreForDisplay);
         meta.setUnbreakable(config.getBoolean("unbreakable", false));
-
         PersistentDataContainer container = meta.getPersistentDataContainer();
         container.set(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING, itemId);
 
@@ -121,12 +111,11 @@ public class ItemManager {
             if (matcher.find()) {
                 String statName = getStatKeyFromName(matcher.group(1));
                 if (statName != null) {
-                    baseStats.put(statName, Double.parseDouble(matcher.group(2).replace("+","")));
+                    baseStats.put(statName, Double.parseDouble(matcher.group(2).replace("+", "")));
                 }
             }
         }
         container.set(BASE_STATS_KEY, new StatMapDataType(), baseStats);
-
         return applyAttributesFromLore(meta, itemId, originalLoreStrings);
     }
 
@@ -138,14 +127,15 @@ public class ItemManager {
                 meta.removeAttributeModifier(Objects.requireNonNull(attribute));
             }
         }
-
         for (String loreLine : loreLines) {
             String cleanLine = MINI_MESSAGE.stripTags(loreLine);
-            if (cleanLine.startsWith("피해량:")) {
+            // [버그 수정] "피해량"을 getStatKeyFromName으로 확인
+            if ("ATTACK_DAMAGE".equals(getStatKeyFromName(cleanLine.split(":")[0]))) {
                 try {
                     double value = parseValueFromLore(cleanLine);
                     NamespacedKey key = new NamespacedKey(plugin, itemId + "_attack_damage");
                     AttributeModifier modifier = new AttributeModifier(key, value, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+                    // [버그 수정] ATTACK_DAMAGE -> GENERIC_ATTACK_DAMAGE
                     meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier);
                 } catch (NumberFormatException ignored) {}
             }
@@ -167,12 +157,12 @@ public class ItemManager {
         item.setItemMeta(updatedMeta);
     }
 
+    // [수정] 요청대로 isNotCustomItem 메소드 사용
     public boolean isNotCustomItem(ItemStack item) {
         if (item == null || item.getItemMeta() == null) return true;
         return !item.getItemMeta().getPersistentDataContainer().has(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
     }
 
-    // ▼▼▼ [핵심] 리포지 시 '리포지 ID'만 저장하도록 변경 ▼▼▼
     public void reforgeItem(ItemStack item, ReforgeManager.ReforgeModifier modifier) {
         if (isNotCustomItem(item)) return;
         ItemMeta meta = item.getItemMeta();
@@ -181,17 +171,14 @@ public class ItemManager {
         updateLoreAndStats(item);
     }
 
-    // ▼▼▼ [핵심] Item.yml 변경 시 '기본 스탯'만 업데이트하고 리포지는 유지하도록 변경 ▼▼▼
     public boolean updateItemIfNecessary(ItemStack item) {
         if (isNotCustomItem(item)) return false;
         ItemMeta currentMeta = item.getItemMeta();
         String itemId = currentMeta.getPersistentDataContainer().get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
         ItemStack latestItemTemplate = customItems.get(itemId);
         if (latestItemTemplate == null) return false;
-
         Map<String, Double> currentBaseStats = getBaseStats(item);
         Map<String, Double> latestBaseStats = getBaseStats(latestItemTemplate);
-
         if (!currentBaseStats.equals(latestBaseStats)) {
             currentMeta.getPersistentDataContainer().set(BASE_STATS_KEY, new StatMapDataType(), latestBaseStats);
             item.setItemMeta(currentMeta);
@@ -201,66 +188,52 @@ public class ItemManager {
         return false;
     }
 
-    // ▼▼▼ [핵심] 모든 로어/스탯 업데이트를 처리하는 새로운 통합 메소드 ▼▼▼
     public void updateLoreAndStats(ItemStack item) {
         if (isNotCustomItem(item)) return;
-
         ItemMeta meta = item.getItemMeta();
         String itemId = meta.getPersistentDataContainer().get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
         Map<String, Double> baseStats = getBaseStats(item);
-
         String reforgeId = meta.getPersistentDataContainer().get(REFORGE_KEY, PersistentDataType.STRING);
         ReforgeManager.ReforgeModifier modifier = (reforgeId != null) ? reforgeManager.getModifierById(reforgeId) : null;
-
         ItemStack template = customItems.get(itemId);
-        if (template == null) return; // 템플릿이 없으면 중단
-
-        Component baseName = template.getItemMeta().displayName();
+        if (template == null) return;
+        Component baseName = Objects.requireNonNull(template.getItemMeta()).displayName();
         if (modifier != null) {
             meta.displayName(Component.text(modifier.getName() + " ").color(NamedTextColor.YELLOW).append(Objects.requireNonNull(baseName)));
         } else {
             meta.displayName(baseName);
         }
-
-        // [수정] getLore() 대신 lore()를 사용하여 Component 리스트를 직접 가져옵니다.
         List<Component> originalLoreComponents = Objects.requireNonNull(template.getItemMeta().lore());
         List<Component> newLore = new ArrayList<>();
-
         for (Component loreComponent : originalLoreComponents) {
-            // [수정] Component를 String으로 변환하여 파싱에 사용합니다.
             String loreLineFormat = MINI_MESSAGE.serialize(loreComponent);
             String cleanLine = MINI_MESSAGE.stripTags(loreLineFormat);
             Matcher matcher = LORE_STAT_PATTERN.matcher(cleanLine);
-
-            if (matcher.find()) { // 스탯 줄일 경우
+            if (matcher.find()) {
                 String statDisplayName = matcher.group(1).trim();
                 String statKey = getStatKeyFromName(statDisplayName);
-
                 if (statKey != null) {
                     double baseValue = baseStats.getOrDefault(statKey, 0.0);
                     double finalValue = baseValue;
                     double diff = 0;
-
                     if (modifier != null) {
                         double reforgeMultiplier = modifier.getStatModifiers().getOrDefault(statKey, 0.0);
                         finalValue = baseValue * (1 + reforgeMultiplier);
                         diff = finalValue - baseValue;
                     }
-
                     String newLoreLine = String.format("<i:false><gray>%s: </gray><white>%.0f</white>", statDisplayName, finalValue);
                     if (Math.abs(diff) > 0.01) {
                         newLoreLine += String.format(" <gray>(%s%.0f)</gray>", diff > 0 ? "+" : "", diff);
                     }
                     newLore.add(MINI_MESSAGE.deserialize(newLoreLine));
                 } else {
-                    newLore.add(loreComponent); // 인식할 수 없는 스탯 줄이면 원본 Component 유지
+                    newLore.add(loreComponent);
                 }
-            } else { // 설명 줄일 경우
-                newLore.add(loreComponent); // 원본 Component 그대로 유지
+            } else {
+                newLore.add(loreComponent);
             }
         }
         meta.lore(newLore);
-
         item.setItemMeta(meta);
         refreshStatsFromLore(item);
     }
@@ -275,19 +248,18 @@ public class ItemManager {
         if (item == null || !item.hasItemMeta() || !item.getItemMeta().hasLore()) {
             return stats;
         }
-
         List<Component> lore = item.getItemMeta().lore();
         for (Component lineComponent : Objects.requireNonNull(lore)) {
             String cleanLine = MINI_MESSAGE.stripTags(MINI_MESSAGE.serialize(lineComponent));
             String statKey = getStatKeyFromName(cleanLine.split(":")[0]);
-
             if (statKey != null) {
                 try {
                     Matcher matcher = LORE_STAT_PATTERN.matcher(cleanLine);
                     if (matcher.find()) {
                         stats.put(statKey, Double.parseDouble(matcher.group(2)));
                     }
-                } catch (NumberFormatException ignored) {}
+                } catch (NumberFormatException ignored) {
+                }
             }
         }
         return stats;
@@ -298,9 +270,10 @@ public class ItemManager {
         return Double.parseDouble(valueString.split(" ")[0]);
     }
 
+    // [수정] "피해량"과 "공격 피해"를 모두 인식하도록 수정
     private String getStatKeyFromName(String name) {
         return switch (name.trim()) {
-            case "피해량" -> "ATTACK_DAMAGE";
+            case "피해량", "공격 피해" -> "ATTACK_DAMAGE";
             case "힘" -> "STRENGTH";
             case "방어력" -> "DEFENSE";
             case "체력", "최대 체력" -> "MAX_HEALTH";

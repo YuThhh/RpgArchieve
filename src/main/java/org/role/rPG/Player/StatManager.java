@@ -73,7 +73,8 @@ public class StatManager {
         base.put("ATTACK_SPEED", perData.getPlayerAttactSpeed(uuid));
         base.put("MAX_MANA", perData.getPlayerMaxMana(uuid));
         base.put("CURRENT_MANA", perData.getPlayerCurrentMana(uuid));
-        // 필요한 다른 기본 스탯들도 여기에 추가
+        // ▼▼▼ [추가] 누락된 스탯 추가 ▼▼▼
+        base.put("SPEED", (double) perData.getPlayerSpeed(uuid));
         return base;
     }
 
