@@ -2,7 +2,6 @@ package org.role.rPG;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +16,8 @@ import org.role.rPG.Item.EquipmentListener;
 import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Player.*;
 import org.role.rPG.UI.Ui;
+import org.role.rPG.Item.ReforgeCommand;
+import org.role.rPG.Item.ReforgeManager;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -27,6 +28,7 @@ public final class RPG extends JavaPlugin implements Listener {
     private IndicatorManager indicatorManager;
     private ItemManager itemManager;
     private StatManager statManager;
+    private ReforgeManager reforgeManager;
 
     private static final double NormalHpRegen = 1;
     private static final double NormalMpRegen = 3;
@@ -43,6 +45,7 @@ public final class RPG extends JavaPlugin implements Listener {
         this.itemManager = new ItemManager(this);
         this.statManager = new StatManager(this, this.itemManager);
         this.itemManager.reloadItems();
+        this.reforgeManager = new ReforgeManager(this);
 
         StatDataManager.initialize(this);
         StatDataManager.loadAllStats();
@@ -57,6 +60,8 @@ public final class RPG extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
         getServer().getPluginManager().registerEvents(new EquipmentListener(this, this.statManager), this);
         getServer().getPluginManager().registerEvents(new Ui(this, this.statManager), this);
+
+        Objects.requireNonNull(getCommand("리포지")).setExecutor(new ReforgeCommand(this.itemManager, this.statManager, this.reforgeManager));
 
         Regeneration();
 
@@ -98,7 +103,6 @@ public final class RPG extends JavaPlugin implements Listener {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     UUID playerUUID = player.getUniqueId();
-                    PER_DATA data = PER_DATA.getInstance();
 
                     // HP 재생 로직
                     double maxHealth = statManager.getFinalStat(playerUUID, "MAX_HEALTH");

@@ -71,6 +71,8 @@ public class StatManager {
         base.put("CRIT_CHANCE", perData.getPlayerCrit(uuid));
         base.put("CRIT_DAMAGE", perData.getPlayerCritDamage(uuid));
         base.put("ATTACK_SPEED", perData.getPlayerAttactSpeed(uuid));
+        base.put("MAX_MANA", perData.getPlayerMaxMana(uuid));
+        base.put("CURRENT_MANA", perData.getPlayerCurrentMana(uuid));
         // 필요한 다른 기본 스탯들도 여기에 추가
         return base;
     }
