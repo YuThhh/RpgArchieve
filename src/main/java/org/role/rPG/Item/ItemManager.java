@@ -19,7 +19,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.role.rPG.Player.StatMapDataType;
 import org.role.rPG.RPG;
+import org.role.rPG.Reforge.ReforgeManager; // ReforgeManager 임포트
 
 import java.io.File;
 import java.util.*;
@@ -30,13 +32,15 @@ import java.util.stream.Collectors;
 public class ItemManager {
 
     private final RPG plugin;
+    private final ReforgeManager reforgeManager; // ReforgeManager 주입을 위한 필드
     private final Map<String, ItemStack> customItems = new HashMap<>();
     private FileConfiguration itemConfig;
     private File itemConfigFile;
 
     public static final NamespacedKey CUSTOM_ITEM_ID_KEY;
     private static final NamespacedKey BASE_STATS_KEY = new NamespacedKey("rpg", "base_stats");
-    private static final NamespacedKey PREFIX_KEY = new NamespacedKey("rpg", "prefix_name");
+    // [수정] PREFIX_KEY -> REFORGE_KEY 로 변경하여 리포지 ID를 직접 저장
+    private static final NamespacedKey REFORGE_KEY = new NamespacedKey("rpg", "reforge_id");
     private static final Pattern LORE_STAT_PATTERN = Pattern.compile("([^:]+): ([+\\-]?\\d+(\\.\\d+)?)");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
@@ -44,8 +48,10 @@ public class ItemManager {
         CUSTOM_ITEM_ID_KEY = new NamespacedKey("rpg", "custom_item_id");
     }
 
-    public ItemManager(RPG plugin) {
+    // [수정] 생성자에서 ReforgeManager를 받도록 변경
+    public ItemManager(RPG plugin, ReforgeManager reforgeManager) {
         this.plugin = plugin;
+        this.reforgeManager = reforgeManager;
         createItemConfigFile();
     }
 
@@ -126,6 +132,13 @@ public class ItemManager {
 
     private ItemMeta applyAttributesFromLore(ItemMeta meta, String itemId, List<String> loreLines) {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        Multimap<Attribute, AttributeModifier> modifiers = meta.getAttributeModifiers();
+        if (modifiers != null && !modifiers.isEmpty()) {
+            for (Attribute attribute : new ArrayList<>(modifiers.keySet())) {
+                meta.removeAttributeModifier(Objects.requireNonNull(attribute));
+            }
+        }
+
         for (String loreLine : loreLines) {
             String cleanLine = MINI_MESSAGE.stripTags(loreLine);
             if (cleanLine.startsWith("피해량:")) {
@@ -142,24 +155,14 @@ public class ItemManager {
 
     public void refreshStatsFromLore(ItemStack item) {
         if (isNotCustomItem(item)) return;
-
         ItemMeta meta = item.getItemMeta();
         String itemId = meta.getPersistentDataContainer().get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
-
         List<String> loreStrings = new ArrayList<>();
         if (meta.lore() != null) {
             for (Component component : Objects.requireNonNull(meta.lore())) {
                 loreStrings.add(MINI_MESSAGE.serialize(component));
             }
         }
-
-        Multimap<Attribute, AttributeModifier> modifiers = meta.getAttributeModifiers();
-        if (modifiers != null && !modifiers.isEmpty()) {
-            for (Attribute attribute : new ArrayList<>(modifiers.keySet())) {
-                meta.removeAttributeModifier(Objects.requireNonNull(attribute));
-            }
-        }
-
         ItemMeta updatedMeta = applyAttributesFromLore(meta, itemId, loreStrings);
         item.setItemMeta(updatedMeta);
     }
@@ -169,56 +172,80 @@ public class ItemManager {
         return !item.getItemMeta().getPersistentDataContainer().has(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
     }
 
+    // ▼▼▼ [핵심] 리포지 시 '리포지 ID'만 저장하도록 변경 ▼▼▼
     public void reforgeItem(ItemStack item, ReforgeManager.ReforgeModifier modifier) {
+        if (isNotCustomItem(item)) return;
+        ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().set(REFORGE_KEY, PersistentDataType.STRING, modifier.getId());
+        item.setItemMeta(meta);
+        updateLoreAndStats(item);
+    }
+
+    // ▼▼▼ [핵심] Item.yml 변경 시 '기본 스탯'만 업데이트하고 리포지는 유지하도록 변경 ▼▼▼
+    public boolean updateItemIfNecessary(ItemStack item) {
+        if (isNotCustomItem(item)) return false;
+        ItemMeta currentMeta = item.getItemMeta();
+        String itemId = currentMeta.getPersistentDataContainer().get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
+        ItemStack latestItemTemplate = customItems.get(itemId);
+        if (latestItemTemplate == null) return false;
+
+        Map<String, Double> currentBaseStats = getBaseStats(item);
+        Map<String, Double> latestBaseStats = getBaseStats(latestItemTemplate);
+
+        if (!currentBaseStats.equals(latestBaseStats)) {
+            currentMeta.getPersistentDataContainer().set(BASE_STATS_KEY, new StatMapDataType(), latestBaseStats);
+            item.setItemMeta(currentMeta);
+            updateLoreAndStats(item);
+            return true;
+        }
+        return false;
+    }
+
+    // ▼▼▼ [핵심] 모든 로어/스탯 업데이트를 처리하는 새로운 통합 메소드 ▼▼▼
+    public void updateLoreAndStats(ItemStack item) {
         if (isNotCustomItem(item)) return;
 
         ItemMeta meta = item.getItemMeta();
+        String itemId = meta.getPersistentDataContainer().get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
         Map<String, Double> baseStats = getBaseStats(item);
-        if (baseStats.isEmpty()) return;
 
-        PersistentDataContainer container = meta.getPersistentDataContainer();
+        String reforgeId = meta.getPersistentDataContainer().get(REFORGE_KEY, PersistentDataType.STRING);
+        ReforgeManager.ReforgeModifier modifier = (reforgeId != null) ? reforgeManager.getModifierById(reforgeId) : null;
 
-        // [개선] 기존 접두사가 있다면 이름에서 제거
-        if (container.has(PREFIX_KEY, PersistentDataType.STRING)) {
-            String oldPrefix = container.get(PREFIX_KEY, PersistentDataType.STRING);
-            Component oldDisplayName = meta.displayName();
-            if (oldDisplayName != null) {
-                String nameString = MINI_MESSAGE.serialize(oldDisplayName);
-                // 접두사와 뒤따르는 공백을 제거
-                nameString = nameString.replace(oldPrefix + " ", "");
-                meta.displayName(MINI_MESSAGE.deserialize(nameString));
-            }
+        ItemStack template = customItems.get(itemId);
+        if (template == null) return; // 템플릿이 없으면 중단
+
+        Component baseName = template.getItemMeta().displayName();
+        if (modifier != null) {
+            meta.displayName(Component.text(modifier.getName() + " ").color(NamedTextColor.YELLOW).append(Objects.requireNonNull(baseName)));
+        } else {
+            meta.displayName(baseName);
         }
 
-        // 새 접두사 적용 및 저장
-        String newPrefix = modifier.getName();
-        Component originalName = meta.displayName();
-        meta.displayName(Component.text(newPrefix + " ").color(NamedTextColor.YELLOW).append(Objects.requireNonNull(originalName)));
-        container.set(PREFIX_KEY, PersistentDataType.STRING, newPrefix);
-
-        Map<String, Double> reforgeModifiers = modifier.getStatModifiers();
+        // [수정] getLore() 대신 lore()를 사용하여 Component 리스트를 직접 가져옵니다.
+        List<Component> originalLoreComponents = Objects.requireNonNull(template.getItemMeta().lore());
         List<Component> newLore = new ArrayList<>();
 
-        // [버그 수정] 아이템의 현재 로어를 가져옵니다.
-        List<String> originalLoreStrings = new ArrayList<>();
-        if (meta.lore() != null) {
-            Objects.requireNonNull(meta.lore()).forEach(line -> originalLoreStrings.add(MINI_MESSAGE.serialize(line)));
-        }
-
-        // [버그 수정] 원본 로어를 기준으로 한 줄씩 확인하여 새 로어를 만듭니다.
-        for (String oldLine : originalLoreStrings) {
-            String cleanLine = MINI_MESSAGE.stripTags(oldLine);
+        for (Component loreComponent : originalLoreComponents) {
+            // [수정] Component를 String으로 변환하여 파싱에 사용합니다.
+            String loreLineFormat = MINI_MESSAGE.serialize(loreComponent);
+            String cleanLine = MINI_MESSAGE.stripTags(loreLineFormat);
             Matcher matcher = LORE_STAT_PATTERN.matcher(cleanLine);
 
-            if (matcher.find()) { // 이 줄이 스탯 줄이라면
+            if (matcher.find()) { // 스탯 줄일 경우
                 String statDisplayName = matcher.group(1).trim();
                 String statKey = getStatKeyFromName(statDisplayName);
 
-                if (statKey != null && baseStats.containsKey(statKey)) {
-                    double baseValue = baseStats.get(statKey);
-                    double reforgeMultiplier = reforgeModifiers.getOrDefault(statKey, 0.0);
-                    double finalValue = baseValue * (1 + reforgeMultiplier);
-                    double diff = finalValue - baseValue;
+                if (statKey != null) {
+                    double baseValue = baseStats.getOrDefault(statKey, 0.0);
+                    double finalValue = baseValue;
+                    double diff = 0;
+
+                    if (modifier != null) {
+                        double reforgeMultiplier = modifier.getStatModifiers().getOrDefault(statKey, 0.0);
+                        finalValue = baseValue * (1 + reforgeMultiplier);
+                        diff = finalValue - baseValue;
+                    }
 
                     String newLoreLine = String.format("<i:false><gray>%s: </gray><white>%.0f</white>", statDisplayName, finalValue);
                     if (Math.abs(diff) > 0.01) {
@@ -226,49 +253,16 @@ public class ItemManager {
                     }
                     newLore.add(MINI_MESSAGE.deserialize(newLoreLine));
                 } else {
-                    newLore.add(MINI_MESSAGE.deserialize(oldLine)); // 인식할 수 없는 스탯이면 원본 유지
+                    newLore.add(loreComponent); // 인식할 수 없는 스탯 줄이면 원본 Component 유지
                 }
-            } else { // 스탯 줄이 아니면 (설명, 빈 줄 등)
-                newLore.add(MINI_MESSAGE.deserialize(oldLine)); // 원본 로어 그대로 유지
+            } else { // 설명 줄일 경우
+                newLore.add(loreComponent); // 원본 Component 그대로 유지
             }
         }
-
-
         meta.lore(newLore);
+
         item.setItemMeta(meta);
         refreshStatsFromLore(item);
-    }
-
-    // ▼▼▼ [복구됨] Item.yml 파일 변경 감지를 위한 메소드 ▼▼▼
-    public boolean updateItemIfNecessary(ItemStack item) {
-        if (isNotCustomItem(item)) return false;
-
-        ItemMeta currentMeta = item.getItemMeta();
-        String itemId = currentMeta.getPersistentDataContainer().get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
-
-        // 서버에 로드된 최신 버전의 아이템 템플릿을 가져옵니다.
-        ItemStack latestItem = customItems.get(itemId);
-        if (latestItem == null) return false; // yml에서 아이템이 삭제된 경우
-
-        ItemMeta latestMeta = latestItem.getItemMeta();
-
-        // 현재 아이템이 리포지/강화 등으로 변경되었는지 확인합니다.
-        // 만약 접두사가 있다면, 이것은 '원본' 아이템이 아니므로 yml 업데이트 대상에서 제외합니다.
-        if (currentMeta.getPersistentDataContainer().has(PREFIX_KEY, PersistentDataType.STRING)) {
-            return false;
-        }
-
-        // 이름, 로어, 속성 등을 비교합니다.
-        // 여기서는 간단하게 '원본' 아이템의 로어만 비교하여 변경 여부를 감지합니다.
-        // (리포지된 아이템은 로어가 변경되므로 업데이트되지 않습니다.)
-        boolean needsUpdate = !Objects.equals(currentMeta.lore(), latestMeta.lore());
-
-        if (needsUpdate) {
-            item.setItemMeta(latestMeta); // 아이템 정보를 최신 템플릿으로 덮어씁니다.
-            return true;
-        }
-
-        return false;
     }
 
     public Map<String, Double> getBaseStats(ItemStack item) {
@@ -301,11 +295,12 @@ public class ItemManager {
 
     public double parseValueFromLore(String cleanLine) throws NumberFormatException {
         String valueString = cleanLine.substring(cleanLine.indexOf(":") + 1).trim();
-        return Double.parseDouble(valueString.split(" ")[0]); // "(+3)" 같은 부분을 제외하고 첫 숫자만 파싱
+        return Double.parseDouble(valueString.split(" ")[0]);
     }
 
     private String getStatKeyFromName(String name) {
         return switch (name.trim()) {
+            case "피해량" -> "ATTACK_DAMAGE";
             case "힘" -> "STRENGTH";
             case "방어력" -> "DEFENSE";
             case "체력", "최대 체력" -> "MAX_HEALTH";

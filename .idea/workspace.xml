@@ -4,14 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="커스텀 아이템 제작 중&#10;문제점 및 의도와 다른 표기 수정">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ReforgeCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ReforgeManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/StatMapDataType.java" afterDir="false" />
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Graypanefiller.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/StatManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/StatManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ReforgeCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Reforge/ReforgeCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ReforgeManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Reforge/ReforgeManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/StatMapDataType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/StatMapDataType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Menu_UI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Menu_UI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -179,7 +184,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758118013477</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요">
+      <option name="closed" value="true" />
+      <created>1758169621917</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1758169621917</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -213,6 +226,7 @@
     <MESSAGE value="커스텀 아이템 제작 중&#10;아이템을 클릭하거나 들고 있으면 자동으로 최신 아이템으로 동기화" />
     <MESSAGE value="커스텀 아이템 제작 중&#10;아이템 로어에 따라서 스탯 변화 추가" />
     <MESSAGE value="커스텀 아이템 제작 중&#10;문제점 및 의도와 다른 표기 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="커스텀 아이템 제작 중&#10;문제점 및 의도와 다른 표기 수정" />
+    <MESSAGE value="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요" />
+    <option name="LAST_COMMIT_MESSAGE" value="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요" />
   </component>
 </project>

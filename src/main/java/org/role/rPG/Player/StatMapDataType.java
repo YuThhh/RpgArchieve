@@ -1,4 +1,4 @@
-package org.role.rPG.Item;
+package org.role.rPG.Player;
 
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;

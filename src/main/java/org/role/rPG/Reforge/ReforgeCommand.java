@@ -1,4 +1,4 @@
-package org.role.rPG.Item;
+package org.role.rPG.Reforge;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Player.Cash;
 import org.role.rPG.Player.StatManager;
 

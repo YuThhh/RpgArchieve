@@ -16,8 +16,8 @@ import org.role.rPG.Item.EquipmentListener;
 import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Player.*;
 import org.role.rPG.UI.Ui;
-import org.role.rPG.Item.ReforgeCommand;
-import org.role.rPG.Item.ReforgeManager;
+import org.role.rPG.Reforge.ReforgeCommand;
+import org.role.rPG.Reforge.ReforgeManager;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -42,10 +42,10 @@ public final class RPG extends JavaPlugin implements Listener {
         new PER_DATA();
 
         this.indicatorManager = new IndicatorManager(this);
-        this.itemManager = new ItemManager(this);
+        this.reforgeManager = new ReforgeManager(this);
+        this.itemManager = new ItemManager(this, this.reforgeManager); // ReforgeManager 전달
         this.statManager = new StatManager(this, this.itemManager);
         this.itemManager.reloadItems();
-        this.reforgeManager = new ReforgeManager(this);
 
         StatDataManager.initialize(this);
         StatDataManager.loadAllStats();

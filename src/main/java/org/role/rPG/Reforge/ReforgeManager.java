@@ -1,4 +1,4 @@
-package org.role.rPG.Item;
+package org.role.rPG.Reforge;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,7 +12,8 @@ public class ReforgeManager {
 
     private final RPG plugin;
     private FileConfiguration reforgeConfig;
-    private final List<ReforgeModifier> availableModifiers = new ArrayList<>();
+    // [수정] List -> Map 으로 변경하여 ID로 접두사를 찾을 수 있도록 함
+    private final Map<String, ReforgeModifier> modifierMap = new HashMap<>();
     private int reforgeCost = 1000;
 
     public ReforgeManager(RPG plugin) {
@@ -28,11 +29,11 @@ public class ReforgeManager {
         reforgeConfig = YamlConfiguration.loadConfiguration(reforgeFile);
 
         reforgeCost = reforgeConfig.getInt("reforge_cost", 1000);
-        availableModifiers.clear();
+        modifierMap.clear();
 
         ConfigurationSection prefixesSection = reforgeConfig.getConfigurationSection("prefixes.common");
         if (prefixesSection != null) {
-            for (String key : prefixesSection.getKeys(false)) {
+            for (String key : prefixesSection.getKeys(false)) { // key는 'broken', 'strong' 등
                 ConfigurationSection modifierSection = prefixesSection.getConfigurationSection(key);
                 if (modifierSection != null) {
                     String name = modifierSection.getString("name");
@@ -43,38 +44,42 @@ public class ReforgeManager {
                             stats.put(statKey.toUpperCase(), statsSection.getDouble(statKey));
                         }
                     }
-                    availableModifiers.add(new ReforgeModifier(name, stats));
+                    // [수정] key(ID)와 함께 ReforgeModifier 객체를 Map에 저장
+                    modifierMap.put(key, new ReforgeModifier(key, name, stats));
                 }
             }
         }
-        plugin.getLogger().info(availableModifiers.size() + "개의 리포지 접두사를 로드했습니다.");
+        plugin.getLogger().info(modifierMap.size() + "개의 리포지 접두사를 로드했습니다.");
     }
 
     public ReforgeModifier getRandomModifier() {
-        if (availableModifiers.isEmpty()) return null;
-        return availableModifiers.get(new Random().nextInt(availableModifiers.size()));
+        if (modifierMap.isEmpty()) return null;
+        List<ReforgeModifier> modifiers = new ArrayList<>(modifierMap.values());
+        return modifiers.get(new Random().nextInt(modifiers.size()));
+    }
+
+    // [추가] ID로 ReforgeModifier를 가져오는 메소드
+    public ReforgeModifier getModifierById(String id) {
+        return modifierMap.get(id);
     }
 
     public int getReforgeCost() {
         return reforgeCost;
     }
 
-    // 리포지 정보를 담는 내부 데이터 클래스
     public static class ReforgeModifier {
+        private final String id; // ID 필드 추가
         private final String name;
         private final Map<String, Double> statModifiers;
 
-        public ReforgeModifier(String name, Map<String, Double> statModifiers) {
+        public ReforgeModifier(String id, String name, Map<String, Double> statModifiers) {
+            this.id = id;
             this.name = name;
             this.statModifiers = statModifiers;
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public Map<String, Double> getStatModifiers() {
-            return statModifiers;
-        }
+        public String getId() { return id; }
+        public String getName() { return name; }
+        public Map<String, Double> getStatModifiers() { return statModifiers; }
     }
 }
