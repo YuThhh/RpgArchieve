@@ -1,8 +1,11 @@
 package org.role.rPG.Item;
 
+import com.google.common.collect.Multimap;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -16,30 +19,36 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.role.rPG.Player.StatMapDataType;
 import org.role.rPG.RPG;
 
 import java.io.File;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ItemManager {
 
     private final RPG plugin;
+    private final ReforgeManager reforgeManager;
     private final Map<String, ItemStack> customItems = new HashMap<>();
     private FileConfiguration itemConfig;
     private File itemConfigFile;
 
     public static final NamespacedKey CUSTOM_ITEM_ID_KEY;
-    public static final NamespacedKey CUSTOM_ITEM_VERSION_KEY;
+    private static final NamespacedKey BASE_STATS_KEY = new NamespacedKey("rpg", "base_stats");
+    private static final NamespacedKey REFORGE_KEY = new NamespacedKey("rpg", "reforge_id");
+    private static final Pattern LORE_STAT_PATTERN = Pattern.compile("([^:]+): ([+\\-]?\\d+(\\.\\d+)?)");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     static {
         CUSTOM_ITEM_ID_KEY = new NamespacedKey("rpg", "custom_item_id");
-        CUSTOM_ITEM_VERSION_KEY = new NamespacedKey("rpg", "custom_item_version");
     }
 
-    public ItemManager(RPG plugin) {
+    public ItemManager(RPG plugin, ReforgeManager reforgeManager) {
         this.plugin = plugin;
+        this.reforgeManager = reforgeManager;
         createItemConfigFile();
     }
 
@@ -51,70 +60,26 @@ public class ItemManager {
         itemConfig = YamlConfiguration.loadConfiguration(itemConfigFile);
     }
 
-    // ▼▼▼ [수정됨] 누락된 로직이 모두 추가된 메소드 ▼▼▼
     public void reloadItems() {
         itemConfig = YamlConfiguration.loadConfiguration(itemConfigFile);
         customItems.clear();
-
         ConfigurationSection itemsSection = itemConfig.getConfigurationSection("items");
         if (itemsSection == null) {
             plugin.getLogger().warning("Item.yml에서 'items' 섹션을 찾을 수 없습니다.");
             return;
         }
-
         for (String itemId : itemsSection.getKeys(false)) {
             ConfigurationSection config = itemsSection.getConfigurationSection(itemId);
             if (config == null) continue;
-
             try {
                 Material material = Material.matchMaterial(config.getString("material", "STONE"));
                 if (material == null) {
-                    plugin.getLogger().warning(itemId + " 아이템의 material을 찾을 수 없습니다: " + config.getString("material"));
+                    plugin.getLogger().warning(itemId + " 아이템의 material을 찾을 수 없습니다.");
                     continue;
                 }
-
                 ItemStack item = new ItemStack(material);
-                ItemMeta meta = item.getItemMeta();
-
-                if (meta != null) {
-                    // [복구] 아이템 이름 설정
-                    Component name = MINI_MESSAGE.deserialize(config.getString("name", ""))
-                            .decoration(TextDecoration.ITALIC, false);
-                    meta.displayName(name);
-
-                    // [복구] 아이템 로어 설정
-                    List<String> originalLoreStrings = config.getStringList("lore");
-                    List<Component> loreForDisplay = originalLoreStrings.stream()
-                            .map(line -> MINI_MESSAGE.deserialize(line).decoration(TextDecoration.ITALIC, false))
-                            .collect(Collectors.toList());
-                    meta.lore(loreForDisplay);
-
-                    // [복구] 파괴 불가 설정
-                    meta.setUnbreakable(config.getBoolean("unbreakable", false));
-
-                    // [복구] 커스텀 아이템 ID 태그 저장 (자동 업데이트 및 스탯 적용에 필수)
-                    PersistentDataContainer container = meta.getPersistentDataContainer();
-                    container.set(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING, itemId);
-
-                    // 로어를 분석하여 Minecraft 기본 속성(AttributeModifier) 적용
-                    meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-
-                    for (String loreLine : originalLoreStrings) {
-                        String cleanLine = MINI_MESSAGE.stripTags(loreLine);
-                        // [수정] Attribute.ATTACK_DAMAGE -> Attribute.GENERIC_ATTACK_DAMAGE
-                        if (cleanLine.startsWith("공격 피해:")) {
-                            try {
-                                double value = parseValueFromLore(cleanLine);
-                                NamespacedKey key = new NamespacedKey(plugin, itemId + "_attack_damage");
-                                AttributeModifier modifier = new AttributeModifier(key, value, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
-                                meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier);
-                            } catch (NumberFormatException ignored) {}
-                        }
-                        // 여기에 '방어구 강도' 등 다른 바닐라 속성 로직 추가 가능
-                    }
-
-                    item.setItemMeta(meta);
-                }
+                ItemMeta meta = buildMetaFromConfig(itemId, config);
+                item.setItemMeta(meta);
                 customItems.put(itemId, item);
             } catch (Exception e) {
                 plugin.getLogger().warning(itemId + " 아이템 로딩 중 오류 발생:");
@@ -123,67 +88,269 @@ public class ItemManager {
         }
         plugin.getLogger().info(customItems.size() + "개의 커스텀 아이템을 로드했습니다.");
     }
-    // ▲▲▲ 메소드 수정 완료 ▲▲▲
+
+    private ItemMeta buildMetaFromConfig(String itemId, ConfigurationSection config) {
+        Material material = Material.matchMaterial(config.getString("material", "STONE"));
+        ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Objects.requireNonNull(material));
+        Component name = MINI_MESSAGE.deserialize(config.getString("name", "")).decoration(TextDecoration.ITALIC, false);
+        meta.displayName(name);
+        List<String> originalLoreStrings = config.getStringList("lore");
+        List<Component> loreForDisplay = originalLoreStrings.stream()
+                .map(line -> MINI_MESSAGE.deserialize(line).decoration(TextDecoration.ITALIC, false))
+                .collect(Collectors.toList());
+        meta.lore(loreForDisplay);
+        meta.setUnbreakable(config.getBoolean("unbreakable", false));
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        container.set(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING, itemId);
+
+        Map<String, Double> baseStats = new HashMap<>();
+        for (String loreLine : originalLoreStrings) {
+            String cleanLine = MINI_MESSAGE.stripTags(loreLine);
+            Matcher matcher = LORE_STAT_PATTERN.matcher(cleanLine);
+            if (matcher.find()) {
+                String statName = getStatKeyFromName(matcher.group(1));
+                if (statName != null) {
+                    baseStats.put(statName, Double.parseDouble(matcher.group(2).replace("+", "")));
+                }
+            }
+        }
+        container.set(BASE_STATS_KEY, new StatMapDataType(), baseStats);
+        return applyAttributesFromLore(meta, itemId, originalLoreStrings);
+    }
+
+    private ItemMeta applyAttributesFromLore(ItemMeta meta, String itemId, List<String> loreLines) {
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        Multimap<Attribute, AttributeModifier> modifiers = meta.getAttributeModifiers();
+        if (modifiers != null && !modifiers.isEmpty()) {
+            for (Attribute attribute : new ArrayList<>(modifiers.keySet())) {
+                meta.removeAttributeModifier(Objects.requireNonNull(attribute));
+            }
+        }
+        for (String loreLine : loreLines) {
+            String cleanLine = MINI_MESSAGE.stripTags(loreLine);
+            // [버그 수정] "피해량"을 getStatKeyFromName으로 확인
+            if ("ATTACK_DAMAGE".equals(getStatKeyFromName(cleanLine.split(":")[0]))) {
+                try {
+                    double value = parseValueFromLore(cleanLine);
+                    NamespacedKey key = new NamespacedKey(plugin, itemId + "_attack_damage");
+                    AttributeModifier modifier = new AttributeModifier(key, value, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+                    meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier);
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+        return meta;
+    }
+
+    public void refreshStatsFromLore(ItemStack item) {
+        if (isNotCustomItem(item)) return;
+        ItemMeta meta = item.getItemMeta();
+        String itemId = meta.getPersistentDataContainer().get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
+        List<String> loreStrings = new ArrayList<>();
+        if (meta.lore() != null) {
+            for (Component component : Objects.requireNonNull(meta.lore())) {
+                loreStrings.add(MINI_MESSAGE.serialize(component));
+            }
+        }
+        ItemMeta updatedMeta = applyAttributesFromLore(meta, itemId, loreStrings);
+        item.setItemMeta(updatedMeta);
+    }
+
+    // [수정] 요청대로 isNotCustomItem 메소드 사용
+    public boolean isNotCustomItem(ItemStack item) {
+        if (item == null || item.getItemMeta() == null) return true;
+        return !item.getItemMeta().getPersistentDataContainer().has(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
+    }
+
+    public void reforgeItem(ItemStack item, ReforgeManager.ReforgeModifier modifier) {
+        if (isNotCustomItem(item)) return;
+
+        ItemMeta meta = item.getItemMeta();
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        Map<String, Double> baseStats = getBaseStats(item);
+
+        // [수정] 기존의 불안정한 이름 제거 방식 대신, 원본 아이템의 이름을 가져와 사용합니다.
+        String itemId = container.get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
+        ItemStack templateItem = customItems.get(itemId);
+        if (templateItem == null || templateItem.getItemMeta() == null) {
+            // 템플릿 아이템을 찾을 수 없는 경우, 오류를 방지하기 위해 작업을 중단합니다.
+            plugin.getLogger().warning(itemId + "에 대한 아이템 템플릿을 찾을 수 없어 리포지를 중단합니다.");
+            return;
+        }
+        Component originalName = templateItem.getItemMeta().displayName();
+        if (originalName == null) {
+            originalName = Component.text("이름 없는 아이템"); // 만약을 위한 대비
+        }
+
+        Component prefixComponent = Component.text(modifier.getName() + " ").color(NamedTextColor.YELLOW);
+        meta.displayName(prefixComponent.append(originalName).decoration(TextDecoration.ITALIC, false));
+
+        // [매우 중요] 접두사 이름(getName) 대신, 고유 ID(getId)를 저장합니다.
+        container.set(REFORGE_KEY, PersistentDataType.STRING, modifier.getId());
+
+        Map<String, Double> reforgeModifiers = modifier.getStatModifiers();
+        List<Component> newLore = new ArrayList<>();
+
+        // 원본 아이템의 로어를 기반으로 새로운 로어를 생성합니다.
+        List<Component> originalLoreComponents = Objects.requireNonNull(templateItem.getItemMeta().lore());
+        for (Component loreComponent : originalLoreComponents) {
+            String loreLineFormat = MINI_MESSAGE.serialize(loreComponent);
+            String cleanLine = MINI_MESSAGE.stripTags(loreLineFormat);
+            Matcher matcher = LORE_STAT_PATTERN.matcher(cleanLine);
+
+            if (matcher.find()) {
+                String statDisplayName = matcher.group(1).trim();
+                String statKey = getStatKeyFromName(statDisplayName);
+
+                if (statKey != null) {
+                    double baseValue = baseStats.getOrDefault(statKey, 0.0);
+                    double reforgeMultiplier = reforgeModifiers.getOrDefault(statKey, 0.0);
+                    double finalValue = baseValue * (1 + reforgeMultiplier);
+                    double diff = finalValue - baseValue;
+
+                    String newLoreLine = String.format("<i:false><gray>%s: </gray><white>%.0f</white>", statDisplayName, finalValue);
+                    if (Math.abs(diff) > 0.01) {
+                        newLoreLine += String.format(" <gray>(%s%.0f)</gray>", diff > 0 ? "+" : "", diff);
+                    }
+                    newLore.add(MINI_MESSAGE.deserialize(newLoreLine));
+                } else {
+                    newLore.add(loreComponent.decoration(TextDecoration.ITALIC, false));
+                }
+            } else {
+                newLore.add(loreComponent.decoration(TextDecoration.ITALIC, false));
+            }
+        }
+
+        meta.lore(newLore);
+        item.setItemMeta(meta);
+        refreshStatsFromLore(item);
+    }
+
+    public boolean updateItemIfNecessary(ItemStack item) {
+        if (isNotCustomItem(item)) return false;
+
+        ItemMeta currentMeta = item.getItemMeta();
+        String itemId = currentMeta.getPersistentDataContainer().get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
+        ItemStack latestItemTemplate = customItems.get(itemId);
+        if (latestItemTemplate == null) return false;
+
+        Map<String, Double> currentBaseStats = getBaseStats(item);
+        Map<String, Double> latestBaseStats = getBaseStats(latestItemTemplate);
+
+        // --- ▼▼▼ 디버그 메시지 출력 부분 ▼▼▼ ---
+        System.out.println("----- 아이템 업데이트 확인 -----");
+        System.out.println("아이템 ID: " + itemId);
+        System.out.println("플레이어가 가진 아이템의 기본 스탯: " + currentBaseStats);
+        System.out.println("Item.yml의 최신 기본 스탯: " + latestBaseStats);
+        System.out.println("두 스탯이 동일한가? " + currentBaseStats.equals(latestBaseStats));
+        // --- ▲▲▲ 여기까지 ▲▲▲ ---
+
+        if (!currentBaseStats.equals(latestBaseStats)) {
+            System.out.println("결과: 기본 스탯 불일치. 아이템을 업데이트합니다.");
+            currentMeta.getPersistentDataContainer().set(BASE_STATS_KEY, new StatMapDataType(), latestBaseStats);
+            item.setItemMeta(currentMeta);
+            updateLoreAndStats(item);
+            return true;
+        }
+        System.out.println("결과: 기본 스탯 일치. 업데이트하지 않습니다.");
+        return false;
+    }
+
+    public void updateLoreAndStats(ItemStack item) {
+        if (isNotCustomItem(item)) return;
+        ItemMeta meta = item.getItemMeta();
+        String itemId = meta.getPersistentDataContainer().get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
+        Map<String, Double> baseStats = getBaseStats(item);
+        String reforgeId = meta.getPersistentDataContainer().get(REFORGE_KEY, PersistentDataType.STRING);
+        ReforgeManager.ReforgeModifier modifier = (reforgeId != null) ? reforgeManager.getModifierById(reforgeId) : null;
+        ItemStack template = customItems.get(itemId);
+        if (template == null) return;
+        Component baseName = Objects.requireNonNull(template.getItemMeta()).displayName();
+        if (modifier != null) {
+            Component prefixComponent = Component.text(modifier.getName() + " ").color(NamedTextColor.YELLOW);
+            meta.displayName(prefixComponent.append(Objects.requireNonNull(baseName)).decoration(TextDecoration.ITALIC, false));
+        } else {
+            meta.displayName(baseName);
+        }
+        List<Component> originalLoreComponents = Objects.requireNonNull(template.getItemMeta().lore());
+        List<Component> newLore = new ArrayList<>();
+        for (Component loreComponent : originalLoreComponents) {
+            String loreLineFormat = MINI_MESSAGE.serialize(loreComponent);
+            String cleanLine = MINI_MESSAGE.stripTags(loreLineFormat);
+            Matcher matcher = LORE_STAT_PATTERN.matcher(cleanLine);
+            if (matcher.find()) {
+                String statDisplayName = matcher.group(1).trim();
+                String statKey = getStatKeyFromName(statDisplayName);
+                if (statKey != null) {
+                    double baseValue = baseStats.getOrDefault(statKey, 0.0);
+                    double finalValue = baseValue;
+                    double diff = 0;
+                    if (modifier != null) {
+                        double reforgeMultiplier = modifier.getStatModifiers().getOrDefault(statKey, 0.0);
+                        finalValue = baseValue * (1 + reforgeMultiplier);
+                        diff = finalValue - baseValue;
+                    }
+                    String newLoreLine = String.format("<i:false><gray>%s: </gray><white>%.0f</white>", statDisplayName, finalValue);
+                    if (Math.abs(diff) > 0.01) {
+                        newLoreLine += String.format(" <gray>(%s%.0f)</gray>", diff > 0 ? "+" : "", diff);
+                    }
+                    newLore.add(MINI_MESSAGE.deserialize(newLoreLine));
+                } else {
+                    newLore.add(loreComponent);
+                }
+            } else {
+                newLore.add(loreComponent);
+            }
+        }
+        meta.lore(newLore);
+        item.setItemMeta(meta);
+        refreshStatsFromLore(item);
+    }
+
+    public Map<String, Double> getBaseStats(ItemStack item) {
+        if (isNotCustomItem(item)) return Collections.emptyMap();
+        return item.getItemMeta().getPersistentDataContainer().getOrDefault(BASE_STATS_KEY, new StatMapDataType(), new HashMap<>());
+    }
 
     public Map<String, Double> getStatsFromItem(ItemStack item) {
         Map<String, Double> stats = new HashMap<>();
-        if (item == null || item.getItemMeta() == null || item.getItemMeta().lore() == null) {
+        if (item == null || !item.hasItemMeta() || !item.getItemMeta().hasLore()) {
             return stats;
         }
-
         List<Component> lore = item.getItemMeta().lore();
         for (Component lineComponent : Objects.requireNonNull(lore)) {
             String cleanLine = MINI_MESSAGE.stripTags(MINI_MESSAGE.serialize(lineComponent));
-
-            try {
-                if (cleanLine.startsWith("공격 피해:")) {
-                    // "공격 피해"는 AttributeModifier로 직접 처리되므로 여기서는 제외합니다.
-                } else if (cleanLine.startsWith("체력:")) {
-                    stats.put("MAX_HEALTH", parseValueFromLore(cleanLine));
-                } else if (cleanLine.startsWith("방어력:")) {
-                    stats.put("DEFENSE", parseValueFromLore(cleanLine));
-                } else if (cleanLine.startsWith("힘:")) {
-                    stats.put("STRENGTH", parseValueFromLore(cleanLine));
-                } else if (cleanLine.startsWith("크리티컬 확률:")) {
-                    stats.put("CRIT_CHANCE", parseValueFromLore(cleanLine));
-                } else if (cleanLine.startsWith("크리티컬 피해:")) {
-                    stats.put("CRIT_DAMAGE", parseValueFromLore(cleanLine));
-                } else if (cleanLine.startsWith("이동 속도:")) {
-                    stats.put("SPEED", parseValueFromLore(cleanLine));
-                }else if (cleanLine.startsWith("공격 속도:")) {
-                    stats.put("ATTACK_SPEED", parseValueFromLore(cleanLine));
+            String statKey = getStatKeyFromName(cleanLine.split(":")[0]);
+            if (statKey != null) {
+                try {
+                    Matcher matcher = LORE_STAT_PATTERN.matcher(cleanLine);
+                    if (matcher.find()) {
+                        stats.put(statKey, Double.parseDouble(matcher.group(2)));
+                    }
+                } catch (NumberFormatException ignored) {
                 }
-            } catch (NumberFormatException ignored) {
             }
         }
         return stats;
     }
 
-    private double parseValueFromLore(String cleanLine) throws NumberFormatException {
+    public double parseValueFromLore(String cleanLine) throws NumberFormatException {
         String valueString = cleanLine.substring(cleanLine.indexOf(":") + 1).trim();
-        return Double.parseDouble(valueString);
+        return Double.parseDouble(valueString.split(" ")[0]);
     }
 
-    public boolean updateItemIfNecessary(ItemStack item) {
-        if (item == null || item.getItemMeta() == null) return false;
-        ItemMeta currentMeta = item.getItemMeta();
-        PersistentDataContainer container = currentMeta.getPersistentDataContainer();
-        if (!container.has(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING)) return false;
-        String itemId = container.get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
-        ItemStack latestItem = customItems.get(itemId);
-        if (latestItem == null) return false;
-        ItemMeta latestMeta = latestItem.getItemMeta();
-
-        boolean needsUpdate = !Objects.equals(currentMeta.displayName(), latestMeta.displayName()) ||
-                !Objects.equals(currentMeta.lore(), latestMeta.lore()) ||
-                !Objects.equals(currentMeta.getAttributeModifiers(), latestMeta.getAttributeModifiers()) ||
-                currentMeta.isUnbreakable() != latestMeta.isUnbreakable();
-
-        if (needsUpdate) {
-            item.setItemMeta(latestMeta);
-            return true;
-        }
-        return false;
+    // [수정] "피해량"과 "공격 피해"를 모두 인식하도록 수정
+    private String getStatKeyFromName(String name) {
+        return switch (name.trim()) {
+            case "피해량", "공격 피해" -> "ATTACK_DAMAGE";
+            case "힘" -> "STRENGTH";
+            case "방어력" -> "DEFENSE";
+            case "체력", "최대 체력" -> "MAX_HEALTH";
+            case "크리티컬 확률" -> "CRIT_CHANCE";
+            case "크리티컬 피해" -> "CRIT_DAMAGE";
+            case "이동 속도" -> "SPEED";
+            case "공격 속도" -> "ATTACK_SPEED";
+            default -> null;
+        };
     }
 
     public ItemStack getItem(String itemId) {

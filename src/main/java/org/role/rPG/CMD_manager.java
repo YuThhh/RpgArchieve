@@ -8,52 +8,59 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter; // TabCompleter import
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Player.Cash;
 import org.role.rPG.Player.PER_DATA;
 import org.role.rPG.UI.Menu_UI;
+import org.role.rPG.UI.Reforge_UI;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-public class CMD_manager implements CommandExecutor {
+// [수정] TabCompleter 인터페이스를 구현(implements)합니다.
+public class CMD_manager implements CommandExecutor, TabCompleter {
 
     private final MiniMessage mm = MiniMessage.miniMessage();
     private final JavaPlugin plugin;
     private final ItemManager itemManager;
+    private final Reforge_UI reforgeUI;
 
-    public CMD_manager(JavaPlugin plugin, ItemManager itemManager) {
+    public CMD_manager(JavaPlugin plugin, ItemManager itemManager, Reforge_UI reforgeUI) {
         this.plugin = plugin;
         this.itemManager = itemManager;
+        this.reforgeUI = reforgeUI;
     }
 
     // 명령어 등록
     public void registerCommands() {
-        Objects.requireNonNull(plugin.getCommand("메뉴")).setExecutor(this);
-        Objects.requireNonNull(plugin.getCommand("setdef")).setExecutor(this);
-        Objects.requireNonNull(plugin.getCommand("setcrit")).setExecutor(this);
-        Objects.requireNonNull(plugin.getCommand("setcritdmg")).setExecutor(this);
-        Objects.requireNonNull(plugin.getCommand("sethp")).setExecutor(this);
-        Objects.requireNonNull(plugin.getCommand("myinfo")).setExecutor(this);
-        Objects.requireNonNull(plugin.getCommand("sucheck")).setExecutor(this);
-        Objects.requireNonNull(plugin.getCommand("devsucheck")).setExecutor(this);
-        Objects.requireNonNull(plugin.getCommand("setpower")).setExecutor(this);
-        Objects.requireNonNull(plugin.getCommand("setattackspeed")).setExecutor(this);
-        Objects.requireNonNull(plugin.getCommand("setspeed")).setExecutor(this);
-        Objects.requireNonNull(plugin.getCommand("setvital")).setExecutor(this);
-        Objects.requireNonNull(plugin.getCommand("rpgitem")).setExecutor(this);
+        List<String> commands = Arrays.asList(
+                "메뉴", "setdef", "setcrit", "setcritdmg", "sethp", "myinfo",
+                "sucheck", "devsucheck", "setpower", "setattackspeed",
+                "setspeed", "setvital", "rpgitem", "리포지"
+        );
+
+        for (String cmdName : commands) {
+            Objects.requireNonNull(plugin.getCommand(cmdName)).setExecutor(this);
+            // [수정] 모든 명령어에 TabCompleter를 설정합니다.
+            Objects.requireNonNull(plugin.getCommand(cmdName)).setTabCompleter(this);
+        }
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
-
+        // onCommand 메소드 내용은 그대로 유지됩니다.
+        // ... (기존 onCommand 코드 생략) ...
         // 1. "메뉴" 명령어 처리
         if (command.getName().equalsIgnoreCase("메뉴")) {
             // 이 명령어는 플레이어만 사용해야 하므로, 먼저 플레이어인지 확인합니다.
@@ -395,7 +402,14 @@ public class CMD_manager implements CommandExecutor {
             }
             return true;
         }
-
+        else if (command.getName().equalsIgnoreCase("리포지")) {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage(Component.text("플레이어만 사용 가능합니다.", NamedTextColor.RED));
+                return true;
+            }
+            reforgeUI.openInventory(player);
+            return true;
+        }
 
 
         Player player = (Player) sender;
@@ -456,5 +470,34 @@ public class CMD_manager implements CommandExecutor {
         return false;
     }
 
+    // [추가] onTabComplete 메소드 구현
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String @NotNull [] args) {
+        final List<String> completions = new ArrayList<>();
+        String cmdName = command.getName().toLowerCase();
 
+        // 'set'으로 시작하는 스탯 설정 명령어들을 일괄 처리
+        if (cmdName.startsWith("set")) {
+            // 첫 번째 인자(플레이어 이름) 자동 완성
+            if (args.length == 1) {
+                // 현재 타이핑 중인 내용을 기반으로 온라인 플레이어 목록을 필터링하여 제안
+                StringUtil.copyPartialMatches(args[0],
+                        Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()),
+                        completions);
+            }
+        }
+        // 'rpgitem' 명령어 자동 완성
+        else if (cmdName.equals("rpgitem")) {
+            // 첫 번째 인자 자동 완성 (/rpgitem <...>)
+            if (args.length == 1) {
+                StringUtil.copyPartialMatches(args[0], Arrays.asList("give", "reload"), completions);
+            }
+            // 'give'의 두 번째 인자(아이템 ID) 자동 완성 (/rpgitem give <...>)
+            else if (args.length == 2 && args[0].equalsIgnoreCase("give")) {
+                StringUtil.copyPartialMatches(args[1], itemManager.getAllItemIds(), completions);
+            }
+        }
+
+        return completions; // 완성된 목록 반환
+    }
 }

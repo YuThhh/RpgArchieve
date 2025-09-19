@@ -37,3 +37,5 @@ commands:
     usage: /setvital
   rpgitem:
     usage: /rpgitem
+  리포지:
+    usage: /리포지

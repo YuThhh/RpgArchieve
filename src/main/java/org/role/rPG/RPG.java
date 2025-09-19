@@ -2,7 +2,6 @@ package org.role.rPG;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,10 +14,12 @@ import org.role.rPG.Indicator.Indicator;
 import org.role.rPG.Indicator.IndicatorManager;
 import org.role.rPG.Item.EquipmentListener;
 import org.role.rPG.Item.ItemManager;
+import org.role.rPG.Item.ItemUpdateListener;
 import org.role.rPG.Player.*;
+import org.role.rPG.UI.Reforge_UI;
 import org.role.rPG.UI.Ui;
+import org.role.rPG.Item.ReforgeManager;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public final class RPG extends JavaPlugin implements Listener {
@@ -27,6 +28,8 @@ public final class RPG extends JavaPlugin implements Listener {
     private IndicatorManager indicatorManager;
     private ItemManager itemManager;
     private StatManager statManager;
+    private ReforgeManager reforgeManager;
+    private Reforge_UI reforgeUi;
 
     private static final double NormalHpRegen = 1;
     private static final double NormalMpRegen = 3;
@@ -40,15 +43,17 @@ public final class RPG extends JavaPlugin implements Listener {
         new PER_DATA();
 
         this.indicatorManager = new IndicatorManager(this);
-        this.itemManager = new ItemManager(this);
+        this.reforgeManager = new ReforgeManager(this);
+        this.itemManager = new ItemManager(this, this.reforgeManager); // ReforgeManager 전달
         this.statManager = new StatManager(this, this.itemManager);
         this.itemManager.reloadItems();
+        this.reforgeUi = new Reforge_UI(itemManager, statManager, reforgeManager);
 
         StatDataManager.initialize(this);
         StatDataManager.loadAllStats();
 
         // 각 기능 클래스의 register 메소드를 호출하여 시스템을 활성화합니다.
-        new CMD_manager(this, this.itemManager).registerCommands();
+        new CMD_manager(this, this.itemManager, this.reforgeUi).registerCommands();
         new LIS_manager(this).registerListeners();
 
         getServer().getPluginManager().registerEvents(this, this);
@@ -57,6 +62,8 @@ public final class RPG extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
         getServer().getPluginManager().registerEvents(new EquipmentListener(this, this.statManager), this);
         getServer().getPluginManager().registerEvents(new Ui(this, this.statManager), this);
+        getServer().getPluginManager().registerEvents(new ItemUpdateListener(this.itemManager), this);
+        getServer().getPluginManager().registerEvents(this.reforgeUi, this);
 
         Regeneration();
 
@@ -98,7 +105,6 @@ public final class RPG extends JavaPlugin implements Listener {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     UUID playerUUID = player.getUniqueId();
-                    PER_DATA data = PER_DATA.getInstance();
 
                     // HP 재생 로직
                     double maxHealth = statManager.getFinalStat(playerUUID, "MAX_HEALTH");

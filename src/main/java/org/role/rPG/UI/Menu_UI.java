@@ -30,14 +30,7 @@ public class Menu_UI implements InventoryHolder, Listener {
     private void initializeItems() {
         // inv.setItem(슬롯, 아이템);
         // 슬롯 번호는 0부터 시작
-        ItemStack grayGlassPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-        ItemMeta grayMeta = grayGlassPane.getItemMeta();
-        grayMeta.displayName(Component.text(" ", NamedTextColor.GRAY));
-        grayMeta.setHideTooltip(true);
-        grayGlassPane.setItemMeta(grayMeta);
-        for (int i = 0; i < inv.getSize(); i++) {
-            inv.setItem(i, grayGlassPane);
-        }
+        Graypanefiller.fillBackground(inv);
 
         ItemStack profile = new ItemStack(Material.PLAYER_HEAD);
         ItemMeta headMeta = profile.getItemMeta();
