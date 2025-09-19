@@ -1,0 +1,39 @@
+# plugins/RPG/reforges.yml
+
+# 리포지에 필요한 비용
+reforge_cost: 1000
+
+# 리포지 접두사 목록
+# 모든 값은 '곱연산'으로 적용됩니다. (예: 0.1 = +10%, -0.05 = -5%)
+prefixes:
+  common: # 등급 (나중에 legendary, mythic 등으로 확장 가능)
+    broken:
+      name: '부서진'
+      modifiers:
+        STRENGTH: -0.15      # 힘 15% 감소
+        ATTACK_DAMAGE: -0.2  # 공격 피해 20% 감소
+        
+    strong:
+      name: '강력한'
+      modifiers:
+        STRENGTH: 0.1        # 힘 10% 증가
+        CRIT_CHANCE: 0.05    # 치명타 확률 5% 증가
+
+    godly:
+      name: '신성한'
+      modifiers:
+        STRENGTH: 0.15       # 힘 15% 증가
+        ATTACK_DAMAGE: 0.1   # 공격 피해 10% 증가
+        CRIT_CHANCE: 0.1     # 치명타 확률 10% 증가
+
+    demonic:
+      name: '불길한'
+      modifiers:
+        STRENGTH: 0.2        # 힘 20% 증가
+        DEFENSE: -0.1        # 방어력 10% 감소 (패널티)
+
+    light:
+      name: '가벼운'
+      modifiers:
+        SPEED: 0.1           # 이동 속도 10% 증가
+        ATTACK_SPEED: 0.1    # 공격 속도 10% 증가

@@ -4,17 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Reforge_UI.java" afterDir="false" />
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="커스텀 아이템 제작 완료&#10;리포지 제작 완료&#10;코드 분석 필요">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/CMD_manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/CMD_manager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Indicator/Indicator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Indicator/Indicator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/Stat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/Stat.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Reforge/ReforgeCommand.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Reforge/ReforgeManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ReforgeManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/CMD_manager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/CMD_manager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Reforge_UI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Reforge_UI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Item.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Item.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,12 +38,22 @@
     &quot;assignee&quot;: &quot;kosi1324&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/YuThhh/Rpgplugin.git&quot;,
-    &quot;accountId&quot;: &quot;1f073aea-be47-4c32-acc4-5890d47373a6&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/YuThhh/Rpgplugin.git",
+    "accountId": "482230a0-fbe8-437c-b31b-c946033ea7f7"
+  },
+  "recentNewPullRequestHead": {
+    "server": {
+      "useHttp": false,
+      "host": "github.com",
+      "port": null,
+      "suffix": null
+    },
+    "owner": "YuThhh",
+    "repository": "Rpgplugin"
   }
-}</component>
+}]]></component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -61,22 +66,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Item&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/chldn/IdeaProjects/Rpgplugin/src/main/resources&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;아티팩트&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.1484375&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/chldn/IdeaProjects/Rpgplugin/src/main/resources",
+    "project.structure.last.edited": "아티팩트",
+    "project.structure.proportion": "0.1484375",
+    "project.structure.side.proportion": "0.2",
+    "to.speed.mode.migration.done": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\chldn\IdeaProjects\Rpgplugin\src\main\resources" />
@@ -225,7 +230,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758276900558</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="커스텀 아이템 제작 완료&#10;리포지 제작 완료&#10;코드 분석 필요">
+      <option name="closed" value="true" />
+      <created>1758280565441</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1758280565441</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -260,6 +273,7 @@
     <MESSAGE value="커스텀 아이템 제작 중&#10;아이템 로어에 따라서 스탯 변화 추가" />
     <MESSAGE value="커스텀 아이템 제작 중&#10;문제점 및 의도와 다른 표기 수정" />
     <MESSAGE value="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요" />
-    <option name="LAST_COMMIT_MESSAGE" value="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요" />
+    <MESSAGE value="커스텀 아이템 제작 완료&#10;리포지 제작 완료&#10;코드 분석 필요" />
+    <option name="LAST_COMMIT_MESSAGE" value="커스텀 아이템 제작 완료&#10;리포지 제작 완료&#10;코드 분석 필요" />
   </component>
 </project>

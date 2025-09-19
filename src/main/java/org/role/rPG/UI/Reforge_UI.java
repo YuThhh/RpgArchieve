@@ -5,6 +5,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -107,6 +108,8 @@ public class Reforge_UI implements InventoryHolder, Listener {
             }
 
             // 4. 재련 실행
+            player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 1.0F, 1.0F);
+
             Cash.removeMoney(player, cost);
             itemManager.reforgeItem(item, modifier);
             statManager.updatePlayerStats(player); // 변경된 스탯 적용
