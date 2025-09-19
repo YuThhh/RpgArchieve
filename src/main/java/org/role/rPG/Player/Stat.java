@@ -49,52 +49,41 @@ public class Stat implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
+        Player attacker = null;
+        double final_damage = event.getDamage();
 
         // 1. 공격이 플레이어가 쏜 '투사체'인 경우
-        if (event.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player attacker) {
-
-            // 투사체 공격은 항상 무기의 'ATTACK_DAMAGE' 스탯을 기본 피해량으로 사용합니다.
+        if (event.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player p) {
+            attacker = p; // 공격자 설정
             double weaponDamage = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_DAMAGE");
-            double final_damage = (weaponDamage > 0) ? weaponDamage : event.getDamage();
 
-            // --- 공통 스탯 적용 (힘, 치명타) ---
-            final_damage = applyPlayerModifiers(attacker, final_damage);
-            event.setDamage(final_damage);
-
-            // --- 공통 공격 속도 적용 ---
-            applyAttackSpeed(attacker, event.getEntity());
+            // 투사체는 항상 weaponDamage를 기본값으로 사용
+            final_damage = (weaponDamage > 0) ? weaponDamage : event.getDamage();
+            final_damage = applyPlayerModifiers(attacker, final_damage); // 스탯 적용
 
             // 2. 공격이 '플레이어의 근접 공격'인 경우
-        } else if (event.getDamager() instanceof Player attacker) {
-
-            double final_damage;
+        } else if (event.getDamager() instanceof Player p) {
+            attacker = p; // 공격자 설정
             org.bukkit.inventory.ItemStack weapon = attacker.getInventory().getItemInMainHand();
             org.bukkit.Material weaponType = weapon.getType();
-
-            // 근접 공격 시, 손에 든 무기가 활/쇠뇌인지 확인합니다.
             double weaponDamage = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_DAMAGE");
+
+            // 활/쇠뇌로 직접 때린 경우, 피해량을 크게 줄임 (스탯 보너스 없음)
             if (weaponType == org.bukkit.Material.BOW || weaponType == org.bukkit.Material.CROSSBOW) {
-
-                // 활/쇠뇌로 직접 때린 경우, 기본 근접 피해량을 무기의 ATTACK_DAMAGE로 나눕니다.
-                final_damage = event.getDamage(); // 매우 낮은 기본 피해량 (예: 1)
-
                 if (weaponDamage > 0) {
-                    final_damage = final_damage / weaponDamage; // (예: 1 / 50 = 0.02)
+                    final_damage = final_damage / weaponDamage;
                 }
-                // 참고: 이 공격에는 힘, 치명타 등 추가 스탯이 적용되지 않아 피해가 거의 없습니다.
-
             } else {
-                // 그 외 무기(검, 도끼 등)는 정상적으로 'ATTACK_DAMAGE' 스탯을 사용하고 보너스를 적용합니다.
+                // 그 외 무기는 정상적으로 스탯 적용
                 final_damage = (weaponDamage > 0) ? weaponDamage : event.getDamage();
-                final_damage = applyPlayerModifiers(attacker, final_damage);
+                final_damage = applyPlayerModifiers(attacker, final_damage); // 스탯 적용
             }
+        }
 
-            // --- 공통 스탯 적용 (힘, 치명타) ---
-            final_damage = applyPlayerModifiers(attacker, final_damage);
+        // --- 최종 처리: 공격자가 플레이어일 경우에만 실행 ---
+        if (attacker != null) {
             event.setDamage(final_damage);
-
-            // --- 공통 공격 속도 적용 ---
-            applyAttackSpeed(attacker, event.getEntity());
+            applyAttackSpeed(attacker, event.getEntity()); // 공속 적용은 여기서 한번만!
         }
     }
 
