@@ -21,6 +21,7 @@ public class Stat implements Listener {
     // [수정] 코드의 가독성과 유지보수를 위해 '매직 넘버'들을 상수로 정의합니다.
     private static final double DEFENSE_CONSTANT = 500.0;
     private static final double STRENGTH_MUPLTPLIER = 0.003;
+    private static final int MINIMUM_INVINCIBILITY_TICKS = 5;
 
 
     private final JavaPlugin plugin;
@@ -49,6 +50,17 @@ public class Stat implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
+        // ▼▼▼ [핵심 수정] 메서드 최상단에 아래 내용을 추가하세요 ▼▼▼
+        // 피격자가 살아있는 생명체이고, 현재 무적 시간이 남아있다면,
+        if (event.getEntity() instanceof LivingEntity livingEntity && livingEntity.getNoDamageTicks() > 0) {
+            // 이 공격 이벤트를 취소하고 즉시 모든 처리를 중단합니다.
+            event.setCancelled(true);
+            return;
+        }
+        // ▲▲▲ 여기까지가 추가된 내용입니다 ▲▲▲
+
+
+        // --- 아래는 기존 코드 ---
         Player attacker = null;
         double final_damage = event.getDamage();
 
@@ -57,9 +69,8 @@ public class Stat implements Listener {
             attacker = p; // 공격자 설정
             double weaponDamage = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_DAMAGE");
 
-            // 투사체는 항상 weaponDamage를 기본값으로 사용
             final_damage = (weaponDamage > 0) ? weaponDamage : event.getDamage();
-            final_damage = applyPlayerModifiers(attacker, final_damage); // 스탯 적용
+            final_damage = applyPlayerModifiers(attacker, final_damage);
 
             // 2. 공격이 '플레이어의 근접 공격'인 경우
         } else if (event.getDamager() instanceof Player p) {
@@ -68,22 +79,20 @@ public class Stat implements Listener {
             org.bukkit.Material weaponType = weapon.getType();
             double weaponDamage = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_DAMAGE");
 
-            // 활/쇠뇌로 직접 때린 경우, 피해량을 크게 줄임 (스탯 보너스 없음)
             if (weaponType == org.bukkit.Material.BOW || weaponType == org.bukkit.Material.CROSSBOW) {
                 if (weaponDamage > 0) {
                     final_damage = final_damage / weaponDamage;
                 }
             } else {
-                // 그 외 무기는 정상적으로 스탯 적용
                 final_damage = (weaponDamage > 0) ? weaponDamage : event.getDamage();
-                final_damage = applyPlayerModifiers(attacker, final_damage); // 스탯 적용
+                final_damage = applyPlayerModifiers(attacker, final_damage);
             }
         }
 
         // --- 최종 처리: 공격자가 플레이어일 경우에만 실행 ---
         if (attacker != null) {
             event.setDamage(final_damage);
-            applyAttackSpeed(attacker, event.getEntity()); // 공속 적용은 여기서 한번만!
+            applyAttackSpeed(attacker, event.getEntity());
         }
     }
 
@@ -123,22 +132,15 @@ public class Stat implements Listener {
         if (entity instanceof LivingEntity livingEntity) {
             double atkspd = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_SPEED");
 
-            // --- ▼▼▼ 디버깅 메시지 추가 ▼▼▼ ---
-            // 실제 적용되고 있는 플레이어의 공격 속도 스탯 값을 확인합니다.
-            attacker.sendMessage("§e[디버그] 현재 공격 속도 스탯: " + atkspd);
-
             if (atkspd > 0.0) {
-                final int ticks = (int) (20 * 100 / (100 + atkspd));
+                // 초반 스탯 효율이 개선된 계산식
+                int calculated_ticks = (int) (500 / (50 + atkspd));
 
-                // --- ▼▼▼ 디버깅 메시지 추가 ▼▼▼ ---
-                // 위 스탯을 기반으로 최종 계산된 무적 시간(tick) 값을 확인합니다.
-                attacker.sendMessage("§e[디버그] 계산된 무적 틱: " + ticks);
+                // 계산된 틱이 설정한 최소치보다 낮아지지 않도록 보정
+                int final_ticks = Math.max(MINIMUM_INVINCIBILITY_TICKS, calculated_ticks);
 
-                plugin.getServer().getScheduler().runTask(plugin, () -> livingEntity.setNoDamageTicks(ticks));
-            } else {
-                // --- ▼▼▼ 디버깅 메시지 추가 ▼▼▼ ---
-                // 스탯이 0이라서 적용되지 않는 경우를 확인합니다.
-                attacker.sendMessage("§e[디버그] 스탯이 0 이하여서 기본 무적 틱이 적용됩니다.");
+                // 다음 틱에 무적 시간을 최종 적용
+                plugin.getServer().getScheduler().runTask(plugin, () -> livingEntity.setNoDamageTicks(final_ticks));
             }
         }
     }

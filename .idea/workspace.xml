@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="커스텀 아이템 제작 완료&#10;리포지 제작 완료&#10;코드 분석 필요">
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="공격 속도 오류 수정 중">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/Stat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/Stat.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -243,7 +244,23 @@
       <option name="project" value="LOCAL" />
       <updated>1758284737325</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="공격 속도 오류 수정">
+      <option name="closed" value="true" />
+      <created>1758285749722</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1758285749722</updated>
+    </task>
+    <task id="LOCAL-00018" summary="공격 속도 오류 수정 중">
+      <option name="closed" value="true" />
+      <created>1758285975799</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1758285975799</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -279,6 +296,8 @@
     <MESSAGE value="커스텀 아이템 제작 중&#10;문제점 및 의도와 다른 표기 수정" />
     <MESSAGE value="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요" />
     <MESSAGE value="커스텀 아이템 제작 완료&#10;리포지 제작 완료&#10;코드 분석 필요" />
-    <option name="LAST_COMMIT_MESSAGE" value="커스텀 아이템 제작 완료&#10;리포지 제작 완료&#10;코드 분석 필요" />
+    <MESSAGE value="공격 속도 오류 수정" />
+    <MESSAGE value="공격 속도 오류 수정 중" />
+    <option name="LAST_COMMIT_MESSAGE" value="공격 속도 오류 수정 중" />
   </component>
 </project>
