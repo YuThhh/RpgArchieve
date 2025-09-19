@@ -135,7 +135,6 @@ public class ItemManager {
                     double value = parseValueFromLore(cleanLine);
                     NamespacedKey key = new NamespacedKey(plugin, itemId + "_attack_damage");
                     AttributeModifier modifier = new AttributeModifier(key, value, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
-                    // [버그 수정] ATTACK_DAMAGE -> GENERIC_ATTACK_DAMAGE
                     meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier);
                 } catch (NumberFormatException ignored) {}
             }
@@ -165,10 +164,66 @@ public class ItemManager {
 
     public void reforgeItem(ItemStack item, ReforgeManager.ReforgeModifier modifier) {
         if (isNotCustomItem(item)) return;
+
         ItemMeta meta = item.getItemMeta();
-        meta.getPersistentDataContainer().set(REFORGE_KEY, PersistentDataType.STRING, modifier.getId());
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        Map<String, Double> baseStats = getBaseStats(item);
+
+        // [수정] 기존의 불안정한 이름 제거 방식 대신, 원본 아이템의 이름을 가져와 사용합니다.
+        String itemId = container.get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
+        ItemStack templateItem = customItems.get(itemId);
+        if (templateItem == null || templateItem.getItemMeta() == null) {
+            // 템플릿 아이템을 찾을 수 없는 경우, 오류를 방지하기 위해 작업을 중단합니다.
+            plugin.getLogger().warning(itemId + "에 대한 아이템 템플릿을 찾을 수 없어 리포지를 중단합니다.");
+            return;
+        }
+        Component originalName = templateItem.getItemMeta().displayName();
+        if (originalName == null) {
+            originalName = Component.text("이름 없는 아이템"); // 만약을 위한 대비
+        }
+
+        Component prefixComponent = Component.text(modifier.getName() + " ").color(NamedTextColor.YELLOW);
+        meta.displayName(prefixComponent.append(originalName).decoration(TextDecoration.ITALIC, false));
+
+        // [매우 중요] 접두사 이름(getName) 대신, 고유 ID(getId)를 저장합니다.
+        container.set(REFORGE_KEY, PersistentDataType.STRING, modifier.getId());
+
+        Map<String, Double> reforgeModifiers = modifier.getStatModifiers();
+        List<Component> newLore = new ArrayList<>();
+
+        // 원본 아이템의 로어를 기반으로 새로운 로어를 생성합니다.
+        List<Component> originalLoreComponents = Objects.requireNonNull(templateItem.getItemMeta().lore());
+        for (Component loreComponent : originalLoreComponents) {
+            String loreLineFormat = MINI_MESSAGE.serialize(loreComponent);
+            String cleanLine = MINI_MESSAGE.stripTags(loreLineFormat);
+            Matcher matcher = LORE_STAT_PATTERN.matcher(cleanLine);
+
+            if (matcher.find()) {
+                String statDisplayName = matcher.group(1).trim();
+                String statKey = getStatKeyFromName(statDisplayName);
+
+                if (statKey != null) {
+                    double baseValue = baseStats.getOrDefault(statKey, 0.0);
+                    double reforgeMultiplier = reforgeModifiers.getOrDefault(statKey, 0.0);
+                    double finalValue = baseValue * (1 + reforgeMultiplier);
+                    double diff = finalValue - baseValue;
+
+                    String newLoreLine = String.format("<i:false><gray>%s: </gray><white>%.0f</white>", statDisplayName, finalValue);
+                    if (Math.abs(diff) > 0.01) {
+                        newLoreLine += String.format(" <gray>(%s%.0f)</gray>", diff > 0 ? "+" : "", diff);
+                    }
+                    newLore.add(MINI_MESSAGE.deserialize(newLoreLine));
+                } else {
+                    newLore.add(loreComponent.decoration(TextDecoration.ITALIC, false));
+                }
+            } else {
+                newLore.add(loreComponent.decoration(TextDecoration.ITALIC, false));
+            }
+        }
+
+        meta.lore(newLore);
         item.setItemMeta(meta);
-        updateLoreAndStats(item);
+        refreshStatsFromLore(item);
     }
 
     public boolean updateItemIfNecessary(ItemStack item) {
@@ -212,7 +267,8 @@ public class ItemManager {
         if (template == null) return;
         Component baseName = Objects.requireNonNull(template.getItemMeta()).displayName();
         if (modifier != null) {
-            meta.displayName(Component.text(modifier.getName() + " ").color(NamedTextColor.YELLOW).append(Objects.requireNonNull(baseName)));
+            Component prefixComponent = Component.text(modifier.getName() + " ").color(NamedTextColor.YELLOW);
+            meta.displayName(prefixComponent.append(Objects.requireNonNull(baseName)).decoration(TextDecoration.ITALIC, false));
         } else {
             meta.displayName(baseName);
         }

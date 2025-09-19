@@ -5,7 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요">
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/rpgplugin_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/rpgplugin_jar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/PlaceHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/PlaceHolder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Item.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Item.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,7 +27,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="Item" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
