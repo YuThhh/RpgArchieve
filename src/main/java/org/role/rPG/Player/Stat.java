@@ -122,9 +122,23 @@ public class Stat implements Listener {
     private void applyAttackSpeed(Player attacker, org.bukkit.entity.Entity entity) {
         if (entity instanceof LivingEntity livingEntity) {
             double atkspd = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_SPEED");
+
+            // --- ▼▼▼ 디버깅 메시지 추가 ▼▼▼ ---
+            // 실제 적용되고 있는 플레이어의 공격 속도 스탯 값을 확인합니다.
+            attacker.sendMessage("§e[디버그] 현재 공격 속도 스탯: " + atkspd);
+
             if (atkspd > 0.0) {
-                final int ticks = (int) (10 * 100 / (100 + atkspd));
+                final int ticks = (int) (20 * 100 / (100 + atkspd));
+
+                // --- ▼▼▼ 디버깅 메시지 추가 ▼▼▼ ---
+                // 위 스탯을 기반으로 최종 계산된 무적 시간(tick) 값을 확인합니다.
+                attacker.sendMessage("§e[디버그] 계산된 무적 틱: " + ticks);
+
                 plugin.getServer().getScheduler().runTask(plugin, () -> livingEntity.setNoDamageTicks(ticks));
+            } else {
+                // --- ▼▼▼ 디버깅 메시지 추가 ▼▼▼ ---
+                // 스탯이 0이라서 적용되지 않는 경우를 확인합니다.
+                attacker.sendMessage("§e[디버그] 스탯이 0 이하여서 기본 무적 틱이 적용됩니다.");
             }
         }
     }
