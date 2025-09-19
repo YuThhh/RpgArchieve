@@ -71,8 +71,8 @@ public class Ui implements Listener {
                     double atkSpdValue = statManager.getFinalStat(playerUUID, "ATTACK_SPEED");
 
                     // 마나는 아직 StatManager에서 관리하지 않으므로 PER_DATA를 유지합니다.
-                    int maxMp = (int) data.getPlayerMaxMana(playerUUID);
-                    int currentMp = (int) data.getPlayerCurrentMana(playerUUID);
+                    int maxMp = (int) statManager.getFinalStat(playerUUID,"MAX_MANA");
+                    int currentMp = (int) statManager.getFinalStat(playerUUID,"CURRENT_MANA");
 
                     Component message = Component.text("♥ " + currentHealth + "/" + maxHealth, NamedTextColor.RED)
                             .append(Component.text("  \uD83D\uDEE1 " + defense, NamedTextColor.GREEN)) // 방패 아이콘 추가

@@ -73,7 +73,6 @@ public class StatManager {
         base.put("ATTACK_SPEED", perData.getPlayerAttactSpeed(uuid));
         base.put("MAX_MANA", perData.getPlayerMaxMana(uuid));
         base.put("CURRENT_MANA", perData.getPlayerCurrentMana(uuid));
-        // ▼▼▼ [추가] 누락된 스탯 추가 ▼▼▼
         base.put("SPEED", (double) perData.getPlayerSpeed(uuid));
         return base;
     }
@@ -111,5 +110,22 @@ public class StatManager {
         double speedStat = finalStats.getOrDefault("SPEED", 100.0); // ItemManager에 SPEED 파싱 추가 필요
         float calculatedSpeed = 0.2f * (float)(speedStat / 100.0); // 기본값 0.2, 스탯 100당 0.1 증가
         player.setWalkSpeed(calculatedSpeed);
+    }
+
+    /**
+     * 플레이어의 현재 마나를 업데이트하고 캐시를 갱신합니다.
+     * (실시간으로 변하는 스탯을 위한 메서드)
+     * @param uuid 플레이어 UUID
+     * @param newMana 새로운 마나 값
+     */
+    public void updatePlayerCurrentMana(UUID uuid, double newMana) {
+        // 1. PER_DATA의 실제 데이터 업데이트
+        perData.setPlayerCurrentMana(uuid, newMana);
+
+        // 2. 캐시에 플레이어의 스탯 맵이 있는지 확인하고, 있다면 마나 값 갱신
+        Map<String, Double> finalStats = finalStatsCache.get(uuid);
+        if (finalStats != null) {
+            finalStats.put("CURRENT_MANA", newMana);
+        }
     }
 }

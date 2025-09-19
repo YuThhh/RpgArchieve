@@ -12,13 +12,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.role.rPG.Food.Cooked;
 import org.role.rPG.Indicator.Indicator;
 import org.role.rPG.Indicator.IndicatorManager;
-import org.role.rPG.Item.EquipmentListener;
-import org.role.rPG.Item.ItemManager;
-import org.role.rPG.Item.ItemUpdateListener;
+import org.role.rPG.Item.*;
 import org.role.rPG.Player.*;
 import org.role.rPG.UI.Reforge_UI;
 import org.role.rPG.UI.Ui;
-import org.role.rPG.Item.ReforgeManager;
 
 import java.util.UUID;
 
@@ -64,6 +61,7 @@ public final class RPG extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new Ui(this, this.statManager), this);
         getServer().getPluginManager().registerEvents(new ItemUpdateListener(this.itemManager), this);
         getServer().getPluginManager().registerEvents(this.reforgeUi, this);
+        getServer().getPluginManager().registerEvents(new MagicListener(this, this.itemManager, this.statManager), this);
 
         Regeneration();
 
@@ -117,11 +115,17 @@ public final class RPG extends JavaPlugin implements Listener {
                         double hpRegenAmount = 0.5 * (NormalHpRegen + maxHealth * 0.01 * (1 + vital * 0.01));
                         player.setHealth(Math.min(maxHealth, currentHealth + hpRegenAmount));
                     }
-                    double maxMp = PER_DATA.getInstance().getPlayerMaxMana(playerUUID); // 마나도 동일하게 수정 가능
-                    double currentMp = PER_DATA.getInstance().getPlayerCurrentMana(playerUUID);
+
+                    double maxMp = statManager.getFinalStat(playerUUID,"MAX_MANA");
+                    // 현재 마나는 여전히 statManager를 통해 가져옵니다 (캐시된 값).
+                    double currentMp = statManager.getFinalStat(playerUUID,"CURRENT_MANA");
+
                     if (currentMp < maxMp) {
                         double mpRegenAmount = (NormalMpRegen + maxMp * 0.02);
-                        PER_DATA.getInstance().setPlayerCurrentMana(playerUUID, Math.min(maxMp, currentMp + mpRegenAmount));
+                        double newCurrentMp = Math.min(maxMp, currentMp + mpRegenAmount);
+
+                        // StatManager에 새로 만든 메서드를 호출하여 데이터를 업데이트합니다.
+                        statManager.updatePlayerCurrentMana(playerUUID, newCurrentMp);
                     }
                 }
             }

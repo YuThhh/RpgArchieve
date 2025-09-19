@@ -349,6 +349,7 @@ public class ItemManager {
             case "크리티컬 피해" -> "CRIT_DAMAGE";
             case "이동 속도" -> "SPEED";
             case "공격 속도" -> "ATTACK_SPEED";
+            case "마나" -> "MAX_MANA";
             default -> null;
         };
     }

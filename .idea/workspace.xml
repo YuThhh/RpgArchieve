@@ -4,9 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="공격 속도 오류 수정 중">
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="마나 관련 코드 추가">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/MagicListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/Stat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/Stat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ItemManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/StatManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/StatManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Ui.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Ui.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Item.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Item.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -260,7 +267,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758285975799</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="공격 속도 오류 수정 완료">
+      <option name="closed" value="true" />
+      <created>1758287434606</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1758287434606</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -298,6 +313,8 @@
     <MESSAGE value="커스텀 아이템 제작 완료&#10;리포지 제작 완료&#10;코드 분석 필요" />
     <MESSAGE value="공격 속도 오류 수정" />
     <MESSAGE value="공격 속도 오류 수정 중" />
-    <option name="LAST_COMMIT_MESSAGE" value="공격 속도 오류 수정 중" />
+    <MESSAGE value="공격 속도 오류 수정 완료" />
+    <MESSAGE value="마나 관련 코드 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="마나 관련 코드 추가" />
   </component>
 </project>
