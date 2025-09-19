@@ -16,11 +16,10 @@ import org.role.rPG.Item.EquipmentListener;
 import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Item.ItemUpdateListener;
 import org.role.rPG.Player.*;
+import org.role.rPG.UI.Reforge_UI;
 import org.role.rPG.UI.Ui;
-import org.role.rPG.Reforge.ReforgeCommand;
-import org.role.rPG.Reforge.ReforgeManager;
+import org.role.rPG.Item.ReforgeManager;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public final class RPG extends JavaPlugin implements Listener {
@@ -30,6 +29,7 @@ public final class RPG extends JavaPlugin implements Listener {
     private ItemManager itemManager;
     private StatManager statManager;
     private ReforgeManager reforgeManager;
+    private Reforge_UI reforgeUi;
 
     private static final double NormalHpRegen = 1;
     private static final double NormalMpRegen = 3;
@@ -47,12 +47,13 @@ public final class RPG extends JavaPlugin implements Listener {
         this.itemManager = new ItemManager(this, this.reforgeManager); // ReforgeManager 전달
         this.statManager = new StatManager(this, this.itemManager);
         this.itemManager.reloadItems();
+        this.reforgeUi = new Reforge_UI(itemManager, statManager, reforgeManager);
 
         StatDataManager.initialize(this);
         StatDataManager.loadAllStats();
 
         // 각 기능 클래스의 register 메소드를 호출하여 시스템을 활성화합니다.
-        new CMD_manager(this, this.itemManager).registerCommands();
+        new CMD_manager(this, this.itemManager, this.reforgeUi).registerCommands();
         new LIS_manager(this).registerListeners();
 
         getServer().getPluginManager().registerEvents(this, this);
@@ -62,8 +63,7 @@ public final class RPG extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new EquipmentListener(this, this.statManager), this);
         getServer().getPluginManager().registerEvents(new Ui(this, this.statManager), this);
         getServer().getPluginManager().registerEvents(new ItemUpdateListener(this.itemManager), this);
-
-        Objects.requireNonNull(getCommand("리포지")).setExecutor(new ReforgeCommand(this.itemManager, this.statManager, this.reforgeManager));
+        getServer().getPluginManager().registerEvents(this.reforgeUi, this);
 
         Regeneration();
 

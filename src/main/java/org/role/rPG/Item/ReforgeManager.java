@@ -1,4 +1,4 @@
-package org.role.rPG.Reforge;
+package org.role.rPG.Item;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;

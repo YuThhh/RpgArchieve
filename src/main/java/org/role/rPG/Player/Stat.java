@@ -93,12 +93,14 @@ public class Stat implements Listener {
         event.setDamage(final_damage);
 
         if (event.getEntity() instanceof LivingEntity livingEntity) {
-            double atkspd = statManager.getFinalStat(attacker.getUniqueId(),"ATTACK_SPEED");
-                if (atkspd > 0.0) {
-                    final int ticks = (int) (10 * 100 / (100 + atkspd));
-                    // 1틱(0.05초) 뒤에 livingEntity의 무적 시간을 ticks로 설정하는 작업을 예약합니다.
-                    livingEntity.setNoDamageTicks(ticks);
-                }
+            double atkspd = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_SPEED");
+            if (atkspd > 0.0) {
+                final int ticks = (int) (10 * 100 / (100 + atkspd));
+
+                // [핵심] 다음 서버 틱에 실행하도록 예약하여,
+                // 마인크래프트 기본 무적시간 설정을 덮어씌웁니다.
+                plugin.getServer().getScheduler().runTask(plugin, () -> livingEntity.setNoDamageTicks(ticks));
+            }
         }
     }
 }
