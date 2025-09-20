@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="레벨 추가&#10;메인 레벨&#10;부가 숙련도">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/FireBallSpell.java" afterDir="false" />
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="마법 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/SkillListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/SkillListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/SpellManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/SpellManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/WaterBoltSpell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/WaterBoltSpell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ReforgeManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Item/ReforgeManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/FireBallSpell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/FireBallSpell.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -310,7 +305,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758364659153</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="마법 수정">
+      <option name="closed" value="true" />
+      <created>1758379210011</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1758379210011</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -354,6 +357,7 @@
     <MESSAGE value="마법 코드 수정&#10;추가하기 쉬워짐" />
     <MESSAGE value="마법 -&gt; 스킬로 변경" />
     <MESSAGE value="레벨 추가&#10;메인 레벨&#10;부가 숙련도" />
-    <option name="LAST_COMMIT_MESSAGE" value="레벨 추가&#10;메인 레벨&#10;부가 숙련도" />
+    <MESSAGE value="마법 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="마법 수정" />
   </component>
 </project>

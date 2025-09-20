@@ -39,7 +39,7 @@ public class FireBallSpell implements Spell {
     @Override
     public void cast(Player caster) {
         // 물방울 모양 머리 아이템 생성
-        ItemStack FireBallDisplay = new ItemStack(Material.MAGMA_BLOCK);
+        ItemStack FireBallDisplay = new ItemStack(Material.FIRE_CHARGE);
 
         // 플레이어의 눈 위치에서 ItemDisplay 엔티티 생성
         Location spawnLocation = caster.getEyeLocation();
@@ -48,7 +48,7 @@ public class FireBallSpell implements Spell {
             display.setBillboard(Display.Billboard.FIXED);
 
             Transformation transformation = display.getTransformation();
-            transformation.getScale().set(new Vector3f(0.3f, 0.3f, 0.6f));
+            transformation.getScale().set(new Vector3f(0.6f, 0.6f, 0.6f));
             display.setTransformation(transformation);
 
             caster.playSound(caster.getLocation(), Sound.ITEM_FIRECHARGE_USE, 1.0f, 1.0f);

@@ -141,6 +141,14 @@ public class CMD_manager implements CommandExecutor, TabCompleter {
             return true;
         }
 
+        if (command.getName().equalsIgnoreCase("리포지")) {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage(Component.text("플레이어만 사용 가능합니다.", NamedTextColor.RED));
+                return true;
+            }
+            reforgeUI.openInventory(player);
+            return true;
+        }
 
         Player player = (Player) sender;
         String commandName = command.getName().toLowerCase();

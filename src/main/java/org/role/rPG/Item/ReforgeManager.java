@@ -60,17 +60,17 @@ public class ReforgeManager {
 
     // [추가] ID로 ReforgeModifier를 가져오는 메소드
     public ReforgeModifier getModifierById(String id) {
-        return modifierMap.get(id);
-    }
+            return modifierMap.get(id);
+        }
 
-    public int getReforgeCost() {
-        return reforgeCost;
-    }
+        public int getReforgeCost() {
+            return reforgeCost;
+        }
 
-    public static class ReforgeModifier {
-        private final String id; // ID 필드 추가
-        private final String name;
-        private final Map<String, Double> statModifiers;
+        public static class ReforgeModifier {
+            private final String id; // ID 필드 추가
+            private final String name;
+            private final Map<String, Double> statModifiers;
 
         public ReforgeModifier(String id, String name, Map<String, Double> statModifiers) {
             this.id = id;
