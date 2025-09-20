@@ -1,5 +1,6 @@
 package org.role.rPG.Player;
 
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -9,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.role.rPG.Indicator.IndicatorManager;
 
 import java.util.Random;
 
@@ -23,13 +25,25 @@ public class Stat implements Listener {
     private static final double STRENGTH_MUPLTPLIER = 0.003;
     private static final int MINIMUM_INVINCIBILITY_TICKS = 5;
 
-
     private final JavaPlugin plugin;
     private final StatManager statManager;
+    private final IndicatorManager indicatorManager; // 인디케이터를 직접 제어하기 위해 추가
 
-    public Stat(JavaPlugin plugin, StatManager statManager) {
+    public Stat(JavaPlugin plugin, StatManager statManager, IndicatorManager indicatorManager) {
         this.plugin = plugin;
         this.statManager = statManager;
+        this.indicatorManager = indicatorManager;
+    }
+
+    // 대미지 계산 결과와 치명타 여부를 함께 반환하기 위한 내부 클래스
+    private static class DamageResult {
+        final double damage;
+        final boolean isCritical;
+
+        DamageResult(double damage, boolean isCritical) {
+            this.damage = damage;
+            this.isCritical = isCritical;
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -62,15 +76,13 @@ public class Stat implements Listener {
 
         // --- 아래는 기존 코드 ---
         Player attacker = null;
-        double final_damage = event.getDamage();
+        double baseDamage = event.getDamage();
 
         // 1. 공격이 플레이어가 쏜 '투사체'인 경우
         if (event.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player p) {
             attacker = p; // 공격자 설정
             double weaponDamage = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_DAMAGE");
-
-            final_damage = (weaponDamage > 0) ? weaponDamage : event.getDamage();
-            final_damage = applyPlayerModifiers(attacker, final_damage);
+            baseDamage = (weaponDamage > 0) ? weaponDamage : event.getDamage();
 
             // 2. 공격이 '플레이어의 근접 공격'인 경우
         } else if (event.getDamager() instanceof Player p) {
@@ -81,30 +93,41 @@ public class Stat implements Listener {
 
             if (weaponType == org.bukkit.Material.BOW || weaponType == org.bukkit.Material.CROSSBOW) {
                 if (weaponDamage > 0) {
-                    final_damage = final_damage / weaponDamage;
+                    baseDamage = baseDamage / weaponDamage;
                 }
             } else {
-                final_damage = (weaponDamage > 0) ? weaponDamage : event.getDamage();
-                final_damage = applyPlayerModifiers(attacker, final_damage);
+                baseDamage = (weaponDamage > 0) ? weaponDamage : event.getDamage();
             }
         }
 
         // --- 최종 처리: 공격자가 플레이어일 경우에만 실행 ---
         if (attacker != null) {
-            event.setDamage(final_damage);
+            // 대미지 계산과 함께 치명타 여부를 확인
+            DamageResult result = applyPlayerModifiers(attacker, baseDamage);
+
+            event.setDamage(result.damage);
             applyAttackSpeed(attacker, event.getEntity());
+
+            // 치명타 여부에 따라 다른 인디케이터를 표시
+            Location loc = event.getEntity().getLocation();
+            if (result.isCritical) {
+                indicatorManager.showCriticalDamageIndicator(loc, result.damage);
+            } else {
+                indicatorManager.showDamageIndicator(loc, result.damage);
+            }
         }
     }
 
     /**
-     * 힘, 치명타 등 플레이어의 스탯 보너스를 계산하여 최종 피해량을 반환합니다.
+     * 힘, 치명타 등 플레이어의 스탯 보너스를 계산하여 최종 피해량과 치명타 여부를 반환합니다.
      * (코드 중복을 줄이기 위한 도우미 메서드)
      * @param attacker 공격자
      * @param initialDamage 스탯 적용 전 기본 피해량
-     * @return 스탯 보너스가 적용된 최종 피해량
+     * @return 스탯 보너스가 적용된 최종 피해량과 치명타 여부를 담은 DamageResult 객체
      */
-    private double applyPlayerModifiers(Player attacker, double initialDamage) {
+    private DamageResult applyPlayerModifiers(Player attacker, double initialDamage) {
         double final_damage = initialDamage;
+        boolean isCritical = false;
 
         // 힘 스탯 적용
         double str = statManager.getFinalStat(attacker.getUniqueId(), "STRENGTH");
@@ -115,11 +138,12 @@ public class Stat implements Listener {
         // 커스텀 치명타 계산
         double critChance = statManager.getFinalStat(attacker.getUniqueId(), "CRIT_CHANCE");
         if (RANDOM.nextInt(100) < critChance) {
+            isCritical = true;
             double critDamage = statManager.getFinalStat(attacker.getUniqueId(), "CRIT_DAMAGE");
             final_damage *= (1.0 + critDamage / 100.0);
         }
 
-        return final_damage;
+        return new DamageResult(final_damage, isCritical);
     }
 
     /**
@@ -132,16 +156,15 @@ public class Stat implements Listener {
         if (entity instanceof LivingEntity livingEntity) {
             double atkspd = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_SPEED");
 
-            if (atkspd > 0.0) {
                 // 초반 스탯 효율이 개선된 계산식
-                int calculated_ticks = (int) (500 / (50 + atkspd));
+                int calculated_ticks = (int) (10 * 100 / (100 + atkspd));
 
                 // 계산된 틱이 설정한 최소치보다 낮아지지 않도록 보정
                 int final_ticks = Math.max(MINIMUM_INVINCIBILITY_TICKS, calculated_ticks);
 
                 // 다음 틱에 무적 시간을 최종 적용
                 plugin.getServer().getScheduler().runTask(plugin, () -> livingEntity.setNoDamageTicks(final_ticks));
-            }
+
         }
     }
 }

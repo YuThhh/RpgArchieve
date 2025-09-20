@@ -2,8 +2,8 @@
 package org.role.rPG.Magic;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,8 +15,7 @@ import org.role.rPG.Player.StatManager;
 import org.role.rPG.RPG;
 // Bukkit 추가
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 // PlayerProfile 추가
 // PlayerTextures 추가
 // URL 추가
@@ -28,6 +27,9 @@ public class MagicListener implements Listener {
     private final ItemManager itemManager;
     private final StatManager statManager;
     private final SpellManager spellManager;
+
+    // <플레이어UUID, <마법이름, 쿨타임이 끝나는 시간>>
+    private final Map<UUID, Map<String, Long>> cooldowns = new HashMap<>();
 
     public MagicListener(RPG plugin, ItemManager itemManager, StatManager statManager) {
         this.plugin = plugin;
@@ -69,7 +71,22 @@ public class MagicListener implements Listener {
                 Spell spell = spellManager.getSpell(spellName);
 
                 if (spell != null) {
-                    // 마나 소모, 발사 소리 등 공통 로직은 여기서 처리
+                    UUID playerUUID = player.getUniqueId();
+                    long currentTime = System.currentTimeMillis(); // 현재 시간
+
+                    // 플레이어가 해당 스킬의 쿨타임을 가지고 있는지 확인
+                    long cooldownEndTime = cooldowns.computeIfAbsent(playerUUID, k -> new HashMap<>())
+                            .getOrDefault(spell.getName(), 0L);
+
+                    if (currentTime < cooldownEndTime) {
+                        // 아직 쿨타임이 끝나지 않았다면
+                        double timeLeftSeconds = (cooldownEndTime - currentTime) / 1000.0;
+
+                        // String.format("%.1f", ...)을 사용하여 소수점 첫째 자리까지만 표시합니다.
+                        String timeLeftFormatted = String.format("%.1f", timeLeftSeconds);
+                        player.sendMessage(Component.text(spell.getName() + " 쿨타임: " + timeLeftFormatted + "초", NamedTextColor.RED));
+                        return; // 마법 시전 중단
+                    }
 
                     // TODO: 마나 소모 로직을 여기에 추가할 수 있습니다.
 //         double currentMana = statManager.getFinalStat(player.getUniqueId(), "CURRENT_MANA");
@@ -79,10 +96,11 @@ public class MagicListener implements Listener {
 //         }
 //         statManager.updatePlayerCurrentMana(player.getUniqueId(), currentMana - 20);
 
-                    event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE, 1.0f, 1.7f);
-
                     // 해당 마법의 고유 로직 실행
                     spell.cast(player);
+
+                    long newCooldownEndTime = currentTime + (long)(spell.getCoolDown() * 1000.0);
+                    cooldowns.get(playerUUID).put(spell.getName(), newCooldownEndTime);
 
                     break; // 마법을 하나 찾아서 시전했으면 종료
                 }

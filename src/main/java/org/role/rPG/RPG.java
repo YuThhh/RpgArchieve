@@ -10,7 +10,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.role.rPG.Food.Cooked;
-import org.role.rPG.Indicator.Indicator;
 import org.role.rPG.Indicator.IndicatorManager;
 import org.role.rPG.Item.*;
 import org.role.rPG.Magic.MagicListener;
@@ -55,8 +54,7 @@ public final class RPG extends JavaPlugin implements Listener {
         new LIS_manager(this).registerListeners();
 
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new Stat(this, this.statManager), this);
-        getServer().getPluginManager().registerEvents(new Indicator(indicatorManager), this);
+        getServer().getPluginManager().registerEvents(new Stat(this, this.statManager, this.indicatorManager), this);
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
         getServer().getPluginManager().registerEvents(new EquipmentListener(this, this.statManager), this);
         getServer().getPluginManager().registerEvents(new Ui(this, this.statManager), this);

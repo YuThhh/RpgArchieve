@@ -2,10 +2,7 @@ package org.role.rPG.Magic;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.LivingEntity;
@@ -26,6 +23,9 @@ public class WaterBoltSpell implements Spell {
     private final RPG plugin;
     private final StatManager statManager;
 
+    private final String MAGIC_NAME = "워터 볼트";
+    private final Double COOLDOWN = 0.5;
+
     public WaterBoltSpell(RPG plugin, StatManager statManager) {
         this.plugin = plugin;
         this.statManager = statManager;
@@ -33,7 +33,12 @@ public class WaterBoltSpell implements Spell {
 
     @Override
     public String getName() {
-        return "워터 볼트";
+        return MAGIC_NAME;
+    }
+
+    @Override
+    public double getCoolDown() {
+        return COOLDOWN;
     }
 
     @Override
@@ -65,6 +70,8 @@ public class WaterBoltSpell implements Spell {
             Transformation transformation = display.getTransformation();
             transformation.getScale().set(new Vector3f(0.3f, 0.3f, 0.6f));
             display.setTransformation(transformation);
+
+            caster.playSound(caster.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE, 1.0f, 1.7f);
         });
 
         new BukkitRunnable() {
@@ -78,6 +85,22 @@ public class WaterBoltSpell implements Spell {
                     projectile.remove();
                     this.cancel();
                     return;
+                }
+
+                // 1. 다음 틱에 투사체가 이동할 위치를 미리 계산합니다.
+                Location nextLocation = projectile.getLocation().clone().add(direction.clone().multiply(speed));
+
+                // 2. 다음 위치에 있는 블록이 단단한 블록(벽, 바닥 등)인지 확인합니다.
+                if (nextLocation.getBlock().getType().isSolid()) {
+                    // 3. 만약 벽이라면, 충돌 효과를 발생시키고 투사체를 제거합니다.
+                    // 물보라 파티클 효과
+                    projectile.getWorld().spawnParticle(Particle.SPLASH, projectile.getLocation(), 15, 0.2, 0.2, 0.2, 0.1);
+                    // 첨벙 소리 효과
+                    projectile.getWorld().playSound(projectile.getLocation(), Sound.ENTITY_FISHING_BOBBER_SPLASH, 0.5f, 1.5f);
+
+                    projectile.remove();
+                    this.cancel();
+                    return; // 벽에 부딪혔으므로 아래의 엔티티 확인 로직은 실행할 필요가 없습니다.
                 }
 
                 projectile.teleport(projectile.getLocation().add(direction.clone().multiply(speed)));
@@ -94,7 +117,8 @@ public class WaterBoltSpell implements Spell {
                     double damage = 10 + (intelli / 5.0);
 
                     target.damage(damage, caster);
-                    target.getWorld().playSound(target.getLocation(), Sound.ENTITY_FISHING_BOBBER_SPLASH, 0.5f, 1.5f);
+                    target.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_SPLASH, 0.5f, 1.5f);
+                    projectile.getWorld().spawnParticle(Particle.SPLASH, projectile.getLocation(), 15, 0.2, 0.2, 0.2, 0.1);
 
                     projectile.remove();
                     this.cancel();

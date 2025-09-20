@@ -27,9 +27,8 @@ public class Indicator implements Listener {
             attacker = (Player) event.getDamager();
         }
         // 경우 2: 공격자가 투사체인 경우 (원거리 공격)
-        else if (event.getDamager() instanceof Projectile) {
+        else if (event.getDamager() instanceof Projectile projectile) {
             // 투사체 정보를 가져옵니다.
-            Projectile projectile = (Projectile) event.getDamager();
             // 투사체를 쏜 존재(Shooter)를 가져옵니다.
             ProjectileSource shooter = projectile.getShooter();
 
