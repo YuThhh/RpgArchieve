@@ -87,15 +87,6 @@ public class SkillListener implements Listener {
                         player.sendMessage(Component.text(spell.getName() + " 쿨타임: " + timeLeftFormatted + "초", NamedTextColor.RED));
                         return; // 마법 시전 중단
                     }
-
-                    // TODO: 마나 소모 로직을 여기에 추가할 수 있습니다.
-//         double currentMana = statManager.getFinalStat(player.getUniqueId(), "CURRENT_MANA");
-//         if (currentMana < 20) {
-//             player.sendMessage("마나가 부족합니다!");
-//             return;
-//         }
-//         statManager.updatePlayerCurrentMana(player.getUniqueId(), currentMana - 20);
-
                     // 해당 마법의 고유 로직 실행
                     spell.cast(player);
 

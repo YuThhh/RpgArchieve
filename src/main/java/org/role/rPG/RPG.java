@@ -147,6 +147,8 @@ public final class RPG extends JavaPlugin implements Listener {
 
                         // StatManager에 새로 만든 메서드를 호출하여 데이터를 업데이트합니다.
                         statManager.updatePlayerCurrentMana(playerUUID, newCurrentMp);
+                    } else {
+                        statManager.updatePlayerCurrentMana(playerUUID, maxMp);
                     }
                 }
             }

@@ -4,15 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="마법 -&gt; 스킬로 변경">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Level/ExperienceListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Level/LevelManager.java" afterDir="false" />
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="레벨 추가&#10;메인 레벨&#10;부가 숙련도">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/FireBallSpell.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/PER_DATA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/PER_DATA.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/StatDataManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/StatDataManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/StatManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/StatManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Ui.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Ui.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/SkillListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/SkillListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/SpellManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/SpellManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/WaterBoltSpell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/WaterBoltSpell.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" afterDir="false" />
     </list>
@@ -71,22 +69,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Level",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/USER-PC/IdeaProjects/Rpgplugin/src/main/resources",
-    "project.structure.last.edited": "아티팩트",
-    "project.structure.proportion": "0.1484375",
-    "project.structure.side.proportion": "0.2",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Level&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/USER-PC/IdeaProjects/Rpgplugin/src/main/resources&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;아티팩트&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.1484375&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\USER-PC\IdeaProjects\Rpgplugin\src\main\resources" />
@@ -94,6 +92,9 @@
     </key>
     <key name="ExtractSuperBase.RECENT_KEYS">
       <recent name="org.role.rPG.UI" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.role.rPG.Skill" />
     </key>
   </component>
   <component name="RunManager">
@@ -301,7 +302,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758362191635</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="레벨 추가&#10;메인 레벨&#10;부가 숙련도">
+      <option name="closed" value="true" />
+      <created>1758364659153</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1758364659153</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -344,6 +353,7 @@
     <MESSAGE value="마법 및 마법서 추가" />
     <MESSAGE value="마법 코드 수정&#10;추가하기 쉬워짐" />
     <MESSAGE value="마법 -&gt; 스킬로 변경" />
-    <option name="LAST_COMMIT_MESSAGE" value="마법 -&gt; 스킬로 변경" />
+    <MESSAGE value="레벨 추가&#10;메인 레벨&#10;부가 숙련도" />
+    <option name="LAST_COMMIT_MESSAGE" value="레벨 추가&#10;메인 레벨&#10;부가 숙련도" />
   </component>
 </project>

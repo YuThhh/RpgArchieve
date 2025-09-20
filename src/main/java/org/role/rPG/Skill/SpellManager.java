@@ -12,6 +12,7 @@ public class SpellManager {
     public SpellManager(RPG plugin, StatManager statManager) {
         // 여기에 새로운 마법들을 등록합니다.
         registerSpell(new WaterBoltSpell(plugin, statManager));
+        registerSpell(new FireBallSpell(plugin,statManager));
         // registerSpell(new FireBallSpell(plugin, statManager)); // 나중에 파이어볼 추가시
     }
 
