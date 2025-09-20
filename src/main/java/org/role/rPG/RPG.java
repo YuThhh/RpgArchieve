@@ -12,7 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.role.rPG.Food.Cooked;
 import org.role.rPG.Indicator.IndicatorManager;
 import org.role.rPG.Item.*;
-import org.role.rPG.Magic.MagicListener;
+import org.role.rPG.Skill.SkillListener;
 import org.role.rPG.Mob.DummyMob;
 import org.role.rPG.Mob.MobManager;
 import org.role.rPG.Player.*;
@@ -75,7 +75,7 @@ public final class RPG extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new Ui(this, this.statManager), this);
         getServer().getPluginManager().registerEvents(new ItemUpdateListener(this.itemManager), this);
         getServer().getPluginManager().registerEvents(this.reforgeUi, this); // Reforge_UI 리스너 등록
-        getServer().getPluginManager().registerEvents(new MagicListener(this, this.itemManager, this.statManager), this);
+        getServer().getPluginManager().registerEvents(new SkillListener(this, this.itemManager, this.statManager), this);
 
         // --- 6. PlaceholderAPI 등록 및 후속 작업 ---
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {

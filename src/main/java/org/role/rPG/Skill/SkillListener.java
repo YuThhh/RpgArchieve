@@ -1,5 +1,5 @@
 // 파일 경로: org/role/rPG/MagicListener.java (예시)
-package org.role.rPG.Magic;
+package org.role.rPG.Skill;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -21,7 +21,7 @@ import java.util.*;
 // URL 추가
 
 
-public class MagicListener implements Listener {
+public class SkillListener implements Listener {
 
     private final RPG plugin;
     private final ItemManager itemManager;
@@ -31,7 +31,7 @@ public class MagicListener implements Listener {
     // <플레이어UUID, <마법이름, 쿨타임이 끝나는 시간>>
     private final Map<UUID, Map<String, Long>> cooldowns = new HashMap<>();
 
-    public MagicListener(RPG plugin, ItemManager itemManager, StatManager statManager) {
+    public SkillListener(RPG plugin, ItemManager itemManager, StatManager statManager) {
         this.plugin = plugin;
         this.itemManager = itemManager;
         this.statManager = statManager;

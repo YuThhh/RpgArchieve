@@ -1,4 +1,4 @@
-package org.role.rPG.Magic;
+package org.role.rPG.Skill;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;

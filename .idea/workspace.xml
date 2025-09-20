@@ -5,19 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="마법 코드 수정&#10;추가하기 쉬워짐">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/CustomMob.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/DummyMob.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/MobManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/CMD_manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/CMD_manager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/LIS_manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/LIS_manager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/CMD_manager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/CMD_manager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/LIS_manager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/LIS_manager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +67,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Mob",
+    "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",

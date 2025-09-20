@@ -1,4 +1,4 @@
-package org.role.rPG.Magic;
+package org.role.rPG.Skill;
 
 import org.role.rPG.Player.StatManager;
 import org.role.rPG.RPG;
