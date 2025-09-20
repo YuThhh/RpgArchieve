@@ -64,6 +64,15 @@ public class StatDataManager {
                     config.set(basePath + ".speed", perData.getPlayerSpeed(uuid));
                     config.set(basePath + ".max_mana", perData.getPlayerMaxMana(uuid));
                     config.set(basePath + ".current_mana", perData.getPlayerCurrentMana(uuid));
+                    config.set(basePath + ".level", perData.getPlayerLevel(uuid));
+                    config.set(basePath + ".experience", perData.getPlayerExperience(uuid));
+
+                    // 숙련도 저장
+                    perData.getProficiencies(uuid).forEach((proficiencyName, level) -> {
+                        String profPath = basePath + ".proficiencies." + proficiencyName;
+                        config.set(profPath + ".level", level);
+                        config.set(profPath + ".experience", perData.getProficiencyExperience(uuid, proficiencyName));
+                    });
 
                     // 참고: 창고(ItemStack[])는 기본적으로 저장할 수 없어 별도의 변환(직렬화) 과정이 필요합니다.
                     // 이 예제에서는 편의상 제외했습니다.
@@ -110,6 +119,17 @@ public class StatDataManager {
                 perData.setPlayerSpeed(uuid, (float) config.getDouble(basePath + ".speed", 100.0));
                 perData.setPlayerMaxMana(uuid, config.getDouble(basePath + ".max_mana", 100.0));
                 perData.setPlayerCurrentMana(uuid, config.getDouble(basePath + ".current_mana", 100.0));
+                perData.setPlayerLevel(uuid, config.getInt(basePath + ".level", 1));
+                perData.setPlayerExperience(uuid, config.getDouble(basePath + ".experience", 0.0));
+
+                ConfigurationSection profSection = config.getConfigurationSection(basePath + ".proficiencies");
+                if (profSection != null) {
+                    for (String proficiencyName : profSection.getKeys(false)) {
+                        String profPath = profSection.getCurrentPath() + "." + proficiencyName;
+                        perData.setProficiencyLevel(uuid, proficiencyName, config.getInt(profPath + ".level"));
+                        perData.setProficiencyExperience(uuid, proficiencyName, config.getDouble(profPath + ".experience"));
+                    }
+                }
 
             } catch (IllegalArgumentException e) {
                 plugin.getLogger().warning("config.yml에서 잘못된 스탯 UUID 형식을 발견했습니다: " + uuidString);

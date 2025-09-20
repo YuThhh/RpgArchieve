@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.role.rPG.Level.LevelManager;
 import org.role.rPG.Player.Cash;
 import org.role.rPG.Player.PER_DATA;
 import org.role.rPG.Player.StatManager;
@@ -25,13 +26,14 @@ public class Ui implements Listener {
     private final JavaPlugin plugin;
     private final StatManager statManager;
     private final PER_DATA data = PER_DATA.getInstance(); // 마나처럼 StatManager가 관리하지 않는 데이터용
+    private final LevelManager levelManager;
 
     // ▼▼▼ [수정] 생성자를 통해 필요한 인스턴스를 받아옵니다 ▼▼▼
-    public Ui(JavaPlugin plugin, StatManager statManager) {
+    public Ui(JavaPlugin plugin, StatManager statManager, LevelManager levelManager) {
         this.plugin = plugin;
         this.statManager = statManager;
+        this.levelManager = levelManager; // 받아온 LevelManager 인스턴스 저장
 
-        // 생성자에서 직접 스케줄러를 시작합니다.
         startActionBarUpdater();
         startScoreboardUpdater();
     }
@@ -74,11 +76,18 @@ public class Ui implements Listener {
                     int maxMp = (int) statManager.getFinalStat(playerUUID,"MAX_MANA");
                     int currentMp = (int) statManager.getFinalStat(playerUUID,"CURRENT_MANA");
 
+                    // ▼▼▼ [핵심 수정] 레벨 및 경험치 정보 계산 ▼▼▼
+                    int currentLevel = data.getPlayerLevel(playerUUID);
+                    double currentExp = data.getPlayerExperience(playerUUID);
+                    double requiredExp = levelManager.getRequiredExperience(currentLevel);
+                    // 경험치 백분율 계산 (0으로 나누기 방지)
+                    int percentage = (requiredExp > 0) ? (int) ((currentExp / requiredExp) * 100) : 0;
+                    String levelDisplay = "LV." + currentLevel + " (" + percentage + "%)";
+
                     Component message = Component.text("♥ " + currentHealth + "/" + maxHealth, NamedTextColor.RED)
-                            .append(Component.text("  \uD83D\uDEE1 " + defense, NamedTextColor.GREEN)) // 방패 아이콘 추가
-                            .append(Component.text("  \uD83D\uDCA7 " + currentMp + "/" + maxMp, NamedTextColor.AQUA)) // 물방울 아이콘 추가
-                            .append(Component.text("  \uD83D\uDCAA " + str, NamedTextColor.RED)) // 근육 아이콘 추가
-                            .append(Component.text("  ⚔ " + String.format("%.2f", atkSpdValue), NamedTextColor.YELLOW)); // 칼 아이콘 추가
+                            .append(Component.text("  \uD83D\uDEE1 " + defense, NamedTextColor.GREEN))
+                            .append(Component.text("  \uD83D\uDD2E " + currentMp + "/" + maxMp, NamedTextColor.AQUA))
+                            .append(Component.text("  " + levelDisplay, NamedTextColor.YELLOW)); // 레벨 정보 노란색으로 추가
 
                     sendActionBar(player, message);
                 }

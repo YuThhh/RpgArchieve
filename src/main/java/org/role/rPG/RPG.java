@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.role.rPG.Food.Cooked;
 import org.role.rPG.Indicator.IndicatorManager;
 import org.role.rPG.Item.*;
+import org.role.rPG.Level.LevelManager;
 import org.role.rPG.Skill.SkillListener;
 import org.role.rPG.Mob.DummyMob;
 import org.role.rPG.Mob.MobManager;
@@ -33,6 +34,7 @@ public final class RPG extends JavaPlugin implements Listener {
     private static final double NormalHpRegen = 1;
     private static final double NormalMpRegen = 3;
     private MobManager mobManager;
+    private LevelManager levelManager;
 
     @Override
     public void onEnable() {
@@ -52,6 +54,7 @@ public final class RPG extends JavaPlugin implements Listener {
         // 다른 매니저를 필요로 하는 매니저들을 생성합니다.
         this.itemManager = new ItemManager(this, this.reforgeManager); // ItemManager는 ReforgeManager가 필요
         this.statManager = new StatManager(this, this.itemManager);     // StatManager는 ItemManager가 필요
+        this.levelManager = new LevelManager(this, this.statManager);
 
         // UI 클래스를 생성합니다.
         this.reforgeUi = new Reforge_UI(itemManager, statManager, reforgeManager);
@@ -72,10 +75,12 @@ public final class RPG extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new Stat(this, this.statManager, this.indicatorManager), this);
         getServer().getPluginManager().registerEvents(new Cooked(this), this);
         getServer().getPluginManager().registerEvents(new EquipmentListener(this, this.statManager), this);
-        getServer().getPluginManager().registerEvents(new Ui(this, this.statManager), this);
+        getServer().getPluginManager().registerEvents(new Ui(this, this.statManager, this.levelManager), this);
         getServer().getPluginManager().registerEvents(new ItemUpdateListener(this.itemManager), this);
         getServer().getPluginManager().registerEvents(this.reforgeUi, this); // Reforge_UI 리스너 등록
         getServer().getPluginManager().registerEvents(new SkillListener(this, this.itemManager, this.statManager), this);
+        getServer().getPluginManager().registerEvents(new org.role.rPG.Level.ExperienceListener(this.levelManager), this);
+
 
         // --- 6. PlaceholderAPI 등록 및 후속 작업 ---
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
