@@ -19,23 +19,10 @@ commands:
     aliases: [개발자수표]
   메뉴:
     usage: /메뉴
-  setdef:
-    usage: /setdef
-  setcrit:
-    usage: /setcirt
-  setcritdmg:
-    usage: /setcritdmg
-  sethp:
-    usage: /sethp
-  setpower:
-    usage: /setpower
-  setattackspeed:
-    usage: /setattackspeed
-  setspeed:
-    usage: /setspeed
-  setvital:
-    usage: /setvital
   rpgitem:
     usage: /rpgitem
   리포지:
     usage: /리포지
+  mob:
+    description: 커스텀 몹을 관리합니다.
+    usage: /mob <spawn|remove> <mob_id>
