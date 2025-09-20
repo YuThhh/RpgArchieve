@@ -13,6 +13,7 @@ import org.role.rPG.Food.Cooked;
 import org.role.rPG.Indicator.Indicator;
 import org.role.rPG.Indicator.IndicatorManager;
 import org.role.rPG.Item.*;
+import org.role.rPG.Magic.MagicListener;
 import org.role.rPG.Player.*;
 import org.role.rPG.UI.Reforge_UI;
 import org.role.rPG.UI.Ui;

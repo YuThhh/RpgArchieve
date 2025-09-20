@@ -41,6 +41,7 @@ public class ItemManager {
     private static final NamespacedKey REFORGE_KEY = new NamespacedKey("rpg", "reforge_id");
     private static final Pattern LORE_STAT_PATTERN = Pattern.compile("([^:]+): ([+\\-]?\\d+(\\.\\d+)?)");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+    private static final NamespacedKey CONFIG_HASH_KEY = new NamespacedKey("rpg", "config_hash");
 
     static {
         CUSTOM_ITEM_ID_KEY = new NamespacedKey("rpg", "custom_item_id");
@@ -102,6 +103,13 @@ public class ItemManager {
         meta.setUnbreakable(config.getBoolean("unbreakable", false));
         PersistentDataContainer container = meta.getPersistentDataContainer();
         container.set(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING, itemId);
+
+        // ▼▼▼ 버전 저장 로직을 아래 해시 저장 로직으로 교체 ▼▼▼
+        // 아이템의 모든 설정 값을 문자열로 만든 뒤, hashCode를 계산하여 '데이터 지문'으로 사용합니다.
+        String configString = config.getValues(true).toString();
+        int configHash = configString.hashCode();
+        container.set(CONFIG_HASH_KEY, PersistentDataType.INTEGER, configHash);
+        // ▲▲▲ 여기까지 ▲▲▲
 
         Map<String, Double> baseStats = new HashMap<>();
         for (String loreLine : originalLoreStrings) {
@@ -231,27 +239,31 @@ public class ItemManager {
         ItemMeta currentMeta = item.getItemMeta();
         String itemId = currentMeta.getPersistentDataContainer().get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
         ItemStack latestItemTemplate = customItems.get(itemId);
-        if (latestItemTemplate == null) return false;
 
-        Map<String, Double> currentBaseStats = getBaseStats(item);
-        Map<String, Double> latestBaseStats = getBaseStats(latestItemTemplate);
+        if (latestItemTemplate == null || latestItemTemplate.getItemMeta() == null) return false;
+        ItemMeta latestMeta = latestItemTemplate.getItemMeta();
 
-        // --- ▼▼▼ 디버그 메시지 출력 부분 ▼▼▼ ---
-        System.out.println("----- 아이템 업데이트 확인 -----");
-        System.out.println("아이템 ID: " + itemId);
-        System.out.println("플레이어가 가진 아이템의 기본 스탯: " + currentBaseStats);
-        System.out.println("Item.yml의 최신 기본 스탯: " + latestBaseStats);
-        System.out.println("두 스탯이 동일한가? " + currentBaseStats.equals(latestBaseStats));
-        // --- ▲▲▲ 여기까지 ▲▲▲ ---
+        // 1. 플레이어 아이템에 저장된 해시와 최신 아이템의 해시를 가져옵니다.
+        int currentHash = currentMeta.getPersistentDataContainer().getOrDefault(CONFIG_HASH_KEY, PersistentDataType.INTEGER, 0);
+        int latestHash = latestMeta.getPersistentDataContainer().getOrDefault(CONFIG_HASH_KEY, PersistentDataType.INTEGER, 1);
 
-        if (!currentBaseStats.equals(latestBaseStats)) {
-            System.out.println("결과: 기본 스탯 불일치. 아이템을 업데이트합니다.");
+        // 2. 해시 값이 다른 경우에만 업데이트를 진행합니다.
+        if (currentHash != latestHash) {
+            System.out.println("아이템 업데이트 발견 (" + itemId + "): 해시 불일치. " + currentHash + " -> " + latestHash);
+
+            // [중요] 업데이트 전에 아이템의 해시를 최신으로 맞춰줍니다.
+            currentMeta.getPersistentDataContainer().set(CONFIG_HASH_KEY, PersistentDataType.INTEGER, latestHash);
+            // 기본 스탯도 최신 버전으로 업데이트합니다.
+            Map<String, Double> latestBaseStats = getBaseStats(latestItemTemplate);
             currentMeta.getPersistentDataContainer().set(BASE_STATS_KEY, new StatMapDataType(), latestBaseStats);
-            item.setItemMeta(currentMeta);
+
+            item.setItemMeta(currentMeta); // 변경된 해시와 스탯 데이터를 먼저 저장
+
+            // 최종적으로 로어와 모든 스탯을 새로고칩니다.
             updateLoreAndStats(item);
             return true;
         }
-        System.out.println("결과: 기본 스탯 일치. 업데이트하지 않습니다.");
+
         return false;
     }
 
