@@ -55,13 +55,30 @@ public class MobManager {
         return mobRegistry.keySet();
     }
 
+    /**
+     * 월드에 있는 Entity가 등록된 CustomMob인지 확인하고, 맞다면 해당 CustomMob 객체를 반환합니다.
+     * @param entity 확인할 Entity
+     * @return CustomMob 객체. 커스텀 몹이 아니면 null을 반환합니다.
+     */
+    public CustomMob getCustomMob(Entity entity) {
+        // 엔티티의 데이터 컨테이너에서 커스텀 몹 ID를 가져옵니다.
+        String mobId = entity.getPersistentDataContainer().get(DummyMob.CUSTOM_MOB_ID_KEY, PersistentDataType.STRING);
+
+        if (mobId != null) {
+            // mobId가 존재하면, 등록소(mobRegistry)에서 해당 ID를 가진 CustomMob 객체를 찾아 반환합니다.
+            return mobRegistry.get(mobId.toLowerCase());
+        }
+        // 커스텀 몹이 아니면 null을 반환합니다.
+        return null;
+    }
+
     // 참고: 범용 제거 기능은 모든 몹이 동일한 식별 태그를 가져야 하므로,
     // 추후 더 복잡한 시스템(예: 모든 몹에 고유 태그 부여)을 구현할 때 추가하는 것이 좋습니다.
     // 지금은 /더미제거 기능만 남겨두겠습니다.
     public int removeAllDummies(World world) {
         int removedCount = 0;
         for (Entity entity : world.getEntities()) {
-            if (entity.getPersistentDataContainer().has(DummyMob.DUMMY_MOB_KEY, PersistentDataType.BYTE)) {
+            if (entity.getPersistentDataContainer().has(DummyMob.CUSTOM_MOB_ID_KEY, PersistentDataType.BYTE)) {
                 entity.remove();
                 removedCount++;
             }

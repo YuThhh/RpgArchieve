@@ -9,6 +9,9 @@ public interface CustomMob extends Listener {
     // 몹을 식별할 고유 ID (예: "dummy", "goblin")
     String getMobId();
 
+    // 몹이 드롭할 경험치
+    double getExperience();
+
     // 몹을 소환하는 기능
     void spawn(Location location);
 }

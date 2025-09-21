@@ -2,33 +2,50 @@ package org.role.rPG.Level;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.role.rPG.Mob.CustomMob;
+import org.role.rPG.Mob.MobManager;
 import org.role.rPG.Player.PER_DATA;
 
 public class ExperienceListener implements Listener {
 
     private final LevelManager levelManager;
+    private final MobManager mobManager;
 
-    public ExperienceListener(LevelManager levelManager) {
+    public ExperienceListener(LevelManager levelManager, MobManager mobManager) {
         this.levelManager = levelManager;
+        this.mobManager = mobManager;
     }
+
 
     // 몬스터 사냥 시 경험치 획득
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         if (event.getEntity().getKiller() != null) {
             Player killer = event.getEntity().getKiller();
+            Entity deadEntity = event.getEntity();
 
             // 몬스터를 죽였을 때만 경험치 지급
-            if (event.getEntity() instanceof Monster) {
-                // 메인 경험치 15, 전투 숙련도 경험치 10 지급 (값은 자유롭게 조절)
-                levelManager.addExperience(killer, 15);
-                levelManager.addProficiencyExperience(killer, PER_DATA.COMBAT_PROFICIENCY, 10);
+            CustomMob customMob = mobManager.getCustomMob(deadEntity);
+
+            if (customMob != null) {
+                // 커스텀 몹일 경우, 해당 몹이 가진 경험치를 가져옵니다.
+                double experienceToGive = customMob.getExperience();
+                if (experienceToGive > 0) {
+                    levelManager.addExperience(killer, experienceToGive);
+                }
+                // 전투 숙련도 등 추가 경험치를 주고 싶다면 여기에 추가
+                // levelManager.addProficiencyExperience(killer, PER_DATA.COMBAT_PROFICIENCY, 10);
+
+            } else if (deadEntity instanceof Monster) {
+                // 커스텀 몹이 아닌 일반 몬스터일 경우, 기본 경험치를 지급합니다.
+                levelManager.addExperience(killer, 5); // 예: 일반 몬스터는 5 경험치
             }
         }
     }

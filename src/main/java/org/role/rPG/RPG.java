@@ -79,7 +79,7 @@ public final class RPG extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new ItemUpdateListener(this.itemManager), this);
         getServer().getPluginManager().registerEvents(this.reforgeUi, this); // Reforge_UI 리스너 등록
         getServer().getPluginManager().registerEvents(new SkillListener(this, this.itemManager, this.statManager), this);
-        getServer().getPluginManager().registerEvents(new org.role.rPG.Level.ExperienceListener(this.levelManager), this);
+        getServer().getPluginManager().registerEvents(new org.role.rPG.Level.ExperienceListener(this.levelManager, this.mobManager), this);
 
 
         // --- 6. PlaceholderAPI 등록 및 후속 작업 ---
