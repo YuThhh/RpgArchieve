@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="인디케이터 변경">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Indicator/Indicator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Indicator/Indicator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Level/ExperienceListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Level/ExperienceListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/CustomMob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/CustomMob.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/DummyMob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/DummyMob.java" afterDir="false" />
-    </list>
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="경험치를 몹의 아이디에 따라 다르게 오르도록 수정" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -331,7 +325,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758441704445</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="경험치를 몹의 아이디에 따라 다르게 오르도록 수정">
+      <option name="closed" value="true" />
+      <created>1758445830128</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1758445830128</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -378,6 +380,7 @@
     <MESSAGE value="마법 수정" />
     <MESSAGE value="오류 수정" />
     <MESSAGE value="인디케이터 변경" />
-    <option name="LAST_COMMIT_MESSAGE" value="인디케이터 변경" />
+    <MESSAGE value="경험치를 몹의 아이디에 따라 다르게 오르도록 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="경험치를 몹의 아이디에 따라 다르게 오르도록 수정" />
   </component>
 </project>
