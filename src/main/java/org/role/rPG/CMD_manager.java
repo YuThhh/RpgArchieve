@@ -204,7 +204,6 @@ public class CMD_manager implements CommandExecutor, TabCompleter {
                 return true;
             }
         }
-
         return false;
     }
 

@@ -34,7 +34,7 @@ public class IndicatorManager {
 
         spawnLocation.getWorld().spawn(spawnLocation, TextDisplay.class, textDisplay -> {
             // 1. 텍스트 내용과 색상을 설정합니다.
-            textDisplay.text(Component.text(String.format("-%.1f", damage), NORMAL_DAMAGE_COLOR));
+            textDisplay.text(Component.text(String.format("%.1f", damage), NORMAL_DAMAGE_COLOR));
 
             // 2. 항상 플레이어를 바라보도록 설정합니다 (빌보드 효과).
             textDisplay.setBillboard(Display.Billboard.CENTER);
@@ -80,7 +80,7 @@ public class IndicatorManager {
 
         spawnLocation.getWorld().spawn(spawnLocation, TextDisplay.class, textDisplay -> {
             // 1. 텍스트를 금색으로, 더 눈에 띄는 형식으로 설정합니다.
-            textDisplay.text(Component.text(String.format("-%.1f", damage), CRITICAL_DAMAGE_COLOR));
+            textDisplay.text(Component.text(String.format("%.1f", damage), CRITICAL_DAMAGE_COLOR));
 
             // 2. 빌보드 효과
             textDisplay.setBillboard(Display.Billboard.CENTER);

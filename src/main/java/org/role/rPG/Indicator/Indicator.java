@@ -6,6 +6,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource; // 투사체 발사자를 확인하기 위해 임포트
+import org.jetbrains.annotations.Nullable;
 
 public class Indicator implements Listener {
 
@@ -18,6 +19,27 @@ public class Indicator implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent event) {
         // 공격의 최종 출처가 될 플레이어를 담을 변수
+        Player attacker = getPlayer(event);
+
+        // 최종 공격자가 플레이어가 아니면 인디케이터를 표시하지 않습니다.
+        if (attacker == null) {
+            return;
+        }
+
+        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+        // 피해를 입은 대상이 살아있는 개체가 아니거나 Display 개체일 경우 무시
+        if (!(event.getEntity() instanceof LivingEntity) || event.getEntity() instanceof Display) {
+            return;
+        }
+
+        Entity damagedEntity = event.getEntity();
+        double damage = event.getFinalDamage();
+
+        indicatorManager.showDamageIndicator(damagedEntity.getLocation(), damage);
+    }
+
+    private static @Nullable Player getPlayer(EntityDamageByEntityEvent event) {
         Player attacker = null;
 
         // ▼▼▼ 이 부분이 수정되었습니다 ▼▼▼
@@ -37,22 +59,6 @@ public class Indicator implements Listener {
                 attacker = (Player) shooter;
             }
         }
-
-        // 최종 공격자가 플레이어가 아니면 인디케이터를 표시하지 않습니다.
-        if (attacker == null) {
-            return;
-        }
-
-        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-
-        // 피해를 입은 대상이 살아있는 개체가 아니거나 Display 개체일 경우 무시
-        if (!(event.getEntity() instanceof LivingEntity) || event.getEntity() instanceof Display) {
-            return;
-        }
-
-        Entity damagedEntity = event.getEntity();
-        double damage = event.getFinalDamage();
-
-        indicatorManager.showDamageIndicator(damagedEntity.getLocation(), damage);
+        return attacker;
     }
 }
