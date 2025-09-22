@@ -73,7 +73,7 @@ public class LevelManager {
      * @param proficiency 숙련도 종류 (예: PER_DATA.COMBAT_PROFICIENCY)
      * @param amount 획득할 경험치 양
      */
-    public void addProficiencyExperience(Player player, String proficiency, double amount) {
+    public void addProficiencyExp(Player player, String proficiency, double amount) {
         int currentLevel = perData.getProficiencyLevel(player.getUniqueId(), proficiency);
         double currentExp = perData.getProficiencyExperience(player.getUniqueId(), proficiency);
 

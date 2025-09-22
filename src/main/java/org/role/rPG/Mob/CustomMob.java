@@ -10,7 +10,7 @@ public interface CustomMob extends Listener {
     String getMobId();
 
     // 몹이 드롭할 경험치
-    double getExperience();
+    double getProficiencyExp();
 
     // 몹을 소환하는 기능
     void spawn(Location location);

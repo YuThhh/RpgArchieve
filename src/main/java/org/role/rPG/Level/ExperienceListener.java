@@ -36,12 +36,10 @@ public class ExperienceListener implements Listener {
 
             if (customMob != null) {
                 // 커스텀 몹일 경우, 해당 몹이 가진 경험치를 가져옵니다.
-                double experienceToGive = customMob.getExperience();
+                double experienceToGive = customMob.getProficiencyExp();
                 if (experienceToGive > 0) {
-                    levelManager.addExperience(killer, experienceToGive);
+                    levelManager.addProficiencyExp(killer, PER_DATA.COMBAT_PROFICIENCY, experienceToGive);
                 }
-                // 전투 숙련도 등 추가 경험치를 주고 싶다면 여기에 추가
-                // levelManager.addProficiencyExperience(killer, PER_DATA.COMBAT_PROFICIENCY, 10);
 
             } else if (deadEntity instanceof Monster) {
                 // 커스텀 몹이 아닌 일반 몬스터일 경우, 기본 경험치를 지급합니다.
@@ -60,13 +58,13 @@ public class ExperienceListener implements Listener {
 
         // 특정 광물을 캤을 때 채광 숙련도 경험치 지급
         if (blockType == Material.COAL_ORE || blockType == Material.DEEPSLATE_COAL_ORE) {
-            levelManager.addProficiencyExperience(player, PER_DATA.MINING_PROFICIENCY, 3);
+            levelManager.addProficiencyExp(player, PER_DATA.MINING_PROFICIENCY, 3);
         } else if (blockType == Material.IRON_ORE || blockType == Material.DEEPSLATE_IRON_ORE) {
-            levelManager.addProficiencyExperience(player, PER_DATA.MINING_PROFICIENCY, 5);
+            levelManager.addProficiencyExp(player, PER_DATA.MINING_PROFICIENCY, 5);
         } else if (blockType == Material.DIAMOND_ORE || blockType == Material.DEEPSLATE_DIAMOND_ORE) {
-            levelManager.addProficiencyExperience(player, PER_DATA.MINING_PROFICIENCY, 20);
+            levelManager.addProficiencyExp(player, PER_DATA.MINING_PROFICIENCY, 20);
         } else if (blockType == Material.STONE) {
-            levelManager.addProficiencyExperience(player, PER_DATA.MINING_PROFICIENCY, 0.5);
+            levelManager.addProficiencyExp(player, PER_DATA.MINING_PROFICIENCY, 0.5);
         }
     }
 }

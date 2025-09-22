@@ -22,6 +22,9 @@ public class DummyMob implements CustomMob {
     private final JavaPlugin plugin;
     public static final NamespacedKey CUSTOM_MOB_ID_KEY= new NamespacedKey("rpg", "custom_mob_id");
 
+    private final String MobId = "dummy";
+    private final double MobProficiencyExp = 0;
+
     public DummyMob(JavaPlugin plugin) {
         this.plugin = plugin;
     }
@@ -29,11 +32,11 @@ public class DummyMob implements CustomMob {
     // [추가] CustomMob 인터페이스가 요구하는 getMobId 메소드 구현
     @Override
     public String getMobId() {
-        return "dummy"; // 이 몹의 고유 ID는 "dummy" 입니다.
+        return MobId; // 이 몹의 고유 ID는 "dummy" 입니다.
     }
 
     @Override
-    public double getExperience() {
+    public double getProficiencyExp() {
         return 0; // 허수아비는 경험치를 주지 않으므로 0을 반환합니다.
     }
 
