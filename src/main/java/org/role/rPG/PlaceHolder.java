@@ -13,7 +13,7 @@ public class PlaceHolder extends PlaceholderExpansion {
 
     private final RPG plugin;
     private final DecimalFormat decimalFormat = new DecimalFormat("#.#");
-    private StatManager statManager;
+    private final StatManager statManager;
 
     public PlaceHolder(RPG plugin, StatManager statManager) {
         this.plugin = plugin;

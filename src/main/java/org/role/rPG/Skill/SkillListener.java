@@ -10,9 +10,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Player.StatManager;
-import org.role.rPG.RPG;
 // Bukkit 추가
 
 import java.util.*;
@@ -23,7 +23,7 @@ import java.util.*;
 
 public class SkillListener implements Listener {
 
-    private final RPG plugin;
+    private final JavaPlugin plugin;
     private final ItemManager itemManager;
     private final StatManager statManager;
     private final SpellManager spellManager;
@@ -31,7 +31,7 @@ public class SkillListener implements Listener {
     // <플레이어UUID, <마법이름, 쿨타임이 끝나는 시간>>
     private final Map<UUID, Map<String, Long>> cooldowns = new HashMap<>();
 
-    public SkillListener(RPG plugin, ItemManager itemManager, StatManager statManager) {
+    public SkillListener(JavaPlugin plugin, ItemManager itemManager, StatManager statManager) {
         this.plugin = plugin;
         this.itemManager = itemManager;
         this.statManager = statManager;

@@ -6,22 +6,22 @@ import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.Vector3f;
 import org.role.rPG.Player.StatManager;
-import org.role.rPG.RPG;
 
 public class FireBallSpell implements Spell {
 
-    private final RPG plugin;
+    private final JavaPlugin plugin;
     private final StatManager statManager;
 
     private final String MAGIC_NAME = "파이어 볼";
     private final Double COOLDOWN = 0.7;
 
-    public FireBallSpell(RPG plugin, StatManager statManager) {
+    public FireBallSpell(JavaPlugin plugin, StatManager statManager) {
         this.plugin = plugin;
         this.statManager = statManager;
     }

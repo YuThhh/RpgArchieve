@@ -9,18 +9,18 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.role.rPG.Player.StatManager;
-import org.role.rPG.RPG;
 
 public class EquipmentListener implements Listener {
 
     private final StatManager statManager;
-    private final RPG plugin;
+    private final JavaPlugin plugin;
 
     private static final double VANILLA_HEALTH_SCALE = 20.0;
 
-    public EquipmentListener(RPG plugin, StatManager statManager) {
+    public EquipmentListener(JavaPlugin plugin, StatManager statManager) {
         this.plugin = plugin;
         this.statManager = statManager;
     }
