@@ -9,16 +9,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.role.rPG.Food.Cooked;
 import org.role.rPG.Indicator.IndicatorManager;
 import org.role.rPG.Item.*;
 import org.role.rPG.Level.LevelManager;
-import org.role.rPG.Skill.SkillListener;
 import org.role.rPG.Mob.DummyMob;
 import org.role.rPG.Mob.MobManager;
 import org.role.rPG.Player.*;
 import org.role.rPG.UI.Reforge_UI;
-import org.role.rPG.UI.Ui;
 
 import java.util.UUID;
 
@@ -39,47 +36,41 @@ public final class RPG extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         getLogger().info("RPG Plugin is enabling...");
+        // --- 1. 데이터 및 기본 설정 초기화 ---
         Cash.initializeAndLoad(this);
         SUCHECK_VALUE_KEY = new NamespacedKey(this, "sucheck_value");
-        new PER_DATA(); // 데이터 관리자 초기화
+        new PER_DATA();
         StatDataManager.initialize(this);
         StatDataManager.loadAllStats();
 
-        // --- 2. 핵심 매니저(부품) 생성 (의존성 순서에 맞게) ---
-        // 의존성이 없는 기본 매니저들을 먼저 생성합니다.
+        // --- 2. 핵심 매니저(부품) 생성 ---
         this.indicatorManager = new IndicatorManager(this);
-        this.reforgeManager = new ReforgeManager(this); // ReforgeManager는 plugin 참조가 필요 없어 보입니다. 필요하다면 new ReforgeManager(this)로 수정
+        this.reforgeManager = new ReforgeManager(this);
         this.mobManager = new MobManager(this);
-
-        // 다른 매니저를 필요로 하는 매니저들을 생성합니다.
-        this.itemManager = new ItemManager(this, this.reforgeManager); // ItemManager는 ReforgeManager가 필요
-        this.statManager = new StatManager(this, this.itemManager);     // StatManager는 ItemManager가 필요
+        this.itemManager = new ItemManager(this, this.reforgeManager);
+        this.statManager = new StatManager(this, this.itemManager);
         this.levelManager = new LevelManager(this, this.statManager);
 
-        // UI 클래스를 생성합니다.
-        this.reforgeUi = new Reforge_UI(itemManager, statManager, reforgeManager);
+        // 2-1. UI 인스턴스 생성 코드를 제거합니다.
+        // this.reforgeUi = new Reforge_UI(itemManager, statManager, reforgeManager);
 
-        // --- 3. 설정 및 콘텐츠 로드/등록 ---
-        this.itemManager.reloadItems(); // 아이템 로드
-        this.mobManager.registerMob(new DummyMob(this)); // 커스텀 몹 등록
+        // --- 3. 콘텐츠 로드/등록 ---
+        this.itemManager.reloadItems();
+        this.mobManager.registerMob(new DummyMob(this));
 
-        // --- 4. 명령어 관리자(CMD_manager) 생성 및 등록 ---
-        // 모든 부품이 준비된 후, 마지막으로 CMD_manager를 단 한 번 생성하고 등록합니다.
-        CMD_manager cmdManager = new CMD_manager(this, this.itemManager, this.reforgeUi, this.mobManager);
+        // --- 4. 명령어 관리자(CMD_manager) 등록 ---
+        // CMD_manager에 Reforge_UI를 넘기는 대신, 필요한 매니저들을 넘겨주도록 수정해야 합니다.
+        // 또는 CMD_manager 내부에서 new Reforge_UI()를 호출하도록 구조를 변경합니다. (후자를 추천)
+        CMD_manager cmdManager = new CMD_manager(this, this.itemManager, this.reforgeManager, this.statManager, this.mobManager);
         cmdManager.registerCommands();
 
         // --- 5. 이벤트 리스너(Listener) 등록 ---
-        // 여러 클래스에 흩어져 있는 이벤트 핸들러들을 서버에 등록합니다.
-        getServer().getPluginManager().registerEvents(this, this); // onPlayerJoin/Quit 등
-        getServer().getPluginManager().registerEvents(new LIS_manager(this), this); // LIS_manager 등록 (기존 코드에 있었음)
-        getServer().getPluginManager().registerEvents(new Stat(this, this.statManager, this.indicatorManager), this);
-        getServer().getPluginManager().registerEvents(new Cooked(this), this);
-        getServer().getPluginManager().registerEvents(new EquipmentListener(this, this.statManager), this);
-        getServer().getPluginManager().registerEvents(new Ui(this, this.statManager, this.levelManager), this);
-        getServer().getPluginManager().registerEvents(new ItemUpdateListener(this.itemManager), this);
-        getServer().getPluginManager().registerEvents(this.reforgeUi, this); // Reforge_UI 리스너 등록
-        getServer().getPluginManager().registerEvents(new SkillListener(this, this.itemManager, this.statManager), this);
-        getServer().getPluginManager().registerEvents(new org.role.rPG.Level.ExperienceListener(this.levelManager, this.mobManager), this);
+        // 5-1. 메인 클래스(this)를 리스너로 직접 등록합니다. (PlayerJoin/Quit 이벤트 처리용)
+        getServer().getPluginManager().registerEvents(this, this);
+
+        // 5-2. LIS_manager를 통해 나머지 리스너들을 등록합니다.
+        LIS_manager lisManager = new LIS_manager(this);
+        lisManager.registerGeneralListeners(statManager, indicatorManager, itemManager, levelManager, mobManager);
 
 
         // --- 6. PlaceholderAPI 등록 및 후속 작업 ---
@@ -88,12 +79,11 @@ public final class RPG extends JavaPlugin implements Listener {
             getLogger().info("PlaceholderAPI expansion for RPG has been registered.");
         }
 
-        // 체력/마나 재생 스케줄러를 시작합니다.
+        // --- 7. 스케줄러 시작 ---
         Regeneration();
 
         getLogger().info("RPG Plugin has been enabled successfully!");
     }
-
     @Override
     public void onDisable() {
         Cash.saveAllPlayerData();

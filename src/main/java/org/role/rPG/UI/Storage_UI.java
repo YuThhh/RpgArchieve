@@ -2,46 +2,34 @@ package org.role.rPG.UI;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
 import org.role.rPG.Player.PER_DATA;
 
-public class Storage_UI implements Listener, InventoryHolder {
+// 1. BaseUI를 상속받고 Listener 구현을 제거합니다.
+public class Storage_UI extends BaseUI {
 
-    private final Inventory inv;
     private final ItemStack[] storage;
 
     public Storage_UI(ItemStack[] playerStorageData) {
-        Component titleComponent = Component.text("프로필", NamedTextColor.BLUE); //GUI 이름
-        inv = Bukkit.createInventory(this, 54, titleComponent); // GUI 칸 개수
-        // 주입받은 데이터를 클래스 내부 변수(storage)에 저장
+        // 2. 부모 생성자를 호출하여 GUI를 생성합니다.
+        super(54, Component.text("창고", NamedTextColor.BLUE)); // "프로필"에서 "창고"로 이름 수정
         this.storage = playerStorageData;
-        initializeItems();
     }
 
-    private void initializeItems() {
-        // inv.setItem(슬롯, 아이템);
-        // 슬롯 번호는 0부터 시작
-        ItemStack grayGlassPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-        ItemMeta grayMeta = grayGlassPane.getItemMeta();
-        grayMeta.setHideTooltip(true);
-        grayGlassPane.setItemMeta(grayMeta);
-        for (int i = 45; i < inv.getSize(); i++) {
-            inv.setItem(i, grayGlassPane);
+    @Override
+    protected void initializeItems(Player player) {
+        // 기존 initializeItems 로직과 동일
+        for (int i = 45; i < 54; i++) {
+            inv.setItem(i, createGrayPane());
         }
 
-        for (int i = 0; i < 45; i++) {
-            if (storage != null && i < storage.length && storage[i] != null) {
+        if (storage != null) {
+            for (int i = 0; i < Math.min(storage.length, 45); i++) {
                 inv.setItem(i, storage[i]);
             }
         }
@@ -50,55 +38,51 @@ public class Storage_UI implements Listener, InventoryHolder {
         ItemMeta backMeta = back.getItemMeta();
         backMeta.displayName(Component.text("뒤로가기", NamedTextColor.RED));
         back.setItemMeta(backMeta);
-
-        inv.setItem(49,back);
-    }
-
-    public void openInventory(final Player p) {
-        p.openInventory(inv);
+        inv.setItem(49, back);
     }
 
     @Override
-    public @NotNull Inventory getInventory() {
-        return inv;
-    }
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-
-        if (!(event.getInventory().getHolder() instanceof Storage_UI)) {
-            return;
-        }
-
-        // 클릭한 아이템이 없으면 무시
-        if (event.getCurrentItem() == null) {
-            return;
-        }
-
+    public void handleClick(InventoryClickEvent event) {
+        // 3. onInventoryClick 로직을 handleClick으로 옮깁니다.
         Player player = (Player) event.getWhoClicked();
-        Material clickedType = event.getCurrentItem().getType();
+        ItemStack clickedItem = event.getCurrentItem();
 
-        // 1. 뒤로가기 버튼(BARRIER)을 클릭했을 때
-        if (clickedType == Material.BARRIER) {
-            event.setCancelled(true); // 아이템 이동 방지
-            Menu_UI menu = new Menu_UI();
-            menu.openInventory(player);
-            return; // 다른 검사를 할 필요가 없으므로 여기서 종료
+        if (clickedItem == null) return;
+
+        Material clickedType = clickedItem.getType();
+
+        // 장식용 아이템 클릭 시 이벤트 취소
+        if (clickedType == Material.GRAY_STAINED_GLASS_PANE) {
+            event.setCancelled(true);
         }
 
-        // 2. 장식용 유리판을 클릭했을 때
-        if (clickedType == Material.GRAY_STAINED_GLASS_PANE) {
-            event.setCancelled(true); // 아이템 이동 방지
+        // 뒤로가기 버튼 클릭
+        if (clickedType == Material.BARRIER) {
+            event.setCancelled(true);
+            new Menu_UI().openInventory(player);
         }
     }
 
-    @EventHandler
-    public void InventoryCloseEvent(InventoryCloseEvent event) {
-        Player player =  (Player) event.getPlayer();
-
-        if (event.getInventory().getHolder() instanceof Storage_UI) {
-            // 중앙 관리소(RPG)에 접근해서 "이 플레이어의 창고는 이제 이 상태입니다"라고 알려줌
-            PER_DATA.getInstance().savePlayerStorage(player.getUniqueId(), event.getInventory().getContents());
+    /**
+     * GUIManager가 인벤토리가 닫힐 때 호출할 메서드입니다.
+     * @param event InventoryCloseEvent
+     */
+    public void handleClose(InventoryCloseEvent event) {
+        // 4. InventoryCloseEvent 로직을 handleClose로 옮깁니다.
+        Player player = (Player) event.getPlayer();
+        // 창고 영역(0-44 슬롯)의 아이템만 저장합니다.
+        ItemStack[] contents = new ItemStack[45];
+        for (int i = 0; i < 45; i++) {
+            contents[i] = event.getInventory().getItem(i);
         }
+        PER_DATA.getInstance().savePlayerStorage(player.getUniqueId(), contents);
+    }
+
+    private ItemStack createGrayPane() {
+        ItemStack grayGlassPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        ItemMeta grayMeta = grayGlassPane.getItemMeta();
+        grayMeta.displayName(Component.text(" "));
+        grayGlassPane.setItemMeta(grayMeta);
+        return grayGlassPane;
     }
 }

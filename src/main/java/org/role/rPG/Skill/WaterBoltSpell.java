@@ -9,24 +9,24 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.Vector3f;
 import org.role.rPG.Player.StatManager;
-import org.role.rPG.RPG;
 
 import java.util.UUID;
 
 public class WaterBoltSpell implements Spell {
 
-    private final RPG plugin;
+    private final JavaPlugin plugin;
     private final StatManager statManager;
 
     private final String MAGIC_NAME = "워터 볼트";
     private final Double COOLDOWN = 0.5;
 
-    public WaterBoltSpell(RPG plugin, StatManager statManager) {
+    public WaterBoltSpell(JavaPlugin plugin, StatManager statManager) {
         this.plugin = plugin;
         this.statManager = statManager;
     }
