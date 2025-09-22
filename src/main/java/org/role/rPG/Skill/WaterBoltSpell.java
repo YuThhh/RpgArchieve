@@ -43,6 +43,14 @@ public class WaterBoltSpell implements Spell {
 
     @Override
     public void cast(Player caster) {
+        // 마나 소모
+        double currentMana = statManager.getFinalStat(caster.getUniqueId(), "CURRENT_MANA");
+        if (currentMana < 20) {
+            caster.sendMessage("마나가 부족합니다!");
+            return;
+        }
+        statManager.updatePlayerCurrentMana(caster.getUniqueId(), currentMana - 20);
+
         // 물방울 모양 머리 아이템 생성
         ItemStack waterDropHead = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) waterDropHead.getItemMeta();

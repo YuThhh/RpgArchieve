@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="GUI 수정 중">
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="몹 패턴을 간단히 추가하기 위한 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/FireBallSpell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/FireBallSpell.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/Spell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/Spell.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,7 +24,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="Mob" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -354,7 +356,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758532188260</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="몹 패턴을 간단히 추가하기 위한 수정">
+      <option name="closed" value="true" />
+      <created>1758535975844</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1758535975844</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -403,6 +413,7 @@
     <MESSAGE value="인디케이터 변경" />
     <MESSAGE value="경험치를 몹의 아이디에 따라 다르게 오르도록 수정" />
     <MESSAGE value="GUI 수정 중" />
-    <option name="LAST_COMMIT_MESSAGE" value="GUI 수정 중" />
+    <MESSAGE value="몹 패턴을 간단히 추가하기 위한 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="몹 패턴을 간단히 추가하기 위한 수정" />
   </component>
 </project>
