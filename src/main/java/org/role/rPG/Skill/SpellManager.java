@@ -1,7 +1,7 @@
 package org.role.rPG.Skill;
 
+import org.bukkit.plugin.java.JavaPlugin;
 import org.role.rPG.Player.StatManager;
-import org.role.rPG.RPG;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.Map;
 public class SpellManager {
     private final Map<String, Spell> spells = new HashMap<>();
 
-    public SpellManager(RPG plugin, StatManager statManager) {
+    public SpellManager(JavaPlugin plugin, StatManager statManager) {
         // 여기에 새로운 마법들을 등록합니다.
         registerSpell(new WaterBoltSpell(plugin, statManager));
         registerSpell(new FireBallSpell(plugin,statManager));
