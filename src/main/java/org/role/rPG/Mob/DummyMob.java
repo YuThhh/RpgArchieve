@@ -6,6 +6,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 // [변경] Listener -> CustomMob 으로 변경
 // Listener는 CustomMob이 상속하므로 별도로 쓸 필요가 없습니다.
@@ -14,6 +15,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 // [변경] CustomMob 인터페이스를 구현(implements)하도록 수정
@@ -58,6 +60,37 @@ public class DummyMob implements CustomMob {
         dummy.getPersistentDataContainer().set(CUSTOM_MOB_ID_KEY, PersistentDataType.BYTE, (byte) 1);
         dummy.customName(Component.text("§7[ §f허수아비 §7]"));
         dummy.setCustomNameVisible(true);
+    }
+
+    /**
+     * [추가] 더미 몹의 패턴을 구현합니다.
+     * 10칸 이내의 가장 가까운 플레이어를 바라보게 합니다.
+     * @param entity 패턴을 실행할 몹 자신 (더미 몹)
+     */
+    @Override
+    public void runPattern(LivingEntity entity) {
+        // 주변 10칸 내의 플레이어들 중 가장 가까운 플레이어를 찾습니다.
+        Player closestPlayer = entity.getWorld().getPlayers().stream()
+                .filter(p -> p.getLocation().distanceSquared(entity.getLocation()) <= 100) // 10칸(10*10=100) 이내
+                .min(Comparator.comparingDouble(p -> p.getLocation().distanceSquared(entity.getLocation())))
+                .orElse(null); // 가장 가까운 플레이어가 없으면 null
+
+        // 가장 가까운 플레이어가 있다면 그 방향으로 고개를 돌립니다.
+        if (closestPlayer != null) {
+            Location headLocation = entity.getEyeLocation();
+            Location playerLocation = closestPlayer.getEyeLocation();
+
+            // 플레이어를 바라보도록 방향(yaw, pitch) 설정
+            double dx = playerLocation.getX() - headLocation.getX();
+            double dy = playerLocation.getY() - headLocation.getY();
+            double dz = playerLocation.getZ() - headLocation.getZ();
+            double distance = Math.sqrt(dx * dx + dz * dz);
+
+            float yaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
+            float pitch = (float) -Math.toDegrees(Math.atan2(dy, distance));
+
+            entity.setRotation(yaw, pitch);
+        }
     }
 
     @EventHandler
