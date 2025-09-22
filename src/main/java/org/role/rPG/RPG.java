@@ -14,6 +14,7 @@ import org.role.rPG.Item.*;
 import org.role.rPG.Level.LevelManager;
 import org.role.rPG.Mob.DummyMob;
 import org.role.rPG.Mob.MobManager;
+import org.role.rPG.Mob.MobPatternRunnable;
 import org.role.rPG.Player.*;
 import org.role.rPG.UI.Reforge_UI;
 
@@ -81,6 +82,7 @@ public final class RPG extends JavaPlugin implements Listener {
 
         // --- 7. 스케줄러 시작 ---
         Regeneration();
+        new MobPatternRunnable(this.mobManager).runTaskTimer(this, 0L, 20L);
 
         getLogger().info("RPG Plugin has been enabled successfully!");
     }
