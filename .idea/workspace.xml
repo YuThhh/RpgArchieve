@@ -4,8 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="마법 코드 수정&#10;추가하기 쉬워짐">
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Level/ExperienceListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Level/ExperienceListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Level/LevelManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Level/LevelManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/CustomMob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/CustomMob.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/DummyMob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/DummyMob.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,22 +38,25 @@
     &quot;assignee&quot;: &quot;kosi1324&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/YuThhh/Rpgplugin.git&quot;,
-    &quot;accountId&quot;: &quot;482230a0-fbe8-437c-b31b-c946033ea7f7&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/YuThhh/Rpgplugin.git",
+    "accountId": "1f073aea-be47-4c32-acc4-5890d47373a6"
   },
-  &quot;recentNewPullRequestHead&quot;: {
-    &quot;server&quot;: {
-      &quot;useHttp&quot;: false,
-      &quot;host&quot;: &quot;github.com&quot;,
-      &quot;port&quot;: null,
-      &quot;suffix&quot;: null
+  "recentNewPullRequestHead": {
+    "server": {
+      "useHttp": false,
+      "host": "github.com",
+      "port": null,
+      "suffix": null
     },
-    &quot;owner&quot;: &quot;YuThhh&quot;,
-    &quot;repository&quot;: &quot;Rpgplugin&quot;
+    "owner": "YuThhh",
+    "repository": "Rpgplugin"
   }
-}</component>
+}]]></component>
+  <component name="NamedScopeManager">
+    <scope name="작업 파일" pattern="file:README.md||file[rpgplugin]:src/main/java/org/role/rPG/Food//*||file[rpgplugin]:src/main/java/org/role/rPG/Indicator//*||file[rpgplugin]:src/main/java/org/role/rPG/Item//*||file[rpgplugin]:src/main/java/org/role/rPG/Level//*||file[rpgplugin]:src/main/java/org/role/rPG/Mob//*||file[rpgplugin]:src/main/java/org/role/rPG/Player//*||file[rpgplugin]:src/main/java/org/role/rPG/Skill//*||file[rpgplugin]:src/main/java/org/role/rPG/UI//*" />
+  </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -62,22 +69,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/USER-PC/IdeaProjects/Rpgplugin/src/main/resources",
-    "project.structure.last.edited": "아티팩트",
-    "project.structure.proportion": "0.1484375",
-    "project.structure.side.proportion": "0.2",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Level&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/USER-PC/IdeaProjects/Rpgplugin/src/main/resources&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;아티팩트&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.1484375&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.scopes&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\USER-PC\IdeaProjects\Rpgplugin\src\main\resources" />
@@ -85,6 +93,9 @@
     </key>
     <key name="ExtractSuperBase.RECENT_KEYS">
       <recent name="org.role.rPG.UI" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.role.rPG.Skill" />
     </key>
   </component>
   <component name="RunManager">
@@ -99,6 +110,13 @@
       <option name="filePath" />
       <method v="2" />
     </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.25557.131" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
@@ -284,7 +302,55 @@
       <option name="project" value="LOCAL" />
       <updated>1758357769966</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="마법 -&gt; 스킬로 변경">
+      <option name="closed" value="true" />
+      <created>1758362191635</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1758362191635</updated>
+    </task>
+    <task id="LOCAL-00024" summary="레벨 추가&#10;메인 레벨&#10;부가 숙련도">
+      <option name="closed" value="true" />
+      <created>1758364659153</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1758364659153</updated>
+    </task>
+    <task id="LOCAL-00025" summary="마법 수정">
+      <option name="closed" value="true" />
+      <created>1758379210011</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1758379210011</updated>
+    </task>
+    <task id="LOCAL-00026" summary="오류 수정">
+      <option name="closed" value="true" />
+      <created>1758380586887</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1758380586887</updated>
+    </task>
+    <task id="LOCAL-00027" summary="인디케이터 변경">
+      <option name="closed" value="true" />
+      <created>1758441704445</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1758441704445</updated>
+    </task>
+    <task id="LOCAL-00028" summary="경험치를 몹의 아이디에 따라 다르게 오르도록 수정">
+      <option name="closed" value="true" />
+      <created>1758445830128</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1758445830128</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -326,6 +392,12 @@
     <MESSAGE value="마나 관련 코드 추가" />
     <MESSAGE value="마법 및 마법서 추가" />
     <MESSAGE value="마법 코드 수정&#10;추가하기 쉬워짐" />
-    <option name="LAST_COMMIT_MESSAGE" value="마법 코드 수정&#10;추가하기 쉬워짐" />
+    <MESSAGE value="마법 -&gt; 스킬로 변경" />
+    <MESSAGE value="레벨 추가&#10;메인 레벨&#10;부가 숙련도" />
+    <MESSAGE value="마법 수정" />
+    <MESSAGE value="오류 수정" />
+    <MESSAGE value="인디케이터 변경" />
+    <MESSAGE value="경험치를 몹의 아이디에 따라 다르게 오르도록 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="경험치를 몹의 아이디에 따라 다르게 오르도록 수정" />
   </component>
 </project>

@@ -20,11 +20,10 @@ import java.util.Objects;
 public class DummyMob implements CustomMob {
 
     private final JavaPlugin plugin;
-    public static final NamespacedKey DUMMY_MOB_KEY;
+    public static final NamespacedKey CUSTOM_MOB_ID_KEY= new NamespacedKey("rpg", "custom_mob_id");
 
-    static {
-        DUMMY_MOB_KEY = new NamespacedKey("rpg", "dummy_mob");
-    }
+    private final String MobId = "dummy";
+    private final double MobProficiencyExp = 0;
 
     public DummyMob(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -33,7 +32,12 @@ public class DummyMob implements CustomMob {
     // [추가] CustomMob 인터페이스가 요구하는 getMobId 메소드 구현
     @Override
     public String getMobId() {
-        return "dummy"; // 이 몹의 고유 ID는 "dummy" 입니다.
+        return MobId; // 이 몹의 고유 ID는 "dummy" 입니다.
+    }
+
+    @Override
+    public double getProficiencyExp() {
+        return 0; // 허수아비는 경험치를 주지 않으므로 0을 반환합니다.
     }
 
     @Override
@@ -48,14 +52,17 @@ public class DummyMob implements CustomMob {
 
         Objects.requireNonNull(dummy.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(2048);
 
-        dummy.getPersistentDataContainer().set(DUMMY_MOB_KEY, PersistentDataType.BYTE, (byte) 1);
+        dummy.getPersistentDataContainer().set(CUSTOM_MOB_ID_KEY, PersistentDataType.STRING, getMobId());
+
+
+        dummy.getPersistentDataContainer().set(CUSTOM_MOB_ID_KEY, PersistentDataType.BYTE, (byte) 1);
         dummy.customName(Component.text("§7[ §f허수아비 §7]"));
         dummy.setCustomNameVisible(true);
     }
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (event.getEntity().getPersistentDataContainer().has(DUMMY_MOB_KEY, PersistentDataType.BYTE)) {
+        if (event.getEntity().getPersistentDataContainer().has(CUSTOM_MOB_ID_KEY, PersistentDataType.BYTE)) {
             LivingEntity dummy = (LivingEntity) event.getEntity();
             dummy.setHealth(Objects.requireNonNull(dummy.getAttribute(Attribute.MAX_HEALTH)).getValue());
         }
@@ -63,7 +70,7 @@ public class DummyMob implements CustomMob {
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
-        if (event.getEntity().getPersistentDataContainer().has(DUMMY_MOB_KEY, PersistentDataType.BYTE)) {
+        if (event.getEntity().getPersistentDataContainer().has(CUSTOM_MOB_ID_KEY, PersistentDataType.BYTE)) {
             event.setCancelled(true);
         }
     }

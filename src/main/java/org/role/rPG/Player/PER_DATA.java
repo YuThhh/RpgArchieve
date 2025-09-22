@@ -29,6 +29,14 @@ public class PER_DATA{
     private final Map<UUID, Double> playerMaxMana = new HashMap<>(); // 최대 마나
     private final Map<UUID, Double> playerCurrentMana = new HashMap<>(); // 현재 마나
 
+    private final Map<UUID, Integer> playerLevel = new HashMap<>(); // 메인 레벨
+    private final Map<UUID, Double> playerExperience = new HashMap<>(); // 메인 경험치
+
+    private final Map<UUID, Map<String, Integer>> playerProficiencyLevel = new HashMap<>();
+    private final Map<UUID, Map<String, Double>> playerProficiencyExperience = new HashMap<>();
+    public static final String COMBAT_PROFICIENCY = "COMBAT";
+    public static final String MINING_PROFICIENCY = "MINING";
+
     // 생성자: new PER_DATA()를 할 때 instance에 자기 자신을 저장합니다.
     public PER_DATA() {
         instance = this;
@@ -54,6 +62,47 @@ public class PER_DATA{
 
     public String getLastUi(UUID playerUUID) {
         return lastUiMap.getOrDefault(playerUUID, "none");
+    }
+
+    // 메인 레벨
+    public int getPlayerLevel(UUID playerUUID) {
+        return playerLevel.getOrDefault(playerUUID, 1); // 기본 레벨은 1
+    }
+
+    public void setPlayerLevel(UUID playerUUID, int level) {
+        playerLevel.put(playerUUID, level);
+    }
+
+    // 메인 경험치
+    public double getPlayerExperience(UUID playerUUID) {
+        return playerExperience.getOrDefault(playerUUID, 0.0);
+    }
+
+    public void setPlayerExperience(UUID playerUUID, double experience) {
+        playerExperience.put(playerUUID, experience);
+    }
+
+    // 숙련도 레벨
+    public int getProficiencyLevel(UUID playerUUID, String proficiency) {
+        return playerProficiencyLevel.getOrDefault(playerUUID, new HashMap<>()).getOrDefault(proficiency, 0); // 기본 숙련도 레벨은 0
+    }
+
+    public void setProficiencyLevel(UUID playerUUID, String proficiency, int level) {
+        playerProficiencyLevel.computeIfAbsent(playerUUID, k -> new HashMap<>()).put(proficiency, level);
+    }
+
+    // 숙련도 경험치
+    public double getProficiencyExperience(UUID playerUUID, String proficiency) {
+        return playerProficiencyExperience.getOrDefault(playerUUID, new HashMap<>()).getOrDefault(proficiency, 0.0);
+    }
+
+    public void setProficiencyExperience(UUID playerUUID, String proficiency, double experience) {
+        playerProficiencyExperience.computeIfAbsent(playerUUID, k -> new HashMap<>()).put(proficiency, experience);
+    }
+
+    // (추가) 숙련도 맵 전체를 가져오는 메서드 - 데이터 저장 시 필요
+    public Map<String, Integer> getProficiencies(UUID playerUUID) {
+        return playerProficiencyLevel.getOrDefault(playerUUID, new HashMap<>());
     }
 
     public double getplayerMaxHealth(UUID playerUUID) {
