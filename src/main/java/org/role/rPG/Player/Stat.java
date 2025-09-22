@@ -10,6 +10,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.role.rPG.Effect.Effect;
+import org.role.rPG.Effect.EffectManager;
 import org.role.rPG.Indicator.IndicatorManager;
 
 import java.util.Random;
@@ -28,11 +30,13 @@ public class Stat implements Listener {
     private final JavaPlugin plugin;
     private final StatManager statManager;
     private final IndicatorManager indicatorManager; // 인디케이터를 직접 제어하기 위해 추가
+    private final EffectManager effectManager;
 
-    public Stat(JavaPlugin plugin, StatManager statManager, IndicatorManager indicatorManager) {
+    public Stat(JavaPlugin plugin, StatManager statManager, IndicatorManager indicatorManager, EffectManager effectManager) {
         this.plugin = plugin;
         this.statManager = statManager;
         this.indicatorManager = indicatorManager;
+        this.effectManager = effectManager; // [추가]
     }
 
     // 대미지 계산 결과와 치명타 여부를 함께 반환하기 위한 내부 클래스
@@ -64,18 +68,44 @@ public class Stat implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
-        // ▼▼▼ [핵심 수정] 메서드 최상단에 아래 내용을 추가하세요 ▼▼▼
-        // 피격자가 살아있는 생명체이고, 현재 무적 시간이 남아있다면,
-        if (event.getEntity() instanceof LivingEntity livingEntity && livingEntity.getNoDamageTicks() > 0) {
-            // 이 공격 이벤트를 취소하고 즉시 모든 처리를 중단합니다.
-            event.setCancelled(true);
-            return;
+        // 1. '효과 데미지'인지 판별하기 위한 플래그를 만듭니다.
+        boolean isEffectDamage = false;
+        if (event.getEntity() instanceof LivingEntity victim) {
+            // 모든 효과를 순회하며 데미지 표식이 있는지 확인합니다.
+            for (Effect effect : effectManager.getAllEffects()) {
+                if (victim.hasMetadata(effect.getMarkerKey().getKey())) {
+                    isEffectDamage = true; // 표식이 있다면 플래그를 true로 설정합니다.
+                    break; // 하나라도 찾으면 더 이상 확인할 필요가 없으므로 중단합니다.
+                }
+            }
         }
-        // ▲▲▲ 여기까지가 추가된 내용입니다 ▲▲▲
 
+        // 공격자가 플레이어인지 먼저 확인합니다.
+        Player attacker = null;
+        if (event.getDamager() instanceof Player p) {
+            attacker = p;
+        } else if (event.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player p) {
+            attacker = p;
+        }
+
+        if (!isEffectDamage) {
+            // 플레이어별 커스텀 공격 쿨다운 체크
+            if (attacker != null) {
+                String cooldownKey = "ATTACK_COOLDOWN_" + attacker.getUniqueId();
+                if (event.getEntity().hasMetadata(cooldownKey)) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+
+            // 바닐라 무적 시간 체크
+            if (event.getEntity() instanceof LivingEntity livingEntity && livingEntity.getNoDamageTicks() > 0) {
+                event.setCancelled(true);
+                return;
+            }
+        }
 
         // --- 아래는 기존 코드 ---
-        Player attacker = null;
         double baseDamage = event.getDamage();
 
         // 1. 공격이 플레이어가 쏜 '투사체'인 경우
@@ -102,18 +132,31 @@ public class Stat implements Listener {
 
         // --- 최종 처리: 공격자가 플레이어일 경우에만 실행 ---
         if (attacker != null) {
-            // 대미지 계산과 함께 치명타 여부를 확인
-            DamageResult result = applyPlayerModifiers(attacker, baseDamage);
+            double finalDamageToShow;
+            boolean isCritical = false; // 효과 데미지는 기본적으로 크리티컬이 아닙니다.
 
-            event.setDamage(result.damage);
-            applyAttackSpeed(attacker, event.getEntity());
+            // 2. 효과 데미지가 아닐 경우에만 스탯 계산을 수행합니다.
+            if (!isEffectDamage) {
+                // 이 블록은 플레이어의 순수 공격일 때만 실행됩니다.
+                DamageResult result = applyPlayerModifiers(attacker, baseDamage);
+                event.setDamage(result.damage); // 이벤트의 실제 데미지를 변경합니다.
+                finalDamageToShow = result.damage;
+                isCritical = result.isCritical;
 
-            // 치명타 여부에 따라 다른 인디케이터를 표시
-            Location loc = event.getEntity().getLocation();
-            if (result.isCritical) {
-                indicatorManager.showCriticalDamageIndicator(loc, result.damage);
+                // 공격 속도 적용도 순수 공격에만 적용되어야 합니다.
+                applyAttackCoolDown(attacker, event.getEntity());
             } else {
-                indicatorManager.showDamageIndicator(loc, result.damage);
+                // 이 블록은 출혈 등 효과 데미지일 때 실행됩니다.
+                // 스탯 계산을 건너뛰고 이벤트의 최종 데미지를 그대로 사용합니다.
+                finalDamageToShow = event.getFinalDamage();
+            }
+
+            // 3. 인디케이터는 항상 표시됩니다.
+            Location loc = event.getEntity().getLocation();
+            if (isCritical) {
+                indicatorManager.showCriticalDamageIndicator(loc, finalDamageToShow);
+            } else {
+                indicatorManager.showDamageIndicator(loc, finalDamageToShow);
             }
         }
     }
@@ -150,21 +193,31 @@ public class Stat implements Listener {
      * 공격 속도 스탯에 따라 피격자의 무적 시간을 조절합니다.
      * (코드 중복을 줄이기 위한 도우미 메서드)
      * @param attacker 공격자
-     * @param entity 피격자
+     * @param victim 피격자
      */
-    private void applyAttackSpeed(Player attacker, org.bukkit.entity.Entity entity) {
-        if (entity instanceof LivingEntity livingEntity) {
+    private void applyAttackCoolDown(Player attacker, org.bukkit.entity.Entity victim) {
+        if (victim instanceof LivingEntity livingVictim) {
             double atkspd = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_SPEED");
+            ((LivingEntity) victim).setNoDamageTicks(0);
 
-                // 초반 스탯 효율이 개선된 계산식
-                int calculated_ticks = (int) (10 * 100 / (100 + atkspd));
+            // 공격 속도 스탯을 기반으로 쿨다운 시간(틱)을 계산합니다.
+            // 이 계산식은 기존의 것을 그대로 활용하거나 원하는 방식으로 수정할 수 있습니다.
+            int cooldownTicks = (int) (10 * 100 / (100 + atkspd));
+            int finalCooldownTicks = Math.max(MINIMUM_INVINCIBILITY_TICKS, cooldownTicks);
 
-                // 계산된 틱이 설정한 최소치보다 낮아지지 않도록 보정
-                int final_ticks = Math.max(MINIMUM_INVINCIBILITY_TICKS, calculated_ticks);
+            // 1. 공격자에게 고유한 메타데이터 키를 생성합니다.
+            String cooldownKey = "ATTACK_COOLDOWN_" + attacker.getUniqueId();
 
-                // 다음 틱에 무적 시간을 최종 적용
-                plugin.getServer().getScheduler().runTask(plugin, () -> livingEntity.setNoDamageTicks(final_ticks));
+            // 2. 피격자에게 메타데이터 '표식'을 부여합니다.
+            // FixedMetadataValue는 플러그인이 비활성화되면 자동으로 사라집니다.
+            victim.setMetadata(cooldownKey, new org.bukkit.metadata.FixedMetadataValue(plugin, true));
 
+            // 3. 계산된 시간 후에 메타데이터를 제거하도록 스케줄러 작업을 예약합니다.
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> victim.removeMetadata(cooldownKey, plugin), finalCooldownTicks);
+
+            // 4. 바닐라 무적 시간을 즉시 제거하여 다른 플레이어가 바로 공격할 수 있게 합니다.
+            // 다음 틱에 실행하여 현재 데미지가 정상적으로 들어간 후에 무적 시간을 초기화합니다.
+            plugin.getServer().getScheduler().runTask(plugin, () -> livingVictim.setNoDamageTicks(0));
         }
     }
 }

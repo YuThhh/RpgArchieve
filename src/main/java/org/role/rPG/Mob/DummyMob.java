@@ -23,6 +23,8 @@ public class DummyMob implements CustomMob {
 
     private final JavaPlugin plugin;
     public static final NamespacedKey CUSTOM_MOB_ID_KEY= new NamespacedKey("rpg", "custom_mob_id");
+    public static final NamespacedKey IS_DUMMY_KEY = new NamespacedKey("rpg", "is_dummy");
+
 
     private final String MobId = "dummy";
     private final double MobProficiencyExp = 0;
@@ -55,9 +57,8 @@ public class DummyMob implements CustomMob {
         Objects.requireNonNull(dummy.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(2048);
 
         dummy.getPersistentDataContainer().set(CUSTOM_MOB_ID_KEY, PersistentDataType.STRING, getMobId());
+        dummy.getPersistentDataContainer().set(IS_DUMMY_KEY, PersistentDataType.BYTE, (byte) 1);
 
-
-        dummy.getPersistentDataContainer().set(CUSTOM_MOB_ID_KEY, PersistentDataType.BYTE, (byte) 1);
         dummy.customName(Component.text("§7[ §f허수아비 §7]"));
         dummy.setCustomNameVisible(true);
     }
@@ -95,7 +96,8 @@ public class DummyMob implements CustomMob {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (event.getEntity().getPersistentDataContainer().has(CUSTOM_MOB_ID_KEY, PersistentDataType.BYTE)) {
+        // [수정] 허수아비 표식 키로 확인합니다.
+        if (event.getEntity().getPersistentDataContainer().has(IS_DUMMY_KEY, PersistentDataType.BYTE)) {
             LivingEntity dummy = (LivingEntity) event.getEntity();
             dummy.setHealth(Objects.requireNonNull(dummy.getAttribute(Attribute.MAX_HEALTH)).getValue());
         }
@@ -103,7 +105,8 @@ public class DummyMob implements CustomMob {
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent event) {
-        if (event.getEntity().getPersistentDataContainer().has(CUSTOM_MOB_ID_KEY, PersistentDataType.BYTE)) {
+        // [수정] 허수아비 표식 키로 확인합니다.
+        if (event.getEntity().getPersistentDataContainer().has(IS_DUMMY_KEY, PersistentDataType.BYTE)) {
             event.setCancelled(true);
         }
     }

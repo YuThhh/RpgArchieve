@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.role.rPG.Effect.EffectManager;
 import org.role.rPG.Indicator.IndicatorManager;
 import org.role.rPG.Item.*;
 import org.role.rPG.Level.LevelManager;
@@ -28,11 +29,12 @@ public final class RPG extends JavaPlugin implements Listener {
     private StatManager statManager;
     private ReforgeManager reforgeManager;
     private Reforge_UI reforgeUi;
+    private MobManager mobManager;
+    private LevelManager levelManager;
+    private EffectManager effectManager;
 
     private static final double NormalHpRegen = 1;
     private static final double NormalMpRegen = 3;
-    private MobManager mobManager;
-    private LevelManager levelManager;
 
     @Override
     public void onEnable() {
@@ -51,6 +53,7 @@ public final class RPG extends JavaPlugin implements Listener {
         this.itemManager = new ItemManager(this, this.reforgeManager);
         this.statManager = new StatManager(this, this.itemManager);
         this.levelManager = new LevelManager(this, this.statManager);
+        this.effectManager = new EffectManager(this);
 
         // 2-1. UI 인스턴스 생성 코드를 제거합니다.
         // this.reforgeUi = new Reforge_UI(itemManager, statManager, reforgeManager);
@@ -71,7 +74,7 @@ public final class RPG extends JavaPlugin implements Listener {
 
         // 5-2. LIS_manager를 통해 나머지 리스너들을 등록합니다.
         LIS_manager lisManager = new LIS_manager(this);
-        lisManager.registerGeneralListeners(statManager, indicatorManager, itemManager, levelManager, mobManager);
+        lisManager.registerGeneralListeners(statManager, indicatorManager, itemManager, levelManager, mobManager, effectManager);
 
 
         // --- 6. PlaceholderAPI 등록 및 후속 작업 ---
