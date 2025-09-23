@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="출혈 상태이상 추가">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="프로필 추가">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/CMD_manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/CMD_manager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/GUI_manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/GUI_manager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Menu_UI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Menu_UI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Profile_UI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Profile_UI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Storage_UI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Storage_UI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/CMD_manager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/role/rPG/CMD_manager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/PER_DATA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/PER_DATA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Reforge_UI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Reforge_UI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -385,7 +380,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758552243080</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="프로필 추가">
+      <option name="closed" value="true" />
+      <created>1758621880142</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1758621880142</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -412,7 +415,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="클래스 파일 패키지로 정리" />
     <MESSAGE value="아이템 추가 코드 제작 중" />
     <MESSAGE value="투사체 관련 오류 수정" />
     <MESSAGE value="커스텀 아이템 제작 중&#10;아이템 불러오기까지 완료" />
@@ -437,6 +439,7 @@
     <MESSAGE value="몹 패턴을 간단히 추가하기 위한 수정" />
     <MESSAGE value="마법이 마나를 소모하도록 수정" />
     <MESSAGE value="출혈 상태이상 추가" />
-    <option name="LAST_COMMIT_MESSAGE" value="출혈 상태이상 추가" />
+    <MESSAGE value="프로필 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="프로필 추가" />
   </component>
 </project>

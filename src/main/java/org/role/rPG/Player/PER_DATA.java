@@ -32,8 +32,9 @@ public class PER_DATA{
     private final Map<UUID, Integer> playerLevel = new HashMap<>(); // 메인 레벨
     private final Map<UUID, Double> playerExperience = new HashMap<>(); // 메인 경험치
 
-    private final Map<UUID, Map<String, Integer>> playerProficiencyLevel = new HashMap<>();
-    private final Map<UUID, Map<String, Double>> playerProficiencyExperience = new HashMap<>();
+    private final Map<UUID, Map<String, Integer>> playerProficiencyLevel = new HashMap<>(); // 숙련도 레벨
+    private final Map<UUID, Map<String, Double>> playerProficiencyExperience = new HashMap<>(); // 숙련도 경험치
+    // 숙련도 종류
     public static final String COMBAT_PROFICIENCY = "COMBAT";
     public static final String MINING_PROFICIENCY = "MINING";
 

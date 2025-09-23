@@ -41,30 +41,39 @@ public class Reforge_UI extends BaseUI {
         reforgeMeta.displayName(Component.text("클릭하여 재련", NamedTextColor.YELLOW));
         reforgeButton.setItemMeta(reforgeMeta);
 
+        ItemStack slot = new ItemStack(Material.AIR);
+
+        inv.setItem(ITEM_SLOT, slot);
         inv.setItem(REFORGE_BUTTON_SLOT, reforgeButton);
     }
 
     @Override
     public void handleClick(InventoryClickEvent event) {
-        // 아이템을 넣는 칸(ITEM_SLOT)은 자유롭게 클릭할 수 있도록 허용합니다.
-        if (event.getSlot() == ITEM_SLOT) {
-            return; // 이벤트를 취소하지 않고 종료
+        // 1. 클릭된 슬롯 번호와 아이템을 가져옵니다.
+        int clickedSlot = event.getSlot();
+        ItemStack clickedItem = event.getCurrentItem();
+
+        // 2. 만약 회색 유리판을 클릭했다면, 이벤트만 취소하고 아무것도 하지 않습니다.
+        if (clickedItem != null && clickedItem.getType() == Material.GRAY_STAINED_GLASS_PANE) {
+            event.setCancelled(true);
+            return;
         }
 
-        // 나머지 모든 칸은 기본적으로 클릭을 막습니다.
-        event.setCancelled(true);
+        // 3. 만약 재련 버튼을 클릭했다면, 재련 로직을 실행합니다.
+        if (clickedSlot == REFORGE_BUTTON_SLOT) {
+            // 버튼 자체를 움직일 수 없도록 이벤트를 취소합니다.
+            event.setCancelled(true);
 
-        // 재련 버튼을 클릭했을 때의 로직만 처리합니다.
-        if (event.getSlot() == REFORGE_BUTTON_SLOT) {
             Player player = (Player) event.getWhoClicked();
-            ItemStack item = event.getInventory().getItem(ITEM_SLOT);
+            ItemStack itemToReforge = event.getInventory().getItem(ITEM_SLOT); // 재련될 아이템 가져오기
 
-            // 기존 재련 로직과 동일
-            if (item == null || itemManager.isNotCustomItem(item)) {
+            // 재련할 아이템이 있는지 확인
+            if (itemToReforge == null || itemManager.isNotCustomItem(itemToReforge)) {
                 player.sendMessage(Component.text("재련할 아이템을 지정된 칸에 올려주세요.", NamedTextColor.RED));
                 return;
             }
 
+            // 비용 확인
             int cost = reforgeManager.getReforgeCost();
             if (Cash.getMoney(player) < cost) {
                 player.sendMessage(Component.text("재련 비용이 부족합니다. (" + cost + "G)", NamedTextColor.RED));
@@ -72,6 +81,7 @@ public class Reforge_UI extends BaseUI {
                 return;
             }
 
+            // 재련 실행
             ReforgeManager.ReforgeModifier modifier = reforgeManager.getRandomModifier();
             if (modifier == null) {
                 player.sendMessage(Component.text("재련 정보가 없습니다. 관리자에게 문의하세요.", NamedTextColor.RED));
@@ -80,7 +90,7 @@ public class Reforge_UI extends BaseUI {
 
             player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 1.0F, 1.0F);
             Cash.removeMoney(player, cost);
-            itemManager.reforgeItem(item, modifier);
+            itemManager.reforgeItem(itemToReforge, modifier);
             statManager.updatePlayerStats(player);
 
             player.sendMessage(Component.text()
@@ -88,6 +98,10 @@ public class Reforge_UI extends BaseUI {
                     .append(Component.text(modifier.getName(), NamedTextColor.YELLOW))
                     .append(Component.text("] 접두사가 부여되었습니다!", NamedTextColor.GRAY)));
         }
+
+        // 4. 위의 두 조건(유리판, 재련 버튼)에 해당하지 않는 모든 클릭은
+        //    event.setCancelled(true)가 호출되지 않으므로 정상적으로 처리됩니다.
+        //    (예: 아이템 슬롯, 비어있는 다른 슬롯 등)
     }
 
     public void handleClose(InventoryCloseEvent event) {
