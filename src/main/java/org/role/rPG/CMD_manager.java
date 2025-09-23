@@ -44,7 +44,7 @@ public class CMD_manager implements CommandExecutor, TabCompleter {
     // 명령어 등록
     public void registerCommands() {
         // plugin.yml에 등록된 명령어들을 가져와 Executor와 TabCompleter를 설정
-        List<String> commands = Arrays.asList("rpg", "리포지", "rpgitem", "mob", "sucheck", "devsucheck");
+        List<String> commands = Arrays.asList("메뉴", "리포지", "rpgitem", "mob");
         for (String cmdName : commands) {
             if (plugin.getCommand(cmdName) != null) {
                 Objects.requireNonNull(plugin.getCommand(cmdName)).setExecutor(this);
@@ -61,10 +61,11 @@ public class CMD_manager implements CommandExecutor, TabCompleter {
         }
 
         String commandName = command.getName().toLowerCase();
+        Player viewer = (Player) sender;
 
         switch (commandName) {
-            case "rpg":
-                new Menu_UI().openInventory(player);
+            case "메뉴":
+                new Menu_UI(plugin, statManager, viewer).openInventory(player);
                 break;
             case "리포지":
                 // 필요할 때마다 Reforge_UI를 새로 생성하여 필요한 매니저들을 전달

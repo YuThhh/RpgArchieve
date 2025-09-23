@@ -8,22 +8,30 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin; // JavaPlugin 임포트
 import org.role.rPG.Player.PER_DATA;
+import org.role.rPG.Player.StatManager; // StatManager 임포트
 
-// 1. BaseUI를 상속받고 Listener 구현을 제거합니다.
 public class Storage_UI extends BaseUI {
 
+    // ▼▼▼ [수정] 필드 추가 ▼▼▼
+    private final JavaPlugin plugin;
+    private final StatManager statManager;
     private final ItemStack[] storage;
+    private final Player viewer;
 
-    public Storage_UI(ItemStack[] playerStorageData) {
-        // 2. 부모 생성자를 호출하여 GUI를 생성합니다.
-        super(54, Component.text("창고", NamedTextColor.BLUE)); // "프로필"에서 "창고"로 이름 수정
+    // ▼▼▼ [수정] 생성자 변경 ▼▼▼
+    public Storage_UI(JavaPlugin plugin, StatManager statManager, ItemStack[] playerStorageData, Player viewer) {
+        super(54, Component.text("창고", NamedTextColor.BLUE));
+        this.plugin = plugin;
+        this.statManager = statManager;
         this.storage = playerStorageData;
+        this.viewer = viewer;
     }
 
     @Override
     protected void initializeItems(Player player) {
-        // 기존 initializeItems 로직과 동일
+        // ... (기존 코드와 동일)
         for (int i = 45; i < 54; i++) {
             inv.setItem(i, createGrayPane());
         }
@@ -43,34 +51,26 @@ public class Storage_UI extends BaseUI {
 
     @Override
     public void handleClick(InventoryClickEvent event) {
-        // 3. onInventoryClick 로직을 handleClick으로 옮깁니다.
         Player player = (Player) event.getWhoClicked();
         ItemStack clickedItem = event.getCurrentItem();
-
         if (clickedItem == null) return;
 
         Material clickedType = clickedItem.getType();
 
-        // 장식용 아이템 클릭 시 이벤트 취소
         if (clickedType == Material.GRAY_STAINED_GLASS_PANE) {
             event.setCancelled(true);
         }
 
-        // 뒤로가기 버튼 클릭
         if (clickedType == Material.BARRIER) {
             event.setCancelled(true);
-            new Menu_UI().openInventory(player);
+            // ▼▼▼ [수정] Menu_UI를 열 때 plugin과 statManager를 전달합니다. ▼▼▼
+            new Menu_UI(plugin, statManager, viewer).openInventory(player);
         }
     }
 
-    /**
-     * GUIManager가 인벤토리가 닫힐 때 호출할 메서드입니다.
-     * @param event InventoryCloseEvent
-     */
     public void handleClose(InventoryCloseEvent event) {
-        // 4. InventoryCloseEvent 로직을 handleClose로 옮깁니다.
+        // ... (기존 코드와 동일)
         Player player = (Player) event.getPlayer();
-        // 창고 영역(0-44 슬롯)의 아이템만 저장합니다.
         ItemStack[] contents = new ItemStack[45];
         for (int i = 0; i < 45; i++) {
             contents[i] = event.getInventory().getItem(i);
@@ -79,6 +79,7 @@ public class Storage_UI extends BaseUI {
     }
 
     private ItemStack createGrayPane() {
+        // ... (기존 코드와 동일)
         ItemStack grayGlassPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta grayMeta = grayGlassPane.getItemMeta();
         grayMeta.displayName(Component.text(" "));

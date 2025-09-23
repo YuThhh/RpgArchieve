@@ -2,18 +2,28 @@ package org.role.rPG.UI;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.role.rPG.Player.PER_DATA;
+import org.role.rPG.Player.StatManager;
 
 public class Menu_UI extends BaseUI {
 
-    public Menu_UI() {
-        // 부모 클래스(BaseUI)의 생성자를 호출하여 54칸짜리 GUI를 만듭니다.
+    private final JavaPlugin plugin;
+    private final StatManager statManager;
+    private final Player viewer; // UI를 보고 있는 플레이어
+
+    public Menu_UI(JavaPlugin plugin, StatManager statManager, Player viewer) {
         super(54, Component.text("메뉴", NamedTextColor.BLUE));
+        this.plugin = plugin;
+        this.statManager = statManager;
+        this.viewer = viewer;
     }
 
     @Override
@@ -21,9 +31,9 @@ public class Menu_UI extends BaseUI {
         // 기존 initializeItems() 로직과 동일
         Graypanefiller.fillBackground(inv);
 
-        inv.setItem(13, createItem(Material.PLAYER_HEAD, "프로필", NamedTextColor.YELLOW));
-        inv.setItem(20, createItem(Material.END_CRYSTAL, "칭호", NamedTextColor.GREEN));
-        inv.setItem(21, createItem(Material.NETHER_STAR, "퀘스트", NamedTextColor.BLUE));
+        inv.setItem(13, createHeadItem(Material.PLAYER_HEAD, "프로필", viewer, NamedTextColor.YELLOW));
+        inv.setItem(20, createItem(Material.END_CRYSTAL, "칭호", NamedTextColor.BLUE));
+        inv.setItem(21, createItem(Material.NETHER_STAR, "퀘스트", NamedTextColor.GREEN));
         inv.setItem(22, createItem(Material.EXPERIENCE_BOTTLE, "숙련도", NamedTextColor.RED));
         inv.setItem(23, createItem(Material.CRAFTING_TABLE, "제작대", NamedTextColor.DARK_GREEN));
         inv.setItem(24, createItem(Material.CHEST, "창고", NamedTextColor.GREEN));
@@ -47,11 +57,11 @@ public class Menu_UI extends BaseUI {
         // 클릭된 아이템의 타입으로 분기 처리
         switch (clickedItem.getType()) {
             case PLAYER_HEAD:
-                new Profile_UI().openInventory(player);
+                new Profile_UI(plugin, player, statManager).openInventory(player);
                 break;
             case CHEST:
                 ItemStack[] playerData = PER_DATA.getInstance().getPlayerStorage(player.getUniqueId());
-                new Storage_UI(playerData).openInventory(player);
+                new Storage_UI(plugin, statManager, playerData, viewer).openInventory(player);
                 break;
             case BARRIER:
                 player.closeInventory();
@@ -65,8 +75,17 @@ public class Menu_UI extends BaseUI {
     private ItemStack createItem(Material material, String name, NamedTextColor color) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text(name, color));
+        meta.displayName(Component.text(name, color).decoration(TextDecoration.ITALIC, false));
         item.setItemMeta(meta);
         return item;
+    }
+
+    private ItemStack createHeadItem(Material material, String name, Player viewer, NamedTextColor color) {
+        ItemStack Head = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta headMeta = (SkullMeta) Head.getItemMeta();
+        headMeta.setOwningPlayer(viewer);
+        headMeta.displayName(Component.text(name, color).decoration(TextDecoration.ITALIC, false));
+        Head.setItemMeta(headMeta);
+        return Head;
     }
 }

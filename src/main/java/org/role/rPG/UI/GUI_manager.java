@@ -35,5 +35,9 @@ public class GUI_manager implements Listener {
         if (holder instanceof Reforge_UI) {
             ((Reforge_UI) holder).handleClose(event);
         }
+
+        if (holder instanceof Profile_UI) {
+            ((Profile_UI) holder).cancelRefreshTask();
+        }
     }
 }
