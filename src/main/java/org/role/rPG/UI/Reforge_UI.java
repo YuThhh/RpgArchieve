@@ -34,6 +34,7 @@ public class Reforge_UI extends BaseUI {
 
     @Override
     protected void initializeItems(Player player) {
+        // GUI 아이템 배치
         Graypanefiller.fillBackground(inv);
 
         ItemStack reforgeButton = new ItemStack(Material.ANVIL);

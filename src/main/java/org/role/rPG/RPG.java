@@ -21,8 +21,9 @@ import org.role.rPG.UI.Reforge_UI;
 
 import java.util.UUID;
 
-public final class RPG extends JavaPlugin implements Listener {
+public final class RPG extends JavaPlugin implements Listener { // 메인 클래스
 
+    // 필요한 클래스 선언
     public static NamespacedKey SUCHECK_VALUE_KEY;
     private IndicatorManager indicatorManager;
     private ItemManager itemManager;
@@ -33,8 +34,9 @@ public final class RPG extends JavaPlugin implements Listener {
     private LevelManager levelManager;
     private EffectManager effectManager;
 
-    private static final double NormalHpRegen = 1;
-    private static final double NormalMpRegen = 3;
+    // 매직 넘버 선언
+    private static final double NormalHpRegen = 1; // 체력 재생 (고정값)
+    private static final double NormalMpRegen = 3; // 마나 재생 (고정값)
 
     @Override
     public void onEnable() {
