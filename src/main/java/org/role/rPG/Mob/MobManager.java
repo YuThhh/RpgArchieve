@@ -78,7 +78,7 @@ public class MobManager {
     public int removeAllDummies(World world) {
         int removedCount = 0;
         for (Entity entity : world.getEntities()) {
-            if (entity.getPersistentDataContainer().has(DummyMob.CUSTOM_MOB_ID_KEY, PersistentDataType.BYTE)) {
+            if (entity.getPersistentDataContainer().has(DummyMob.IS_DUMMY_KEY, PersistentDataType.BYTE)) {
                 entity.remove();
                 removedCount++;
             }
