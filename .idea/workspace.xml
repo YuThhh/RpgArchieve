@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="버그 수정" />
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="Citizens 종속성 추가">
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -392,7 +394,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758626330030</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="Citizens 종속성 추가">
+      <option name="closed" value="true" />
+      <created>1758627334882</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1758627334882</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -419,7 +429,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="투사체 관련 오류 수정" />
     <MESSAGE value="커스텀 아이템 제작 중&#10;아이템 불러오기까지 완료" />
     <MESSAGE value="커스텀 아이템 제작 중&#10;아이템을 클릭하거나 들고 있으면 자동으로 최신 아이템으로 동기화" />
     <MESSAGE value="커스텀 아이템 제작 중&#10;아이템 로어에 따라서 스탯 변화 추가" />
@@ -444,6 +453,7 @@
     <MESSAGE value="출혈 상태이상 추가" />
     <MESSAGE value="프로필 추가" />
     <MESSAGE value="버그 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="버그 수정" />
+    <MESSAGE value="Citizens 종속성 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="Citizens 종속성 추가" />
   </component>
 </project>
