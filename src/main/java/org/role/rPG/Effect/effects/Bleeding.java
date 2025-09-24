@@ -1,4 +1,4 @@
-package org.role.rPG.Effect;
+package org.role.rPG.Effect.effects;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -9,6 +9,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.role.rPG.Effect.Effect;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.role.rPG.Effect.effects.Bleeding;
 import org.role.rPG.Item.ItemManager;
 
 import java.util.List;

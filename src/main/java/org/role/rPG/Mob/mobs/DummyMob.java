@@ -42,7 +42,7 @@ public class DummyMob implements CustomMob {
 
     @Override
     public double getProficiencyExp() {
-        return 0; // 허수아비는 경험치를 주지 않으므로 0을 반환합니다.
+        return MobProficiencyExp; // 허수아비는 경험치를 주지 않으므로 0을 반환합니다.
     }
 
     @Override

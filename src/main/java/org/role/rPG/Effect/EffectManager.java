@@ -1,6 +1,7 @@
 package org.role.rPG.Effect;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.role.rPG.Effect.effects.Bleeding;
 
 import java.util.Collection;
 import java.util.HashMap;

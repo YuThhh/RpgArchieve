@@ -4,110 +4,64 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="maven 종속성 수정">
+    <list default="true" id="8abb94e0-daa1-4ec5-8e37-fd78c3e77fd3" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/rpgplugin_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/rpgplugin_jar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/CMD_manager.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/LIS_manager.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/role/rPG/RPG.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/original-rpgplugin-1.0-SNAPSHOT.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/rpgplugin-1.0-SNAPSHOT-shaded.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/rpgplugin-1.0-SNAPSHOT.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Level/ExperienceListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Level/ExperienceListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/mobs/DummyMob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/mobs/DummyMob.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="Effect" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;kosi1324&quot;
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "YuThhh"
   }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/YuThhh/Rpgplugin.git&quot;,
-    &quot;accountId&quot;: &quot;1f073aea-be47-4c32-acc4-5890d47373a6&quot;
-  },
-  &quot;recentNewPullRequestHead&quot;: {
-    &quot;server&quot;: {
-      &quot;useHttp&quot;: false,
-      &quot;host&quot;: &quot;github.com&quot;,
-      &quot;port&quot;: null,
-      &quot;suffix&quot;: null
-    },
-    &quot;owner&quot;: &quot;YuThhh&quot;,
-    &quot;repository&quot;: &quot;Rpgplugin&quot;
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/YuThhh/Rpgplugin.git",
+    "accountId": "1f073aea-be47-4c32-acc4-5890d47373a6"
   }
-}</component>
-  <component name="NamedScopeManager">
-    <scope name="작업 파일" pattern="file:README.md||file[rpgplugin]:src/main/java/org/role/rPG/Food//*||file[rpgplugin]:src/main/java/org/role/rPG/Indicator//*||file[rpgplugin]:src/main/java/org/role/rPG/Item//*||file[rpgplugin]:src/main/java/org/role/rPG/Level//*||file[rpgplugin]:src/main/java/org/role/rPG/Mob//*||file[rpgplugin]:src/main/java/org/role/rPG/Player//*||file[rpgplugin]:src/main/java/org/role/rPG/Skill//*||file[rpgplugin]:src/main/java/org/role/rPG/UI//*" />
-  </component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 0
-}</component>
-  <component name="ProjectId" id="32jYhsBJgkWMyPMtpD9GXU70vvn" />
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="338yyiZ4D7leScHOytaflCd2D57" />
   <component name="ProjectViewState">
+    <option name="compactDirectories" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="false" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Maven.rpgplugin [clean].executor": "Run",
     "Maven.rpgplugin [package].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/USER-PC/IdeaProjects/Rpgplugin/src/main/resources",
+    "last_opened_file_path": "C:/Users/chldn/IdeaProjects/Rpgplugin/pom.xml",
     "project.structure.last.edited": "아티팩트",
     "project.structure.proportion": "0.1484375",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.keymap",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
     "to.speed.mode.migration.done": "true"
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\USER-PC\IdeaProjects\Rpgplugin\src\main\resources" />
-      <recent name="C:\Users\chldn\IdeaProjects\Rpgplugin\src\main\resources" />
-    </key>
-    <key name="ExtractSuperBase.RECENT_KEYS">
-      <recent name="org.role.rPG.UI" />
-    </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="org.role.rPG.Skill" />
-    </key>
-  </component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="Rpgplugin" />
@@ -130,384 +84,12 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
-      <changelist id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="" />
-      <created>1757935570345</created>
+      <changelist id="8abb94e0-daa1-4ec5-8e37-fd78c3e77fd3" name="변경" comment="" />
+      <created>1758713249894</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1757935570345</updated>
+      <updated>1758713249894</updated>
     </task>
-    <task id="LOCAL-00001" summary="클래스 파일 패키지로 정리">
-      <option name="closed" value="true" />
-      <created>1758069745616</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1758069745616</updated>
-    </task>
-    <task id="LOCAL-00002" summary="아이템 추가 코드 제작 중">
-      <option name="closed" value="true" />
-      <created>1758071590541</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1758071590541</updated>
-    </task>
-    <task id="LOCAL-00003" summary="투사체 관련 오류 수정">
-      <option name="closed" value="true" />
-      <created>1758072562985</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1758072562985</updated>
-    </task>
-    <task id="LOCAL-00004" summary="커스텀 아이템 제작 중&#10;아이템 불러오기까지 완료">
-      <option name="closed" value="true" />
-      <created>1758072859673</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1758072859673</updated>
-    </task>
-    <task id="LOCAL-00005" summary="커스텀 아이템 제작 중&#10;아이템을 클릭하거나 들고 있으면 자동으로 최신 아이템으로 동기화">
-      <option name="closed" value="true" />
-      <created>1758088523122</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1758088523122</updated>
-    </task>
-    <task id="LOCAL-00006" summary="커스텀 아이템 제작 중&#10;아이템 로어에 따라서 스탯 변화 추가">
-      <option name="closed" value="true" />
-      <created>1758115496631</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1758115496631</updated>
-    </task>
-    <task id="LOCAL-00007" summary="커스텀 아이템 제작 중&#10;아이템 로어에 따라서 스탯 변화 추가">
-      <option name="closed" value="true" />
-      <created>1758115576713</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1758115576713</updated>
-    </task>
-    <task id="LOCAL-00008" summary="커스텀 아이템 제작 중&#10;아이템 로어에 따라서 스탯 변화 추가">
-      <option name="closed" value="true" />
-      <created>1758116618784</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1758116618784</updated>
-    </task>
-    <task id="LOCAL-00009" summary="커스텀 아이템 제작 중&#10;문제점 및 의도와 다른 표기 수정">
-      <option name="closed" value="true" />
-      <created>1758118013477</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1758118013477</updated>
-    </task>
-    <task id="LOCAL-00010" summary="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요">
-      <option name="closed" value="true" />
-      <created>1758169621917</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1758169621917</updated>
-    </task>
-    <task id="LOCAL-00011" summary="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요">
-      <option name="closed" value="true" />
-      <created>1758188375514</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1758188375514</updated>
-    </task>
-    <task id="LOCAL-00012" summary="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요">
-      <option name="closed" value="true" />
-      <created>1758192260410</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1758192260410</updated>
-    </task>
-    <task id="LOCAL-00013" summary="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요">
-      <option name="closed" value="true" />
-      <created>1758202573367</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1758202573367</updated>
-    </task>
-    <task id="LOCAL-00014" summary="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요">
-      <option name="closed" value="true" />
-      <created>1758276900558</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1758276900558</updated>
-    </task>
-    <task id="LOCAL-00015" summary="커스텀 아이템 제작 완료&#10;리포지 제작 완료&#10;코드 분석 필요">
-      <option name="closed" value="true" />
-      <created>1758280565441</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1758280565441</updated>
-    </task>
-    <task id="LOCAL-00016" summary="커스텀 아이템 제작 완료&#10;리포지 제작 완료&#10;코드 분석 필요">
-      <option name="closed" value="true" />
-      <created>1758284737325</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1758284737325</updated>
-    </task>
-    <task id="LOCAL-00017" summary="공격 속도 오류 수정">
-      <option name="closed" value="true" />
-      <created>1758285749722</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1758285749722</updated>
-    </task>
-    <task id="LOCAL-00018" summary="공격 속도 오류 수정 중">
-      <option name="closed" value="true" />
-      <created>1758285975799</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1758285975799</updated>
-    </task>
-    <task id="LOCAL-00019" summary="공격 속도 오류 수정 완료">
-      <option name="closed" value="true" />
-      <created>1758287434606</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1758287434606</updated>
-    </task>
-    <task id="LOCAL-00020" summary="마법 및 마법서 추가">
-      <option name="closed" value="true" />
-      <created>1758291761436</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1758291761436</updated>
-    </task>
-    <task id="LOCAL-00021" summary="마법 코드 수정&#10;추가하기 쉬워짐">
-      <option name="closed" value="true" />
-      <created>1758346790730</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1758346790730</updated>
-    </task>
-    <task id="LOCAL-00022" summary="마법 코드 수정&#10;추가하기 쉬워짐">
-      <option name="closed" value="true" />
-      <created>1758357769966</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1758357769966</updated>
-    </task>
-    <task id="LOCAL-00023" summary="마법 -&gt; 스킬로 변경">
-      <option name="closed" value="true" />
-      <created>1758362191635</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1758362191635</updated>
-    </task>
-    <task id="LOCAL-00024" summary="레벨 추가&#10;메인 레벨&#10;부가 숙련도">
-      <option name="closed" value="true" />
-      <created>1758364659153</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1758364659153</updated>
-    </task>
-    <task id="LOCAL-00025" summary="마법 수정">
-      <option name="closed" value="true" />
-      <created>1758379210011</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1758379210011</updated>
-    </task>
-    <task id="LOCAL-00026" summary="오류 수정">
-      <option name="closed" value="true" />
-      <created>1758380586887</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1758380586887</updated>
-    </task>
-    <task id="LOCAL-00027" summary="인디케이터 변경">
-      <option name="closed" value="true" />
-      <created>1758441704445</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1758441704445</updated>
-    </task>
-    <task id="LOCAL-00028" summary="경험치를 몹의 아이디에 따라 다르게 오르도록 수정">
-      <option name="closed" value="true" />
-      <created>1758445830128</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1758445830128</updated>
-    </task>
-    <task id="LOCAL-00029" summary="GUI 수정 중">
-      <option name="closed" value="true" />
-      <created>1758532188260</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1758532188260</updated>
-    </task>
-    <task id="LOCAL-00030" summary="몹 패턴을 간단히 추가하기 위한 수정">
-      <option name="closed" value="true" />
-      <created>1758535975844</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1758535975844</updated>
-    </task>
-    <task id="LOCAL-00031" summary="마법이 마나를 소모하도록 수정">
-      <option name="closed" value="true" />
-      <created>1758536592092</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1758536592092</updated>
-    </task>
-    <task id="LOCAL-00032" summary="출혈 상태이상 추가">
-      <option name="closed" value="true" />
-      <created>1758552243080</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1758552243080</updated>
-    </task>
-    <task id="LOCAL-00033" summary="프로필 추가">
-      <option name="closed" value="true" />
-      <created>1758621880142</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1758621880142</updated>
-    </task>
-    <task id="LOCAL-00034" summary="버그 수정">
-      <option name="closed" value="true" />
-      <created>1758626330030</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1758626330030</updated>
-    </task>
-    <task id="LOCAL-00035" summary="Citizens 종속성 추가">
-      <option name="closed" value="true" />
-      <created>1758627334882</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1758627334882</updated>
-    </task>
-    <task id="LOCAL-00036" summary="Citizens 종속성 추가">
-      <option name="closed" value="true" />
-      <created>1758628435354</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1758628435354</updated>
-    </task>
-    <task id="LOCAL-00037" summary="주석 추가">
-      <option name="closed" value="true" />
-      <created>1758631793283</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1758631793283</updated>
-    </task>
-    <task id="LOCAL-00038" summary="커스텀 인챈트 추가&#10;리플렉션으로 호출 간소화">
-      <option name="closed" value="true" />
-      <created>1758703291701</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1758703291701</updated>
-    </task>
-    <task id="LOCAL-00039" summary="숙련도 경험치 수정">
-      <option name="closed" value="true" />
-      <created>1758710488017</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1758710488017</updated>
-    </task>
-    <task id="LOCAL-00040" summary="maven 종속성 수정">
-      <option name="closed" value="true" />
-      <created>1758710764037</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1758710764037</updated>
-    </task>
-    <option name="localTasksCounter" value="41" />
     <servers />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State>
-              <option name="FILTERS">
-                <map>
-                  <entry key="branch">
-                    <value>
-                      <list>
-                        <option value="Item" />
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </State>
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="커스텀 아이템 제작 중&#10;리포지 제작 중&#10;코드 분석 필요" />
-    <MESSAGE value="커스텀 아이템 제작 완료&#10;리포지 제작 완료&#10;코드 분석 필요" />
-    <MESSAGE value="공격 속도 오류 수정" />
-    <MESSAGE value="공격 속도 오류 수정 중" />
-    <MESSAGE value="공격 속도 오류 수정 완료" />
-    <MESSAGE value="마나 관련 코드 추가" />
-    <MESSAGE value="마법 및 마법서 추가" />
-    <MESSAGE value="마법 코드 수정&#10;추가하기 쉬워짐" />
-    <MESSAGE value="마법 -&gt; 스킬로 변경" />
-    <MESSAGE value="레벨 추가&#10;메인 레벨&#10;부가 숙련도" />
-    <MESSAGE value="마법 수정" />
-    <MESSAGE value="오류 수정" />
-    <MESSAGE value="인디케이터 변경" />
-    <MESSAGE value="경험치를 몹의 아이디에 따라 다르게 오르도록 수정" />
-    <MESSAGE value="GUI 수정 중" />
-    <MESSAGE value="몹 패턴을 간단히 추가하기 위한 수정" />
-    <MESSAGE value="마법이 마나를 소모하도록 수정" />
-    <MESSAGE value="출혈 상태이상 추가" />
-    <MESSAGE value="프로필 추가" />
-    <MESSAGE value="버그 수정" />
-    <MESSAGE value="Citizens 종속성 추가" />
-    <MESSAGE value="주석 추가" />
-    <MESSAGE value="커스텀 인챈트 추가&#10;리플렉션으로 호출 간소화" />
-    <MESSAGE value="숙련도 경험치 수정" />
-    <MESSAGE value="maven 종속성 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="maven 종속성 수정" />
   </component>
 </project>

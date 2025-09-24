@@ -1,5 +1,6 @@
 package org.role.rPG.Level;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -9,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.role.rPG.Effect.EffectManager;
 import org.role.rPG.Mob.CustomMob;
 import org.role.rPG.Mob.MobManager;
 import org.role.rPG.Player.PER_DATA;
@@ -21,15 +23,17 @@ public class ExperienceListener implements Listener {
 
     private final LevelManager levelManager;
     private final MobManager mobManager;
+    private final EffectManager effectManager;
 
     // ▼▼▼ [추가] 플레이어별 타격 경험치 쿨다운을 관리하기 위한 Map ▼▼▼
     // Key: 플레이어 UUID, Value: 마지막으로 경험치를 획득한 시간 (밀리초)
     private final Map<UUID, Long> lastHitExpTime = new HashMap<>();
     private static final long HIT_EXP_COOLDOWN = 500L; // 0.5초 (밀리초 단위)
 
-    public ExperienceListener(LevelManager levelManager, MobManager mobManager) {
+    public ExperienceListener(LevelManager levelManager, MobManager mobManager, EffectManager effectManager) {
         this.levelManager = levelManager;
         this.mobManager = mobManager;
+        this.effectManager = effectManager; // [추가]
     }
 
 
@@ -67,15 +71,20 @@ public class ExperienceListener implements Listener {
 
         // 3. 근접/원거리 숙련도에 따라 다른 경험치 지급
         // (이 값들은 나중에 config.yml 등으로 옮겨서 관리하는 것이 좋습니다)
+        int playerMeleeProficiencyLevel = PER_DATA.getInstance().getProficiencyLevel(attackerUUID,"MELEE_COMBAT");
+        int playerRangedProficiencyLevel = PER_DATA.getInstance().getProficiencyLevel(attackerUUID,"RANGED_COMBAT");
+
         double meleeExp = customMob.getProficiencyExp();
         double rangedExp = customMob.getProficiencyExp();
 
         if (event.getDamager() instanceof Arrow) {
             // 원거리 공격일 경우
-            levelManager.addProficiencyExp(attacker, PER_DATA.RANGED_COMBAT_PROFICIENCY, rangedExp); // RANGED_PROFICIENCY는 PER_DATA에 추가 필요
+            levelManager.addProficiencyExp(attacker, PER_DATA.RANGED_COMBAT_PROFICIENCY, Math.min(playerRangedProficiencyLevel * 5, rangedExp)); // RANGED_PROFICIENCY는 PER_DATA에 추가 필요
+            attacker.sendMessage(Component.text("원거리 숙련도 " + Math.min(playerRangedProficiencyLevel * 5, rangedExp) + "획득"));
         } else {
             // 근접 공격일 경우
-            levelManager.addProficiencyExp(attacker, PER_DATA.MELEE_COMBAT_PROFICIENCY, meleeExp); // MELEE_PROFICIENCY는 PER_DATA에 추가 필요
+            levelManager.addProficiencyExp(attacker, PER_DATA.MELEE_COMBAT_PROFICIENCY, Math.min(playerRangedProficiencyLevel * 5, meleeExp)); // MELEE_PROFICIENCY는 PER_DATA에 추가 필요
+            attacker.sendMessage(Component.text("근거리 숙련도 " + Math.min(playerRangedProficiencyLevel * 5, meleeExp) + "획득"));
         }
     }
 

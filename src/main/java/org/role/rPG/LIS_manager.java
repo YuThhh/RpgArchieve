@@ -46,7 +46,7 @@ public class LIS_manager {
         pm.registerEvents(new Ui(plugin, statManager, levelManager), plugin);
         pm.registerEvents(new ItemUpdateListener(itemManager), plugin);
         pm.registerEvents(new SkillListener(plugin, itemManager, statManager), plugin);
-        pm.registerEvents(new ExperienceListener(levelManager, mobManager), plugin);
+        pm.registerEvents(new ExperienceListener(levelManager, mobManager, effectManager), plugin);
         pm.registerEvents(new EffectListener(plugin, itemManager), plugin);
     }
 }
