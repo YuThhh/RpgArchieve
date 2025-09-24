@@ -2,21 +2,30 @@ package org.role.rPG.Level;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.role.rPG.Mob.CustomMob;
 import org.role.rPG.Mob.MobManager;
 import org.role.rPG.Player.PER_DATA;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class ExperienceListener implements Listener {
 
     private final LevelManager levelManager;
     private final MobManager mobManager;
+
+    // ▼▼▼ [추가] 플레이어별 타격 경험치 쿨다운을 관리하기 위한 Map ▼▼▼
+    // Key: 플레이어 UUID, Value: 마지막으로 경험치를 획득한 시간 (밀리초)
+    private final Map<UUID, Long> lastHitExpTime = new HashMap<>();
+    private static final long HIT_EXP_COOLDOWN = 500L; // 0.5초 (밀리초 단위)
 
     public ExperienceListener(LevelManager levelManager, MobManager mobManager) {
         this.levelManager = levelManager;
@@ -26,25 +35,47 @@ public class ExperienceListener implements Listener {
 
     // 몬스터 사냥 시 경험치 획득
     @EventHandler
-    public void onEntityDeath(EntityDeathEvent event) {
-        if (event.getEntity().getKiller() != null) {
-            Player killer = event.getEntity().getKiller();
-            Entity deadEntity = event.getEntity();
+    public void onEntityDamage(EntityDamageByEntityEvent event) {
+        // 공격자가 플레이어가 아니면 무시
+        if (!(event.getDamager() instanceof Player) && !(event.getDamager() instanceof Arrow)) return;
+        // 피격자가 몬스터 또는 커스텀 몹이 아니면 무시 (플레이어간 전투 등 제외)
+        if (!(event.getEntity() instanceof Monster) && mobManager.getCustomMob(event.getEntity()) == null) return;
 
-            // 몬스터를 죽였을 때만 경험치 지급
-            CustomMob customMob = mobManager.getCustomMob(deadEntity);
+        Player attacker;
+        // 공격자가 화살인 경우, 쏜 사람을 공격자로 설정
+        if (event.getDamager() instanceof Arrow arrow && arrow.getShooter() instanceof Player p) {
+            attacker = p;
+        } else if (event.getDamager() instanceof Player p) {
+            attacker = p;
+        } else {
+            return; // 플레이어의 공격이 아니면 종료
+        }
 
-            if (customMob != null) {
-                // 커스텀 몹일 경우, 해당 몹이 가진 경험치를 가져옵니다.
-                double experienceToGive = customMob.getProficiencyExp();
-                if (experienceToGive > 0) {
-                    levelManager.addProficiencyExp(killer, PER_DATA.COMBAT_PROFICIENCY, experienceToGive);
-                }
+        UUID attackerUUID = attacker.getUniqueId();
+        CustomMob customMob = mobManager.getCustomMob(event.getEntity());
 
-            } else if (deadEntity instanceof Monster) {
-                // 커스텀 몹이 아닌 일반 몬스터일 경우, 기본 경험치를 지급합니다.
-                levelManager.addExperience(killer, 5); // 예: 일반 몬스터는 5 경험치
-            }
+        // 1. 쿨다운 확인
+        long currentTime = System.currentTimeMillis();
+        long lastTime = lastHitExpTime.getOrDefault(attackerUUID, 0L);
+
+        if (currentTime - lastTime < HIT_EXP_COOLDOWN) {
+            return; // 쿨다운이 지나지 않았으면 경험치를 주지 않고 종료
+        }
+
+        // 2. 쿨다운 통과 시, 경험치 지급 및 시간 기록
+        lastHitExpTime.put(attackerUUID, currentTime);
+
+        // 3. 근접/원거리 숙련도에 따라 다른 경험치 지급
+        // (이 값들은 나중에 config.yml 등으로 옮겨서 관리하는 것이 좋습니다)
+        double meleeExp = customMob.getProficiencyExp();
+        double rangedExp = customMob.getProficiencyExp();
+
+        if (event.getDamager() instanceof Arrow) {
+            // 원거리 공격일 경우
+            levelManager.addProficiencyExp(attacker, PER_DATA.RANGED_COMBAT_PROFICIENCY, rangedExp); // RANGED_PROFICIENCY는 PER_DATA에 추가 필요
+        } else {
+            // 근접 공격일 경우
+            levelManager.addProficiencyExp(attacker, PER_DATA.MELEE_COMBAT_PROFICIENCY, meleeExp); // MELEE_PROFICIENCY는 PER_DATA에 추가 필요
         }
     }
 

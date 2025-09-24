@@ -35,7 +35,8 @@ public class PER_DATA{
     private final Map<UUID, Map<String, Integer>> playerProficiencyLevel = new HashMap<>(); // 숙련도 레벨
     private final Map<UUID, Map<String, Double>> playerProficiencyExperience = new HashMap<>(); // 숙련도 경험치
     // 숙련도 종류
-    public static final String COMBAT_PROFICIENCY = "COMBAT";
+    public static final String MELEE_COMBAT_PROFICIENCY = "MELEE_COMBAT";
+    public static final String RANGED_COMBAT_PROFICIENCY = "RANGED_COMBAT";
     public static final String MINING_PROFICIENCY = "MINING";
 
     // 생성자: new PER_DATA()를 할 때 instance에 자기 자신을 저장합니다.

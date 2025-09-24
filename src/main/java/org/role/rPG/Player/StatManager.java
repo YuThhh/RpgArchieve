@@ -77,7 +77,7 @@ public class StatManager {
 
         // 레벨에 따른 추가 스탯 보너스를 계산하여 합산합니다.
         int mainLevel = perData.getPlayerLevel(uuid);
-        int combatProficiency = perData.getProficiencyLevel(uuid, PER_DATA.COMBAT_PROFICIENCY);
+        int meleeProficiency = perData.getProficiencyLevel(uuid, PER_DATA.MELEE_COMBAT_PROFICIENCY);
         int miningProficiency = perData.getProficiencyLevel(uuid, PER_DATA.MINING_PROFICIENCY);
 
         // 예시: 1 레벨당 최대 체력 5, 1 전투 숙련도당 힘 0.5, 1 채광 숙련도당 방어력 0.2 증가
@@ -85,7 +85,7 @@ public class StatManager {
             // 예시: 1 레벨당 최대 체력 5, 1 전투 숙련도당 힘 0.5, 1 채광 숙련도당 방어력 0.2 증가
             base.merge("MAX_HEALTH", (mainLevel - 1) * 5.0, Double::sum);
         }
-        base.merge("STRENGTH", combatProficiency * 0.5, Double::sum);
+        base.merge("STRENGTH", meleeProficiency * 0.5, Double::sum);
         base.merge("DEFENSE", miningProficiency * 0.2, Double::sum);
 
         return base;

@@ -26,9 +26,9 @@ public class DummyMob implements CustomMob {
     public static final NamespacedKey CUSTOM_MOB_ID_KEY= new NamespacedKey("rpg", "custom_mob_id");
     public static final NamespacedKey IS_DUMMY_KEY = new NamespacedKey("rpg", "is_dummy");
 
-
+    private final int MobLevel = 0;
     private final String MobId = "dummy";
-    private final double MobProficiencyExp = 0;
+    private final double MobProficiencyExp = MobLevel * 5;
 
     public DummyMob(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -44,6 +44,9 @@ public class DummyMob implements CustomMob {
     public double getProficiencyExp() {
         return 0; // 허수아비는 경험치를 주지 않으므로 0을 반환합니다.
     }
+
+    @Override
+    public int getMobLevel() {return MobLevel;}
 
     @Override
     public void spawn(Location location) {
