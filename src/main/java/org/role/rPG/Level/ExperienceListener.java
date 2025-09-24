@@ -4,12 +4,14 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.role.rPG.Effect.Effect;
 import org.role.rPG.Effect.EffectManager;
 import org.role.rPG.Mob.CustomMob;
 import org.role.rPG.Mob.MobManager;
@@ -40,6 +42,16 @@ public class ExperienceListener implements Listener {
     // 몬스터 사냥 시 경험치 획득
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
+        // 이 데미지가 출혈 등 커스텀 효과로 인한 것인지 먼저 확인합니다.
+        if (event.getEntity() instanceof LivingEntity victim) {
+            for (Effect effect : effectManager.getAllEffects()) {
+                if (victim.hasMetadata(effect.getMarkerKey().getKey())) {
+                    // 효과 데미지이므로, 숙련도 경험치를 주지 않고 즉시 종료합니다.
+                    return;
+                }
+            }
+        }
+
         // 공격자가 플레이어가 아니면 무시
         if (!(event.getDamager() instanceof Player) && !(event.getDamager() instanceof Arrow)) return;
         // 피격자가 몬스터 또는 커스텀 몹이 아니면 무시 (플레이어간 전투 등 제외)

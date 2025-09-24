@@ -9,9 +9,9 @@ public abstract class EffectEnchantment extends CustomEnchantment {
 
     private final String effectName;
 
-    public EffectEnchantment(JavaPlugin plugin, String enchantName, int maxLevel, String effectName) {
-        super(plugin, enchantName, maxLevel);
-        this.effectName = effectName; // 이 인챈트가 발동시킬 효과의 이름
+    public EffectEnchantment(JavaPlugin plugin, String id, String enchantName, int maxLevel, String effectName) {
+        super(plugin, id, enchantName, maxLevel);
+        this.effectName = effectName;
     }
 
     /**

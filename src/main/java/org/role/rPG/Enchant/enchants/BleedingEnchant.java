@@ -6,8 +6,9 @@ import org.role.rPG.Enchant.EffectEnchantment;
 public class BleedingEnchant extends EffectEnchantment {
 
     public BleedingEnchant(JavaPlugin plugin) {
-        // 인챈트 이름: 흡혈의 칼날, 최대 레벨: 1, 발동시킬 효과 이름: "출혈"
-        super(plugin, "흡혈의 칼날", 1, "출혈");
+        // ▼▼▼ 생성자 호출 방식 수정 ▼▼▼
+        // 내부 ID: "bleeding_blade" (영어), 표시 이름: "흡혈의 칼날" (한글), 최대 레벨: 1, 효과 이름: "출혈"
+        super(plugin, "bleeding", "출혈", 1, "출혈");
     }
 
     @Override

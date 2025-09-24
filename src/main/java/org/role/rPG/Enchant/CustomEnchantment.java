@@ -5,14 +5,21 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class CustomEnchantment {
 
+    private final String id;
     private final String name;
     private final int maxLevel;
     private final NamespacedKey key;
 
-    public CustomEnchantment(JavaPlugin plugin, String name, int maxLevel) {
+    public CustomEnchantment(JavaPlugin plugin, String id, String name, int maxLevel) {
+        this.id = id;
         this.name = name;
         this.maxLevel = maxLevel;
-        this.key = new NamespacedKey(plugin, "enchant_" + name.toLowerCase().replace(" ", "_"));
+        // NamespacedKey는 이제 한글이 없는 id를 사용합니다.
+        this.key = new NamespacedKey(plugin, "enchant_" + id);
+    }
+
+    public String getId() { // ◀◀◀ 새로 추가
+        return id;
     }
 
     public String getName() {

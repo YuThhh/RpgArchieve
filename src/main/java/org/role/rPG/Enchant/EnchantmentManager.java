@@ -105,6 +105,7 @@ public class EnchantmentManager {
                 plugin.getLogger().info("✅ Successfully registered enchantment: " + enchantment.getName());
             } catch (Exception e) {
                 plugin.getLogger().warning("❌ Failed to register enchantment " + clazz.getSimpleName() + ": " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
