@@ -4,11 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="Citizens 종속성 추가">
+    <list default="true" id="e2249afb-ace2-4899-8cf8-a24b436aea2c" name="변경" comment="주석 추가">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Enchant/CustomEnchantment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Enchant/EffectEnchantment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Enchant/EnchantmentListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Enchant/EnchantmentManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Enchant/enchants/BleedingEnchant.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Effect/Effect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Effect/Effect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/DummyMob.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/mobs/DummyMob.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/MobManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Mob/MobManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Reforge_UI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/UI/Reforge_UI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -413,7 +419,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758628435354</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="주석 추가">
+      <option name="closed" value="true" />
+      <created>1758631793283</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1758631793283</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -440,7 +454,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="커스텀 아이템 제작 중&#10;아이템 불러오기까지 완료" />
     <MESSAGE value="커스텀 아이템 제작 중&#10;아이템을 클릭하거나 들고 있으면 자동으로 최신 아이템으로 동기화" />
     <MESSAGE value="커스텀 아이템 제작 중&#10;아이템 로어에 따라서 스탯 변화 추가" />
     <MESSAGE value="커스텀 아이템 제작 중&#10;문제점 및 의도와 다른 표기 수정" />
@@ -465,6 +478,7 @@
     <MESSAGE value="프로필 추가" />
     <MESSAGE value="버그 수정" />
     <MESSAGE value="Citizens 종속성 추가" />
-    <option name="LAST_COMMIT_MESSAGE" value="Citizens 종속성 추가" />
+    <MESSAGE value="주석 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="주석 추가" />
   </component>
 </project>

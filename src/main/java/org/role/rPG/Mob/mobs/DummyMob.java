@@ -1,4 +1,4 @@
-package org.role.rPG.Mob;
+package org.role.rPG.Mob.mobs;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.role.rPG.Mob.CustomMob;
 
 import java.util.Comparator;
 import java.util.Objects;

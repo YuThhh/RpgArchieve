@@ -10,16 +10,18 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.role.rPG.Effect.EffectManager;
+import org.role.rPG.Enchant.EnchantmentListener;
+import org.role.rPG.Enchant.EnchantmentManager;
 import org.role.rPG.Indicator.IndicatorManager;
 import org.role.rPG.Item.*;
 import org.role.rPG.Level.LevelManager;
-import org.role.rPG.Mob.DummyMob;
 import org.role.rPG.Mob.MobManager;
 import org.role.rPG.Mob.MobPatternRunnable;
 import org.role.rPG.Player.*;
 import org.role.rPG.UI.Reforge_UI;
 
 import java.util.UUID;
+
 
 public final class RPG extends JavaPlugin implements Listener { // 메인 클래스
 
@@ -33,6 +35,7 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
     private MobManager mobManager;
     private LevelManager levelManager;
     private EffectManager effectManager;
+    private EnchantmentManager enchantmentManager;
 
     // 매직 넘버 선언
     private static final double NormalHpRegen = 1; // 체력 재생 (고정값)
@@ -56,13 +59,15 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
         this.statManager = new StatManager(this, this.itemManager);
         this.levelManager = new LevelManager(this, this.statManager);
         this.effectManager = new EffectManager(this);
+        this.enchantmentManager = new EnchantmentManager();
 
         // 2-1. UI 인스턴스 생성 코드를 제거합니다.
         // this.reforgeUi = new Reforge_UI(itemManager, statManager, reforgeManager);
 
         // --- 3. 콘텐츠 로드/등록 ---
         this.itemManager.reloadItems();
-        this.mobManager.registerMob(new DummyMob(this));
+        this.mobManager.registerMobsFromPackage("org.role.rPG.Mob.mobs");
+        this.enchantmentManager.registerEnchantmentsFromPackage(this, "org.role.rPG.Enchant.enchants");
 
         // --- 4. 명령어 관리자(CMD_manager) 등록 ---
         // CMD_manager에 Reforge_UI를 넘기는 대신, 필요한 매니저들을 넘겨주도록 수정해야 합니다.
@@ -73,6 +78,7 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
         // --- 5. 이벤트 리스너(Listener) 등록 ---
         // 5-1. 메인 클래스(this)를 리스너로 직접 등록합니다. (PlayerJoin/Quit 이벤트 처리용)
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new EnchantmentListener(this.enchantmentManager, this.effectManager), this);
 
         // 5-2. LIS_manager를 통해 나머지 리스너들을 등록합니다.
         LIS_manager lisManager = new LIS_manager(this);

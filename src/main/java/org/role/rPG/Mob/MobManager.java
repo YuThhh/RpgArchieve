@@ -5,7 +5,11 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.role.rPG.Mob.mobs.DummyMob;
 
+
+import org.reflections.Reflections;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -84,5 +88,30 @@ public class MobManager {
             }
         }
         return removedCount;
+    }
+
+    /**
+     * 지정된 패키지 내의 모든 CustomMob을 자동으로 찾아 등록합니다.
+     * @param packageName 스캔할 패키지 경로 (예: "org.role.rPG.Mob.mobs")
+     */
+    public void registerMobsFromPackage(String packageName) {
+        Reflections reflections = new Reflections(packageName);
+        // CustomMob 클래스를 상속하는 모든 클래스를 찾습니다.
+        Set<Class<? extends CustomMob>> mobClasses = reflections.getSubTypesOf(CustomMob.class);
+
+        for (Class<? extends CustomMob> clazz : mobClasses) {
+            // 추상 클래스나 인터페이스는 객체로 만들 수 없으므로 건너뜁니다.
+            if (Modifier.isAbstract(clazz.getModifiers()) || clazz.isInterface()) {
+                continue;
+            }
+
+            try {
+                // JavaPlugin을 인자로 받는 생성자를 통해 객체를 생성하고 등록합니다.
+                CustomMob mob = clazz.getConstructor(JavaPlugin.class).newInstance(plugin);
+                registerMob(mob);
+            } catch (Exception e) {
+                plugin.getLogger().warning("❌ Failed to register mob " + clazz.getSimpleName() + ": " + e.getMessage());
+            }
+        }
     }
 }
