@@ -91,27 +91,36 @@ public class StatManager {
         return base;
     }
 
-    // 플레이어의 장비(손 + 방어구)를 모두 확인하여 장비 스탯 총합을 계산합니다.
+    // [수정됨] 아이템 종류(무기/방어구)를 구분하는 새로운 로직
     private Map<String, Double> calculateEquipmentStats(Player player) {
         Map<String, Double> equipStats = new HashMap<>();
 
-        // 갑옷 슬롯 아이템 확인
-        for (ItemStack armor : player.getInventory().getArmorContents()) {
-            addStatsFromItem(equipStats, armor);
+        // 1. 갑옷 슬롯에 '착용'한 아이템들의 스탯을 모두 합산합니다.
+        for (ItemStack armorPiece : player.getInventory().getArmorContents()) {
+            if (armorPiece != null && !armorPiece.getType().isAir()) {
+                Map<String, Double> itemStats = itemManager.getStatsFromItem(armorPiece);
+                itemStats.forEach((stat, value) -> equipStats.merge(stat, value, Double::sum));
+            }
         }
-        // 메인 핸드 아이템 확인
-        addStatsFromItem(equipStats, player.getInventory().getItemInMainHand());
+
+        // 2. '손에 든' 아이템의 스탯을 합산합니다.
+        ItemStack heldItem = player.getInventory().getItemInMainHand();
+        if (!heldItem.getType().isAir()) {
+            // 아이템의 종류를 확인합니다.
+            String typeName = heldItem.getType().name();
+            boolean isArmorPiece = typeName.endsWith("_HELMET") ||
+                    typeName.endsWith("_CHESTPLATE") ||
+                    typeName.endsWith("_LEGGINGS") ||
+                    typeName.endsWith("_BOOTS");
+
+            // [핵심] 손에 든 아이템이 '방어구'가 아닐 경우에만 스탯을 적용합니다.
+            if (!isArmorPiece) {
+                Map<String, Double> itemStats = itemManager.getStatsFromItem(heldItem);
+                itemStats.forEach((stat, value) -> equipStats.merge(stat, value, Double::sum));
+            }
+        }
 
         return equipStats;
-    }
-
-    // 아이템 하나에서 스탯을 추출하여 맵에 더합니다.
-    private void addStatsFromItem(Map<String, Double> stats, ItemStack item) {
-        if (item == null || item.getType().isAir()) return;
-
-        // ItemManager를 통해 아이템의 스탯 맵을 가져옵니다.
-        Map<String, Double> itemStats = itemManager.getStatsFromItem(item);
-        itemStats.forEach((stat, value) -> stats.merge(stat, value, Double::sum));
     }
 
     // 계산된 최종 스탯을 플레이어의 Bukkit Attribute에 적용합니다.
