@@ -54,18 +54,17 @@ public class CMD_manager implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Component.text("플레이어만 사용할 수 있는 명령어입니다.", NamedTextColor.RED));
             return true;
         }
 
         String commandName = command.getName().toLowerCase();
-        Player viewer = (Player) sender;
 
         switch (commandName) {
             case "메뉴":
-                new Menu_UI(plugin, statManager, viewer).openInventory(player);
+                new Menu_UI(plugin, statManager, player).openInventory(player);
                 break;
             case "리포지":
                 // 필요할 때마다 Reforge_UI를 새로 생성하여 필요한 매니저들을 전달
@@ -157,7 +156,7 @@ public class CMD_manager implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String @NotNull [] args) {
         final List<String> completions = new ArrayList<>();
         String cmdName = command.getName().toLowerCase();
 
