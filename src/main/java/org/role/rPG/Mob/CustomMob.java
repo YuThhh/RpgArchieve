@@ -4,6 +4,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Listener;
 
+import java.util.List;
+
 // 모든 몹 클래스가 이 설계도를 따라야 함
 public interface CustomMob extends Listener {
 
@@ -24,4 +26,10 @@ public interface CustomMob extends Listener {
      * @param entity 패턴을 실행할 몹 자신 (LivingEntity)
      */
     void runPattern(LivingEntity entity);
+
+    /**
+     * [추가] 몹이 죽었을 때 드랍할 아이템 목록을 반환합니다.
+     * @return MobDrop 리스트
+     */
+    List<MobDrop> getDrops();
 }

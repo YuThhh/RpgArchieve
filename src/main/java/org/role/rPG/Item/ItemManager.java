@@ -37,6 +37,7 @@ public class ItemManager {
     private File itemConfigFile;
 
     public static final NamespacedKey CUSTOM_ITEM_ID_KEY;
+    public static final NamespacedKey CUSTOM_ITEM_TYPE_KEY;
     private static final NamespacedKey BASE_STATS_KEY = new NamespacedKey("rpg", "base_stats");
     private static final NamespacedKey REFORGE_KEY = new NamespacedKey("rpg", "reforge_id");
     private static final Pattern LORE_STAT_PATTERN = Pattern.compile("([^:]+): ([+\\-]?\\d+(\\.\\d+)?)");
@@ -45,6 +46,7 @@ public class ItemManager {
 
     static {
         CUSTOM_ITEM_ID_KEY = new NamespacedKey("rpg", "custom_item_id");
+        CUSTOM_ITEM_TYPE_KEY = new NamespacedKey("rpg", "custom_item_type");
     }
 
     public ItemManager(RPG plugin, ReforgeManager reforgeManager) {
@@ -62,31 +64,48 @@ public class ItemManager {
     }
 
     public void reloadItems() {
+        // 1. 설정 파일 다시 불러오기
         itemConfig = YamlConfiguration.loadConfiguration(itemConfigFile);
+
+        // 2. 기존 아이템 데이터 초기화
         customItems.clear();
+
+        // 3. 'items' 섹션 가져오기 및 null 체크
         ConfigurationSection itemsSection = itemConfig.getConfigurationSection("items");
         if (itemsSection == null) {
             plugin.getLogger().warning("Item.yml에서 'items' 섹션을 찾을 수 없습니다.");
             return;
         }
+
+        // 4. 각 아이템 ID를 순회하며 아이템 생성
         for (String itemId : itemsSection.getKeys(false)) {
             ConfigurationSection config = itemsSection.getConfigurationSection(itemId);
             if (config == null) continue;
+
+            // 5. 오류 발생에 대비한 try-catch 블록
             try {
+                // 5-1. Material 정보 파싱 및 null 체크
                 Material material = Material.matchMaterial(config.getString("material", "STONE"));
                 if (material == null) {
                     plugin.getLogger().warning(itemId + " 아이템의 material을 찾을 수 없습니다.");
                     continue;
                 }
+
+                // 5-2. ItemStack 생성 및 ItemMeta 설정
                 ItemStack item = new ItemStack(material);
-                ItemMeta meta = buildMetaFromConfig(itemId, config);
+                ItemMeta meta = buildMetaFromConfig(itemId, config); // 핵심 로직 호출
                 item.setItemMeta(meta);
+
+                // 5-3. 메모리에 아이템 저장
                 customItems.put(itemId, item);
+
             } catch (Exception e) {
                 plugin.getLogger().warning(itemId + " 아이템 로딩 중 오류 발생:");
                 e.printStackTrace();
             }
         }
+
+        // 6. 로드 결과 로그 출력
         plugin.getLogger().info(customItems.size() + "개의 커스텀 아이템을 로드했습니다.");
     }
 
@@ -103,6 +122,16 @@ public class ItemManager {
         meta.setUnbreakable(config.getBoolean("unbreakable", false));
         PersistentDataContainer container = meta.getPersistentDataContainer();
         container.set(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING, itemId);
+
+        try {
+            String typeString = config.getString("type", "MISC").toUpperCase();
+            ItemType itemType = ItemType.valueOf(typeString);
+            container.set(CUSTOM_ITEM_TYPE_KEY, PersistentDataType.STRING, itemType.name());
+        } catch (IllegalArgumentException e) {
+            // yml에 잘못된 타입이 적혀있을 경우, 기본값(MISC)으로 설정
+            container.set(CUSTOM_ITEM_TYPE_KEY, PersistentDataType.STRING, ItemType.MISC.name());
+            plugin.getLogger().warning(itemId + " 아이템의 type이 잘못되었습니다. MISC로 설정합니다.");
+        }
 
         // ▼▼▼ 버전 저장 로직을 아래 해시 저장 로직으로 교체 ▼▼▼
         // 아이템의 모든 설정 값을 문자열로 만든 뒤, hashCode를 계산하여 '데이터 지문'으로 사용합니다.
@@ -251,16 +280,20 @@ public class ItemManager {
         if (currentHash != latestHash) {
             System.out.println("아이템 업데이트 발견 (" + itemId + "): 해시 불일치. " + currentHash + " -> " + latestHash);
 
-            // [중요] 업데이트 전에 아이템의 해시를 최신으로 맞춰줍니다.
-            currentMeta.getPersistentDataContainer().set(CONFIG_HASH_KEY, PersistentDataType.INTEGER, latestHash);
-            // 기본 스탯도 최신 버전으로 업데이트합니다.
-            Map<String, Double> latestBaseStats = getBaseStats(latestItemTemplate);
-            currentMeta.getPersistentDataContainer().set(BASE_STATS_KEY, new StatMapDataType(), latestBaseStats);
+            // [수정 후]
+            PersistentDataContainer currentContainer = currentMeta.getPersistentDataContainer();
+            PersistentDataContainer latestContainer = latestMeta.getPersistentDataContainer();
 
-            item.setItemMeta(currentMeta); // 변경된 해시와 스탯 데이터를 먼저 저장
+            // 해시 업데이트
+            currentContainer.set(CONFIG_HASH_KEY, PersistentDataType.INTEGER, latestHash);
+            // 기본 스탯 업데이트
+            currentContainer.set(BASE_STATS_KEY, new StatMapDataType(), getBaseStats(latestItemTemplate));
+            // ▼▼▼ 누락되었던 타입 정보 업데이트 코드 ▼▼▼
+            currentContainer.set(CUSTOM_ITEM_TYPE_KEY, PersistentDataType.STRING, Objects.requireNonNull(latestContainer.get(CUSTOM_ITEM_TYPE_KEY, PersistentDataType.STRING)));
+            // ▲▲▲ 여기까지 ▲▲▲
 
-            // 최종적으로 로어와 모든 스탯을 새로고칩니다.
-            updateLoreAndStats(item);
+            item.setItemMeta(currentMeta); // 변경된 모든 데이터를 먼저 저장
+            updateLoreAndStats(item); // 최종적으로 로어와 모든 스탯을 새로고침
             return true;
         }
 
@@ -348,6 +381,26 @@ public class ItemManager {
     public double parseValueFromLore(String cleanLine) throws NumberFormatException {
         String valueString = cleanLine.substring(cleanLine.indexOf(":") + 1).trim();
         return Double.parseDouble(valueString.split(" ")[0]);
+    }
+
+    /**
+     * [추가] ItemStack에서 ItemType을 가져오는 메서드
+     * @param item 타입을 확인할 아이템
+     * @return 아이템의 타입. 커스텀 아이템이 아니거나 타입 정보가 없으면 UNKNOWN을 반환.
+     */
+    public ItemType getItemType(ItemStack item) {
+        if (isNotCustomItem(item)) {
+            return ItemType.UNKNOWN;
+        }
+        String typeString = item.getItemMeta().getPersistentDataContainer().get(CUSTOM_ITEM_TYPE_KEY, PersistentDataType.STRING);
+        if (typeString == null) {
+            return ItemType.UNKNOWN;
+        }
+        try {
+            return ItemType.valueOf(typeString);
+        } catch (IllegalArgumentException e) {
+            return ItemType.UNKNOWN;
+        }
     }
 
     // [수정] "피해량"과 "공격 피해"를 모두 인식하도록 수정

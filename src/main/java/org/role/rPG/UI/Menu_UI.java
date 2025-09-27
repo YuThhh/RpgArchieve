@@ -66,6 +66,8 @@ public class Menu_UI extends BaseUI {
             case BARRIER:
                 player.closeInventory();
                 break;
+            case CRAFTING_TABLE:
+                new Craft_UI(plugin).openInventory(player);
             default:
                 break;
         }

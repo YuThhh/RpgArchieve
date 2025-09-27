@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.role.rPG.Item.ItemManager;
+import org.role.rPG.Item.ItemType;
 import org.role.rPG.Player.Cash;
 import org.role.rPG.Player.StatManager;
 import org.role.rPG.Item.ReforgeManager;
@@ -69,8 +70,8 @@ public class Reforge_UI extends BaseUI {
             ItemStack itemToReforge = event.getInventory().getItem(ITEM_SLOT); // 재련될 아이템 가져오기
 
             // 재련할 아이템이 있는지 확인
-            if (itemToReforge == null || itemManager.isNotCustomItem(itemToReforge)) {
-                player.sendMessage(Component.text("재련할 아이템을 지정된 칸에 올려주세요.", NamedTextColor.RED));
+            if (itemToReforge == null || itemManager.getItemType(itemToReforge) != ItemType.EQUIPMENT) {
+                player.sendMessage(Component.text("장비 아이템만 재련할 수 있습니다.", NamedTextColor.RED));
                 return;
             }
 

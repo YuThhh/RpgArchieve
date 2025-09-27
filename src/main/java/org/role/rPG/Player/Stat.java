@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.role.rPG.Effect.Effect;
 import org.role.rPG.Effect.EffectManager;
 import org.role.rPG.Indicator.IndicatorManager;
@@ -52,16 +53,28 @@ public class Stat implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamage(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player p) {
-            double def = statManager.getFinalStat(p.getUniqueId(), "DEFENSE");
+        if (e.getEntity() instanceof LivingEntity entity) {
 
-            if (def > 0.0) {
-                double original_damage = e.getDamage();
-                // [수정] 상수를 사용하여 가독성 향상
-                double damageReduction = Math.pow(0.5, def / DEFENSE_CONSTANT);
-                double final_damage = original_damage * damageReduction;
+            // 서버의 기본 데미지 처리 로직이 끝난 후 (1틱 뒤) 무적 시간을 0으로 설정합니다.
+            // 이렇게 해야 서버가 설정하는 기본 무적 시간을 덮어쓸 수 있습니다.
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    entity.setNoDamageTicks(0);
+                }
+            }.runTaskLater(plugin, 1L); // 1L = 1틱 후 실행
 
-                e.setDamage(final_damage);
+            if (e.getEntity() instanceof Player p) {
+                double def = statManager.getFinalStat(p.getUniqueId(), "DEFENSE");
+
+                if (def > 0.0) {
+                    double original_damage = e.getDamage();
+                    // [수정] 상수를 사용하여 가독성 향상
+                    double damageReduction = Math.pow(0.5, def / DEFENSE_CONSTANT);
+                    double final_damage = original_damage * damageReduction;
+
+                    e.setDamage(final_damage);
+                }
             }
         }
     }

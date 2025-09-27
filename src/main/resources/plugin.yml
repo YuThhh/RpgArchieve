@@ -26,3 +26,6 @@ commands:
   mob:
     description: 커스텀 몹을 관리합니다.
     usage: /mob <spawn|remove> <mob_id>
+  testitem: # 이 부분을 추가
+    description: 아이템 이름 테스트 명령어
+    usage: /testitem

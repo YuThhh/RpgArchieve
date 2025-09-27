@@ -5,6 +5,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Mob.mobs.DummyMob;
 
 
@@ -16,12 +17,15 @@ import java.util.Set;
 
 public class MobManager {
 
-    private final JavaPlugin plugin;
     // 모든 몹을 ID와 함께 저장하는 '등록소' 역할을 하는 Map
+    private final JavaPlugin plugin;
+    private final ItemManager itemManager; // ItemManager 필드 추가
     private final Map<String, CustomMob> mobRegistry = new HashMap<>();
 
-    public MobManager(JavaPlugin plugin) {
+    // 생성자에 ItemManager 추가
+    public MobManager(JavaPlugin plugin, ItemManager itemManager) {
         this.plugin = plugin;
+        this.itemManager = itemManager;
     }
 
     /**
@@ -107,7 +111,7 @@ public class MobManager {
 
             try {
                 // JavaPlugin을 인자로 받는 생성자를 통해 객체를 생성하고 등록합니다.
-                CustomMob mob = clazz.getConstructor(JavaPlugin.class).newInstance(plugin);
+                CustomMob mob = clazz.getConstructor(JavaPlugin.class, ItemManager.class).newInstance(plugin, itemManager);
                 registerMob(mob);
             } catch (Exception e) {
                 plugin.getLogger().warning("❌ Failed to register mob " + clazz.getSimpleName() + ": " + e.getMessage());

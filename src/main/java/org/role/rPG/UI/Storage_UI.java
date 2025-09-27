@@ -82,7 +82,8 @@ public class Storage_UI extends BaseUI {
         // ... (기존 코드와 동일)
         ItemStack grayGlassPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta grayMeta = grayGlassPane.getItemMeta();
-        grayMeta.displayName(Component.text(" "));
+        grayMeta.displayName(Component.text(""));
+        grayMeta.setHideTooltip(true);
         grayGlassPane.setItemMeta(grayMeta);
         return grayGlassPane;
     }

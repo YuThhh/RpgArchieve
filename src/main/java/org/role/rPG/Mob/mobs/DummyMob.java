@@ -14,9 +14,13 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Mob.CustomMob;
+import org.role.rPG.Mob.MobDrop;
 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 // [변경] CustomMob 인터페이스를 구현(implements)하도록 수정
@@ -30,7 +34,7 @@ public class DummyMob implements CustomMob {
     private final String MobId = "dummy";
     private final double MobProficiencyExp = MobLevel * 5;
 
-    public DummyMob(JavaPlugin plugin) {
+    public DummyMob(JavaPlugin plugin, ItemManager itemManager) {
         this.plugin = plugin;
     }
 
@@ -96,6 +100,11 @@ public class DummyMob implements CustomMob {
 
             entity.setRotation(yaw, pitch);
         }
+    }
+
+    @Override
+    public List<MobDrop> getDrops() {
+        return Collections.emptyList(); // 빈 리스트 반환
     }
 
     @EventHandler

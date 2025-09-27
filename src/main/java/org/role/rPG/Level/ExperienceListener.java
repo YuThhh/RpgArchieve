@@ -68,6 +68,7 @@ public class ExperienceListener implements Listener {
         }
 
         UUID attackerUUID = attacker.getUniqueId();
+
         CustomMob customMob = mobManager.getCustomMob(event.getEntity());
 
         // 1. 쿨다운 확인
@@ -86,17 +87,19 @@ public class ExperienceListener implements Listener {
         int playerMeleeProficiencyLevel = PER_DATA.getInstance().getProficiencyLevel(attackerUUID,"MELEE_COMBAT");
         int playerRangedProficiencyLevel = PER_DATA.getInstance().getProficiencyLevel(attackerUUID,"RANGED_COMBAT");
 
-        double meleeExp = customMob.getProficiencyExp();
-        double rangedExp = customMob.getProficiencyExp();
+        if (customMob != null) {
+            double meleeExp = customMob.getProficiencyExp();
+            double rangedExp = customMob.getProficiencyExp();
 
-        if (event.getDamager() instanceof Arrow) {
-            // 원거리 공격일 경우
-            levelManager.addProficiencyExp(attacker, PER_DATA.RANGED_COMBAT_PROFICIENCY, Math.min(playerRangedProficiencyLevel * 5, rangedExp)); // RANGED_PROFICIENCY는 PER_DATA에 추가 필요
-            attacker.sendMessage(Component.text("원거리 숙련도 " + Math.min(playerRangedProficiencyLevel * 5, rangedExp) + "획득"));
-        } else {
-            // 근접 공격일 경우
-            levelManager.addProficiencyExp(attacker, PER_DATA.MELEE_COMBAT_PROFICIENCY, Math.min(playerRangedProficiencyLevel * 5, meleeExp)); // MELEE_PROFICIENCY는 PER_DATA에 추가 필요
-            attacker.sendMessage(Component.text("근거리 숙련도 " + Math.min(playerRangedProficiencyLevel * 5, meleeExp) + "획득"));
+            if (event.getDamager() instanceof Arrow) {
+                // 원거리 공격일 경우
+                levelManager.addProficiencyExp(attacker, PER_DATA.RANGED_COMBAT_PROFICIENCY, Math.min((1 + playerRangedProficiencyLevel) * 5, rangedExp)); // RANGED_PROFICIENCY는 PER_DATA에 추가 필요
+                attacker.sendMessage(Component.text("원거리 숙련도 " + Math.min((1 + playerRangedProficiencyLevel) * 5, rangedExp) + "획득"));
+            } else {
+                // 근접 공격일 경우
+                levelManager.addProficiencyExp(attacker, PER_DATA.MELEE_COMBAT_PROFICIENCY, Math.min((1 + playerRangedProficiencyLevel) * 5, meleeExp)); // MELEE_PROFICIENCY는 PER_DATA에 추가 필요
+                attacker.sendMessage(Component.text("근거리 숙련도 " + Math.min((1 + playerRangedProficiencyLevel) * 5, meleeExp) + "획득"));
+            }
         }
     }
 
