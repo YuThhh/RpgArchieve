@@ -5,6 +5,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +26,7 @@ public class EffectListener implements Listener {
         this.itemManager = itemManager;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         // 1. 공격자가 플레이어이고, 피격자가 살아있는 개체인지 확인합니다.
         if (!(event.getDamager() instanceof Player && event.getEntity() instanceof LivingEntity)) {
