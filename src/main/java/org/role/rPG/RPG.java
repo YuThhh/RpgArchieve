@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.role.rPG.Craft.CraftManager;
 import org.role.rPG.Effect.EffectManager;
 import org.role.rPG.Enchant.EnchantmentManager;
 import org.role.rPG.Indicator.IndicatorManager;
@@ -35,6 +36,7 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
     private LevelManager levelManager;
     private EffectManager effectManager;
     private EnchantmentManager enchantmentManager;
+    private CraftManager craftManager;
 
     // 매직 넘버 선언
     private static final double NormalHpRegen = 1; // 체력 재생 (고정값)
@@ -53,11 +55,20 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
         // --- 2. 핵심 매니저(부품) 생성 [수정된 부분] ---
         this.indicatorManager = new IndicatorManager(this);
         this.reforgeManager = new ReforgeManager(this);
-        // ItemManager를 다른 매니저들보다 먼저 생성합니다.
         this.itemManager = new ItemManager(this, this.reforgeManager);
-        // 이제 itemManager가 null이 아니므로 안전하게 전달할 수 있습니다.
+
+        // ▼▼▼ 여기가 수정되어야 합니다 ▼▼▼
+
+        // 1. ItemManager가 먼저 모든 아이템을 불러옵니다.
+        this.itemManager.reloadItems();
+
+        // 2. 아이템 정보가 필요한 다른 매니저들을 생성합니다.
+        this.craftManager = new CraftManager(this, this.itemManager);
         this.mobManager = new MobManager(this, this.itemManager);
         this.statManager = new StatManager(this, this.itemManager);
+
+        // ▲▲▲ 여기까지 수정 ▲▲▲
+
         this.levelManager = new LevelManager(this, this.statManager);
         this.effectManager = new EffectManager(this);
         this.enchantmentManager = new EnchantmentManager();
@@ -68,7 +79,7 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
         this.enchantmentManager.registerEnchantmentsFromPackage(this, "org.role.rPG.Enchant.enchants");
 
         // --- 4. 명령어 관리자(CMD_manager) 등록 ---
-        CMD_manager cmdManager = new CMD_manager(this, this.itemManager, this.reforgeManager, this.statManager, this.mobManager, this.levelManager);
+        CMD_manager cmdManager = new CMD_manager(this, this.itemManager, this.reforgeManager, this.statManager, this.mobManager, this.levelManager, this.craftManager);
         cmdManager.registerCommands();
 
         // --- 5. 이벤트 리스너(Listener) 등록 ---

@@ -13,11 +13,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.role.rPG.Craft.CraftManager;
 import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Item.ReforgeManager;
 import org.role.rPG.Level.LevelManager;
 import org.role.rPG.Mob.MobManager;
 import org.role.rPG.Player.StatManager;
+import org.role.rPG.UI.Craft_UI;
 import org.role.rPG.UI.Menu_UI;
 import org.role.rPG.UI.Reforge_UI;
 
@@ -33,15 +35,17 @@ public class CMD_manager implements CommandExecutor, TabCompleter {
     private final StatManager statManager;
     private final MobManager mobManager;
     private final LevelManager levelManager;
+    private final CraftManager craftManager;
 
     // 생성자를 5개의 인자를 받도록 수정
-    public CMD_manager(JavaPlugin plugin, ItemManager itemManager, ReforgeManager reforgeManager, StatManager statManager, MobManager mobManager, LevelManager levelManager) {
+    public CMD_manager(JavaPlugin plugin, ItemManager itemManager, ReforgeManager reforgeManager, StatManager statManager, MobManager mobManager, LevelManager levelManager, CraftManager craftManager) {
         this.plugin = plugin;
         this.itemManager = itemManager;
         this.reforgeManager = reforgeManager;
         this.statManager = statManager;
         this.mobManager = mobManager;
         this.levelManager = levelManager;
+        this.craftManager = craftManager;
     }
 
     // 명령어 등록
@@ -67,7 +71,7 @@ public class CMD_manager implements CommandExecutor, TabCompleter {
 
         switch (commandName) {
             case "메뉴":
-                new Menu_UI(plugin, statManager, player, levelManager).openInventory(player);
+                new Menu_UI(plugin, statManager, player, levelManager, craftManager).openInventory(player);
                 break;
             case "리포지":
                 // 필요할 때마다 Reforge_UI를 새로 생성하여 필요한 매니저들을 전달
