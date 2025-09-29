@@ -9,11 +9,13 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.Vector3f;
+import org.role.rPG.Player.Stat;
 import org.role.rPG.Player.StatManager;
 
 import java.util.UUID;
@@ -126,7 +128,17 @@ public class WaterBoltSpell implements Spell {
                     double intelli = statManager.getFinalStat(caster.getUniqueId(), "MAX_MANA");
                     double damage = 10 + (intelli / 5.0);
 
+                    // 1. 데미지를 주기 직전, 피격자에게 '마법 데미지' 표식을 붙입니다.
+                    target.setMetadata(Stat.MAGIC_DAMAGE_KEY, new FixedMetadataValue(plugin, true));
+
+                    // 2. 데미지를 적용합니다. 이 때 Stat 클래스는 위의 표식을 보고 물리 데미지 계산을 건너뜁니다.
                     target.damage(damage, caster);
+
+                    // 3. 다음 틱에 표식을 제거하여, 다른 일반 공격은 정상적으로 들어가도록 합니다.
+                    plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                        target.removeMetadata(Stat.MAGIC_DAMAGE_KEY, plugin);
+                    }, 1L);
+
                     target.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_SPLASH, 0.5f, 1.5f);
                     projectile.getWorld().spawnParticle(Particle.SPLASH, projectile.getLocation(), 15, 0.2, 0.2, 0.2, 0.1);
 

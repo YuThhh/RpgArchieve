@@ -28,6 +28,8 @@ public class Stat implements Listener {
     private static final double STRENGTH_MUPLTPLIER = 0.003;
     private static final int MINIMUM_INVINCIBILITY_TICKS = 5;
 
+    public static final String MAGIC_DAMAGE_KEY = "CUSTOM_MAGIC_DAMAGE";
+
     private final JavaPlugin plugin;
     private final StatManager statManager;
     private final IndicatorManager indicatorManager; // 인디케이터를 직접 제어하기 위해 추가
@@ -81,96 +83,97 @@ public class Stat implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
-        // 1. '효과 데미지'인지 판별하기 위한 플래그를 만듭니다.
-        boolean isEffectDamage = false;
-        if (event.getEntity() instanceof LivingEntity victim) {
-            // 모든 효과를 순회하며 데미지 표식이 있는지 확인합니다.
-            for (Effect effect : effectManager.getAllEffects()) {
-                if (victim.hasMetadata(effect.getMarkerKey().getKey())) {
-                    isEffectDamage = true; // 표식이 있다면 플래그를 true로 설정합니다.
-                    break; // 하나라도 찾으면 더 이상 확인할 필요가 없으므로 중단합니다.
-                }
-            }
-        }
-
-        // 공격자가 플레이어인지 먼저 확인합니다.
+        // 1. 공격자가 플레이어인지 확인합니다. 아니면 메서드를 종료합니다.
         Player attacker = null;
         if (event.getDamager() instanceof Player p) {
             attacker = p;
         } else if (event.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player p) {
             attacker = p;
         }
+        if (attacker == null) return;
 
-        if (!isEffectDamage) {
-            // 플레이어별 커스텀 공격 쿨다운 체크
-            if (attacker != null) {
+        // --- 변수 초기화 ---
+        double finalDamage;
+        boolean isCritical = false;
+        boolean isMagic = event.getEntity().hasMetadata(MAGIC_DAMAGE_KEY);
+
+        // 2. 데미지 종류(마법/물리)에 따라 계산 방식을 나눕니다.
+        if (isMagic) {
+            // --- 마법 데미지 계산 경로 ---
+            finalDamage = event.getDamage(); // 스킬에서 설정한 기본 데미지를 가져옵니다.
+
+            // 치명타 스탯을 가져와 적용합니다.
+            double critChance = statManager.getFinalStat(attacker.getUniqueId(), "CRIT_CHANCE");
+            if (RANDOM.nextInt(100) < critChance) {
+                isCritical = true;
+                double critDamage = statManager.getFinalStat(attacker.getUniqueId(), "CRIT_DAMAGE");
+                finalDamage *= (1.0 + critDamage / 100.0);
+            }
+            // (마법 데미지는 힘 스탯의 영향을 받지 않습니다)
+
+        } else {
+            // --- 물리 / 기타 효과 데미지 계산 경로 ---
+
+            // '출혈' 같은 효과 데미지인지 확인합니다.
+            boolean isEffectDamage = false;
+            for (Effect effect : effectManager.getAllEffects()) {
+                if (event.getEntity().hasMetadata(effect.getMarkerKey().getKey())) {
+                    isEffectDamage = true;
+                    break;
+                }
+            }
+
+            // 순수 물리 공격에만 공격 쿨다운과 바닐라 무적 시간을 적용합니다.
+            if (!isEffectDamage) {
                 String cooldownKey = "ATTACK_COOLDOWN_" + attacker.getUniqueId();
                 if (event.getEntity().hasMetadata(cooldownKey)) {
                     event.setCancelled(true);
                     return;
                 }
-            }
-
-            // 바닐라 무적 시간 체크
-            if (event.getEntity() instanceof LivingEntity livingEntity && livingEntity.getNoDamageTicks() > 0) {
-                event.setCancelled(true);
-                return;
-            }
-        }
-
-        // --- 아래는 기존 코드 ---
-        double baseDamage = event.getDamage();
-
-        // 1. 공격이 플레이어가 쏜 '투사체'인 경우
-        if (event.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player p) {
-            attacker = p; // 공격자 설정
-            double weaponDamage = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_DAMAGE");
-            baseDamage = (weaponDamage > 0) ? weaponDamage : event.getDamage();
-
-            // 2. 공격이 '플레이어의 근접 공격'인 경우
-        } else if (event.getDamager() instanceof Player p) {
-            attacker = p; // 공격자 설정
-            org.bukkit.inventory.ItemStack weapon = attacker.getInventory().getItemInMainHand();
-            org.bukkit.Material weaponType = weapon.getType();
-            double weaponDamage = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_DAMAGE");
-
-            if (weaponType == org.bukkit.Material.BOW || weaponType == org.bukkit.Material.CROSSBOW) {
-                if (weaponDamage > 0) {
-                    baseDamage = baseDamage / weaponDamage;
+                if (event.getEntity() instanceof LivingEntity livingEntity && livingEntity.getNoDamageTicks() > 0) {
+                    event.setCancelled(true);
+                    return;
                 }
-            } else {
-                baseDamage = (weaponDamage > 0) ? weaponDamage : event.getDamage();
             }
-        }
 
-        // --- 최종 처리: 공격자가 플레이어일 경우에만 실행 ---
-        if (attacker != null) {
-            double finalDamageToShow;
-            boolean isCritical = false; // 효과 데미지는 기본적으로 크리티컬이 아닙니다.
+            // 기본 공격력을 계산합니다.
+            double baseDamage;
+            if (event.getDamager() instanceof Projectile) {
+                double weaponDamage = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_DAMAGE");
+                baseDamage = (weaponDamage > 0) ? weaponDamage : event.getDamage();
+            } else { // 근접 공격
+                org.bukkit.inventory.ItemStack weapon = attacker.getInventory().getItemInMainHand();
+                org.bukkit.Material weaponType = weapon.getType();
+                double weaponDamage = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_DAMAGE");
 
-            // 2. 효과 데미지가 아닐 경우에만 스탯 계산을 수행합니다.
+                if (weaponType == org.bukkit.Material.BOW || weaponType == org.bukkit.Material.CROSSBOW) {
+                    baseDamage = (weaponDamage > 0) ? (event.getDamage() / weaponDamage) : event.getDamage();
+                } else {
+                    baseDamage = (weaponDamage > 0) ? weaponDamage : event.getDamage();
+                }
+            }
+
             if (!isEffectDamage) {
-                // 이 블록은 플레이어의 순수 공격일 때만 실행됩니다.
+                // 순수 물리 공격에만 힘과 치명타를 적용합니다.
                 DamageResult result = applyPlayerModifiers(attacker, baseDamage);
-                event.setDamage(result.damage); // 이벤트의 실제 데미지를 변경합니다.
-                finalDamageToShow = result.damage;
+                finalDamage = result.damage;
                 isCritical = result.isCritical;
-
-                // 공격 속도 적용도 순수 공격에만 적용되어야 합니다.
                 applyAttackCoolDown(attacker, event.getEntity());
             } else {
-                // 이 블록은 출혈 등 효과 데미지일 때 실행됩니다.
-                // 스탯 계산을 건너뛰고 이벤트의 최종 데미지를 그대로 사용합니다.
-                finalDamageToShow = event.getFinalDamage();
+                // 효과 데미지는 계산 없이 그대로 적용합니다.
+                finalDamage = event.getFinalDamage();
             }
+        }
 
-            // 3. 인디케이터는 항상 표시됩니다.
-            Location loc = event.getEntity().getLocation();
-            if (isCritical) {
-                indicatorManager.showCriticalDamageIndicator(loc, finalDamageToShow);
-            } else {
-                indicatorManager.showDamageIndicator(loc, finalDamageToShow);
-            }
+        // 3. 최종 계산된 데미지를 이벤트에 적용합니다.
+        event.setDamage(finalDamage);
+
+        // 4. 데미지 인디케이터를 표시합니다. (치명타 여부에 따라 색상 변경)
+        Location loc = event.getEntity().getLocation();
+        if (isCritical) {
+            indicatorManager.showCriticalDamageIndicator(loc, finalDamage);
+        } else {
+            indicatorManager.showDamageIndicator(loc, finalDamage);
         }
     }
 
@@ -211,7 +214,7 @@ public class Stat implements Listener {
     private void applyAttackCoolDown(Player attacker, org.bukkit.entity.Entity victim) {
         if (victim instanceof LivingEntity livingVictim) {
             double atkspd = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_SPEED");
-            ((LivingEntity) victim).setNoDamageTicks(0);
+            livingVictim.setNoDamageTicks(0);
 
             atkspd = Math.max(0.0, atkspd);
 
