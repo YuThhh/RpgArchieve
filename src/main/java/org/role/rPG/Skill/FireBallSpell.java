@@ -6,11 +6,13 @@ import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.Vector3f;
+import org.role.rPG.Player.Stat;
 import org.role.rPG.Player.StatManager;
 
 public class FireBallSpell implements Spell {
@@ -106,7 +108,16 @@ public class FireBallSpell implements Spell {
                     double intelli = statManager.getFinalStat(caster.getUniqueId(), "MAX_MANA");
                     double damage = 10 + (intelli / 5.0);
 
+                    // 1. 데미지를 주기 직전, 피격자에게 '마법 데미지' 표식을 붙입니다.
+                    target.setMetadata(Stat.MAGIC_DAMAGE_KEY, new FixedMetadataValue(plugin, true));
+
+                    // 2. 데미지를 적용합니다.
                     target.damage(damage, caster);
+
+                    // 3. 다음 틱에 표식을 제거합니다.
+                    plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                        target.removeMetadata(Stat.MAGIC_DAMAGE_KEY, plugin);
+                    }, 1L);
                     target.getWorld().playSound(target.getLocation(), Sound.ENTITY_BLAZE_HURT, 0.5f, 1.0f);
                     projectile.getWorld().spawnParticle(Particle.LAVA, projectile.getLocation(), 15, 0.2, 0.2, 0.2, 0.1);
 
