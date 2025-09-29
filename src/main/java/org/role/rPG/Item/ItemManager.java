@@ -110,22 +110,48 @@ public class ItemManager {
     }
 
     private ItemMeta buildMetaFromConfig(String itemId, ConfigurationSection config) {
+        // 1. 아이템의 기본 Material 설정
+        // 설정 파일(config)에서 "material" 값을 읽어오고, 값이 없으면 기본값으로 "STONE"을 사용합니다.
         Material material = Material.matchMaterial(config.getString("material", "STONE"));
+
+        // 2. Material을 기반으로 ItemMeta 객체 생성
+        // Material의 ItemMeta 객체를 가져옵니다. Objects.requireNonNull()로 material이 null이 아님을 보장합니다.
         ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Objects.requireNonNull(material));
+
+        // 3. 아이템 이름(Display Name) 설정
+        // 설정 파일에서 "name" 값을 읽어와 MiniMessage로 Component로 변환합니다.
+        // 값이 없으면 빈 문자열("")을 사용하고, 이름에 이탤릭체(기울임꼴)는 적용하지 않도록 설정합니다.
         Component name = MINI_MESSAGE.deserialize(config.getString("name", "")).decoration(TextDecoration.ITALIC, false);
         meta.displayName(name);
+
+        // 4. 아이템 설명(Lore) 설정
+        // 설정 파일에서 "lore" 리스트를 읽어옵니다.
         List<String> originalLoreStrings = config.getStringList("lore");
+        // 각 설명 줄을 MiniMessage로 Component로 변환하고, 이탤릭체를 적용하지 않도록 처리한 후 리스트로 수집합니다.
         List<Component> loreForDisplay = originalLoreStrings.stream()
                 .map(line -> MINI_MESSAGE.deserialize(line).decoration(TextDecoration.ITALIC, false))
                 .collect(Collectors.toList());
         meta.lore(loreForDisplay);
+
+        // 5. 파괴 불가(Unbreakable) 설정
+        // 설정 파일에서 "unbreakable" 값을 읽어와 적용하고, 값이 없으면 기본값으로 false를 사용합니다.
         meta.setUnbreakable(config.getBoolean("unbreakable", false));
+
+        // 6. PersistentDataContainer(영구 데이터 저장소) 준비
+        // ItemMeta에 영구적으로 데이터를 저장할 수 있는 컨테이너를 가져옵니다.
         PersistentDataContainer container = meta.getPersistentDataContainer();
+
+        // 7. 커스텀 아이템 ID 저장
+        // 아이템의 고유 ID를 PersistentDataContainer에 저장합니다.
         container.set(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING, itemId);
 
+        // 8. 아이템 타입(ItemType) 저장
         try {
+            // 설정 파일에서 "type" 값을 읽어와 대문자로 변환합니다. 값이 없으면 기본값으로 "MISC"를 사용합니다.
             String typeString = config.getString("type", "MISC").toUpperCase();
+            // 문자열을 ItemType enum으로 변환합니다.
             ItemType itemType = ItemType.valueOf(typeString);
+            // 변환된 ItemType의 이름을 PersistentDataContainer에 저장합니다.
             container.set(CUSTOM_ITEM_TYPE_KEY, PersistentDataType.STRING, itemType.name());
         } catch (IllegalArgumentException e) {
             // yml에 잘못된 타입이 적혀있을 경우, 기본값(MISC)으로 설정
@@ -133,25 +159,38 @@ public class ItemManager {
             plugin.getLogger().warning(itemId + " 아이템의 type이 잘못되었습니다. MISC로 설정합니다.");
         }
 
+        // 9. 설정 해시 값(데이터 지문) 저장
         // ▼▼▼ 버전 저장 로직을 아래 해시 저장 로직으로 교체 ▼▼▼
         // 아이템의 모든 설정 값을 문자열로 만든 뒤, hashCode를 계산하여 '데이터 지문'으로 사용합니다.
+        // 이 해시 값은 아이템 설정이 변경되었는지 확인하는 용도로 사용될 수 있습니다.
         String configString = config.getValues(true).toString();
         int configHash = configString.hashCode();
         container.set(CONFIG_HASH_KEY, PersistentDataType.INTEGER, configHash);
         // ▲▲▲ 여기까지 ▲▲▲
 
+        // 10. 아이템의 기본 능력치(Base Stats) 파싱 및 저장
         Map<String, Double> baseStats = new HashMap<>();
+        // 원래의 Lore 문자열 리스트를 반복합니다.
         for (String loreLine : originalLoreStrings) {
+            // MiniMessage 태그를 제거하여 순수 텍스트만 남깁니다.
             String cleanLine = MINI_MESSAGE.stripTags(loreLine);
+            // 정의된 정규 표현식 패턴(LORE_STAT_PATTERN)을 사용하여 능력치 정보를 찾습니다.
             Matcher matcher = LORE_STAT_PATTERN.matcher(cleanLine);
             if (matcher.find()) {
+                // 정규식으로 찾은 능력치 이름(Group 1)을 실제 능력치 키로 변환합니다.
                 String statName = getStatKeyFromName(matcher.group(1));
                 if (statName != null) {
+                    // 정규식으로 찾은 능력치 값(Group 2)에서 "+"를 제거하고 Double로 변환합니다.
+                    // 능력치 이름과 값을 baseStats 맵에 저장합니다.
                     baseStats.put(statName, Double.parseDouble(matcher.group(2).replace("+", "")));
                 }
             }
         }
+        // 파싱된 기본 능력치 맵을 PersistentDataContainer에 저장합니다.
         container.set(BASE_STATS_KEY, new StatMapDataType(), baseStats);
+
+        // 11. 아이템 속성(Attribute) 적용 및 ItemMeta 반환
+        // Lore에서 파싱된 정보를 기반으로 아이템 속성(Attributes)을 적용하는 메서드를 호출하고 최종 ItemMeta를 반환합니다.
         return applyAttributesFromLore(meta, itemId, originalLoreStrings);
     }
 
