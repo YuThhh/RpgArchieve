@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9e8f6da2-8b24-4ded-b691-cb0ba1e8794d" name="변경" comment="리포지 수정&#10;레벨 GUI 추가">
+    <list default="true" id="9e8f6da2-8b24-4ded-b691-cb0ba1e8794d" name="변경" comment="마법 피해가 정상적으로 적용되지 않는 문제 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/Stat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/Stat.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/FireBallSpell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/FireBallSpell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/WaterBoltSpell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Skill/WaterBoltSpell.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Effect/EffectListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Effect/EffectListener.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +68,7 @@
     "project.structure.last.edited": "아티팩트",
     "project.structure.proportion": "0.1484375",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "MavenSettings",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "to.speed.mode.migration.done": "true"
   }
 }]]></component>
@@ -150,7 +148,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759128747380</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="마법 피해가 정상적으로 적용되지 않는 문제 수정">
+      <option name="closed" value="true" />
+      <created>1759131097496</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1759131097496</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -160,6 +166,7 @@
     <MESSAGE value="주석 추가" />
     <MESSAGE value="리포지 수정" />
     <MESSAGE value="리포지 수정&#10;레벨 GUI 추가" />
-    <option name="LAST_COMMIT_MESSAGE" value="리포지 수정&#10;레벨 GUI 추가" />
+    <MESSAGE value="마법 피해가 정상적으로 적용되지 않는 문제 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="마법 피해가 정상적으로 적용되지 않는 문제 수정" />
   </component>
 </project>
