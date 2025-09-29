@@ -68,7 +68,7 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
         this.enchantmentManager.registerEnchantmentsFromPackage(this, "org.role.rPG.Enchant.enchants");
 
         // --- 4. 명령어 관리자(CMD_manager) 등록 ---
-        CMD_manager cmdManager = new CMD_manager(this, this.itemManager, this.reforgeManager, this.statManager, this.mobManager);
+        CMD_manager cmdManager = new CMD_manager(this, this.itemManager, this.reforgeManager, this.statManager, this.mobManager, this.levelManager);
         cmdManager.registerCommands();
 
         // --- 5. 이벤트 리스너(Listener) 등록 ---

@@ -38,6 +38,9 @@ public class PER_DATA{
     public static final String MELEE_COMBAT_PROFICIENCY = "MELEE_COMBAT";
     public static final String RANGED_COMBAT_PROFICIENCY = "RANGED_COMBAT";
     public static final String MINING_PROFICIENCY = "MINING";
+    public static final String MAGIC_PROFICIENCY = "MAGIC";
+    public static final String TIMBER_PROFICIENCY = "WOODCUTTING";
+    public static final String GATHERING_PROFICIENCY = "GATHERING";
 
     // 생성자: new PER_DATA()를 할 때 instance에 자기 자신을 저장합니다.
     public PER_DATA() {

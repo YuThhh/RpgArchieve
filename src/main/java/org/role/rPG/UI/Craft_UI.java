@@ -66,14 +66,10 @@ public class Craft_UI extends BaseUI{
             return;
         }
 
-        // 3. 만약 재련 버튼을 클릭했다면, 재련 로직을 실행합니다.
         if (clickedSlot == RESULT_SLOT) {
             // 버튼 자체를 움직일 수 없도록 이벤트를 취소합니다.
 
 
         }
-        // 4. 위의 두 조건(유리판, 재련 버튼)에 해당하지 않는 모든 클릭은
-        //    event.setCancelled(true)가 호출되지 않으므로 정상적으로 처리됩니다.
-        //    (예: 아이템 슬롯, 비어있는 다른 슬롯 등)
     }
 }

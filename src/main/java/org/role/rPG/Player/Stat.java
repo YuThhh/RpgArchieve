@@ -213,6 +213,8 @@ public class Stat implements Listener {
             double atkspd = statManager.getFinalStat(attacker.getUniqueId(), "ATTACK_SPEED");
             ((LivingEntity) victim).setNoDamageTicks(0);
 
+            atkspd = Math.max(0.0, atkspd);
+
             // 공격 속도 스탯을 기반으로 쿨다운 시간(틱)을 계산합니다.
             // 이 계산식은 기존의 것을 그대로 활용하거나 원하는 방식으로 수정할 수 있습니다.
             int cooldownTicks = (int) (10 * 100 / (100 + atkspd));

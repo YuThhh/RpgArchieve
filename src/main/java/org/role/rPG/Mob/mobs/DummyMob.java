@@ -60,7 +60,7 @@ public class DummyMob implements CustomMob {
         dummy.setGravity(false);
         dummy.setInvulnerable(true);
         dummy.setSilent(true);
-        dummy.setCollidable(false);
+        dummy.setCollidable(true);
 
         Objects.requireNonNull(dummy.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(2048);
 

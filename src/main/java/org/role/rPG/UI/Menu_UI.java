@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.role.rPG.Level.LevelManager;
 import org.role.rPG.Player.PER_DATA;
 import org.role.rPG.Player.StatManager;
 
@@ -18,12 +19,14 @@ public class Menu_UI extends BaseUI {
     private final JavaPlugin plugin;
     private final StatManager statManager;
     private final Player viewer; // UI를 보고 있는 플레이어
+    private final LevelManager levelManager;
 
-    public Menu_UI(JavaPlugin plugin, StatManager statManager, Player viewer) {
+    public Menu_UI(JavaPlugin plugin, StatManager statManager, Player viewer, LevelManager levelManager) {
         super(54, Component.text("메뉴", NamedTextColor.BLUE));
         this.plugin = plugin;
         this.statManager = statManager;
         this.viewer = viewer;
+        this.levelManager = levelManager;
     }
 
     @Override
@@ -61,13 +64,17 @@ public class Menu_UI extends BaseUI {
                 break;
             case CHEST:
                 ItemStack[] playerData = PER_DATA.getInstance().getPlayerStorage(player.getUniqueId());
-                new Storage_UI(plugin, statManager, playerData, viewer).openInventory(player);
+                new Storage_UI(plugin, statManager, playerData, viewer, levelManager).openInventory(player);
                 break;
             case BARRIER:
                 player.closeInventory();
                 break;
             case CRAFTING_TABLE:
                 new Craft_UI(plugin).openInventory(player);
+                break;
+            case EXPERIENCE_BOTTLE:
+                new Level_UI(levelManager).openInventory(player);
+                break;
             default:
                 break;
         }
