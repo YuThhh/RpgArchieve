@@ -15,6 +15,9 @@ import org.role.rPG.Player.Cash;
 import org.role.rPG.Player.StatManager;
 import org.role.rPG.Item.ReforgeManager;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 public class Reforge_UI extends BaseUI {
 
     // 매니저 의존성은 그대로 유지합니다.
@@ -24,6 +27,13 @@ public class Reforge_UI extends BaseUI {
 
     private static final int ITEM_SLOT = 22;
     private static final int REFORGE_BUTTON_SLOT = 31;
+
+    private static final Set<ItemType> REFORGEABLE_TYPES = EnumSet.of(
+            ItemType.MELEE,
+            ItemType.ARMOR,
+            ItemType.RANGE,
+            ItemType.MAGIC
+    );
 
     public Reforge_UI(ItemManager itemManager, StatManager statManager, ReforgeManager reforgeManager) {
         // 부모 생성자 호출
@@ -69,9 +79,9 @@ public class Reforge_UI extends BaseUI {
             Player player = (Player) event.getWhoClicked();
             ItemStack itemToReforge = event.getInventory().getItem(ITEM_SLOT); // 재련될 아이템 가져오기
 
-            // 재련할 아이템이 있는지 확인
-            if (itemToReforge == null || itemManager.getItemType(itemToReforge) != ItemType.EQUIPMENT) {
-                player.sendMessage(Component.text("장비 아이템만 재련할 수 있습니다.", NamedTextColor.RED));
+            // 아이템이 없거나, 아이템의 타입이 REFORGEABLE_TYPES Set에 포함되어 있지 않으면 재련 불가 처리
+            if (itemToReforge == null || !REFORGEABLE_TYPES.contains(itemManager.getItemType(itemToReforge))) {
+                player.sendMessage(Component.text("리포지 가능한 아이템이 아닙니다.", NamedTextColor.RED));
                 return;
             }
 
@@ -84,7 +94,8 @@ public class Reforge_UI extends BaseUI {
             }
 
             // 재련 실행
-            ReforgeManager.ReforgeModifier modifier = reforgeManager.getRandomModifier();
+
+            ReforgeManager.ReforgeModifier modifier = reforgeManager.getRandomModifier(itemManager.getItemType(itemToReforge));
             if (modifier == null) {
                 player.sendMessage(Component.text("재련 정보가 없습니다. 관리자에게 문의하세요.", NamedTextColor.RED));
                 return;

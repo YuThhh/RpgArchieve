@@ -238,66 +238,104 @@ public class ItemManager {
     }
 
     public void reforgeItem(ItemStack item, ReforgeManager.ReforgeModifier modifier) {
+        // 1. 커스텀 아이템인지 확인 (필수 전제 조건)
+        // 아이템이 플러그인에서 관리하는 커스텀 아이템이 아니면 즉시 종료합니다.
         if (isNotCustomItem(item)) return;
 
+        // 2. ItemMeta와 PersistentDataContainer 준비
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
+        // 아이템의 PersistentDataContainer에 저장된 기본 능력치 맵을 가져옵니다.
         Map<String, Double> baseStats = getBaseStats(item);
 
+        // 3. 원본 아이템 템플릿 로드 (이름 복원을 위해)
         // [수정] 기존의 불안정한 이름 제거 방식 대신, 원본 아이템의 이름을 가져와 사용합니다.
         String itemId = container.get(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING);
+        // 아이템 ID를 사용하여 등록된 커스텀 아이템 템플릿(원본)을 가져옵니다.
         ItemStack templateItem = customItems.get(itemId);
+
+        // 템플릿 아이템의 유효성 검사
         if (templateItem == null || templateItem.getItemMeta() == null) {
             // 템플릿 아이템을 찾을 수 없는 경우, 오류를 방지하기 위해 작업을 중단합니다.
             plugin.getLogger().warning(itemId + "에 대한 아이템 템플릿을 찾을 수 없어 리포지를 중단합니다.");
             return;
         }
+
+        // 템플릿 아이템에서 원본 이름(Display Name)을 가져옵니다.
         Component originalName = templateItem.getItemMeta().displayName();
         if (originalName == null) {
             originalName = Component.text("이름 없는 아이템"); // 만약을 위한 대비
         }
 
+        // 4. 아이템 이름(Display Name) 업데이트
+        // 새로운 접두사 컴포넌트를 생성하고 색상을 YELLOW로 설정합니다. (예: "[Strong] ")
         Component prefixComponent = Component.text(modifier.getName() + " ").color(NamedTextColor.YELLOW);
+        // 접두사를 원본 이름 앞에 붙이고 이탤릭체를 제거하여 새로운 이름으로 설정합니다.
         meta.displayName(prefixComponent.append(originalName).decoration(TextDecoration.ITALIC, false));
 
+        // 5. 재련 정보(ID) 저장
         // [매우 중요] 접두사 이름(getName) 대신, 고유 ID(getId)를 저장합니다.
+        // 이는 재련된 상태를 영구적으로 기록하고, 나중에 해당 접두사를 식별하는 데 사용됩니다.
         container.set(REFORGE_KEY, PersistentDataType.STRING, modifier.getId());
 
+        // 6. 새로운 로어(Lore) 생성 로직 준비
+        // 적용할 능력치 변경 비율(multiplier) 맵을 가져옵니다.
         Map<String, Double> reforgeModifiers = modifier.getStatModifiers();
+        // 새로운 로어 컴포넌트를 저장할 리스트를 초기화합니다.
         List<Component> newLore = new ArrayList<>();
 
         // 원본 아이템의 로어를 기반으로 새로운 로어를 생성합니다.
         List<Component> originalLoreComponents = Objects.requireNonNull(templateItem.getItemMeta().lore());
+
+        // 7. 로어를 순회하며 능력치 라인 업데이트
         for (Component loreComponent : originalLoreComponents) {
+            // Component를 MiniMessage 형식의 문자열로 직렬화합니다.
             String loreLineFormat = MINI_MESSAGE.serialize(loreComponent);
+            // 태그를 제거하여 순수한 텍스트만 남깁니다.
             String cleanLine = MINI_MESSAGE.stripTags(loreLineFormat);
+            // 능력치 패턴 정규식으로 매칭을 시도합니다.
             Matcher matcher = LORE_STAT_PATTERN.matcher(cleanLine);
 
-            if (matcher.find()) {
+            if (matcher.find()) { // 현재 로어 줄이 능력치 라인인 경우
                 String statDisplayName = matcher.group(1).trim();
+                // 표시 이름을 사용하여 실제 능력치 키(key)를 가져옵니다.
                 String statKey = getStatKeyFromName(statDisplayName);
 
                 if (statKey != null) {
+                    // 기본 능력치 값과 재련 보너스 배율을 가져옵니다. (없으면 0.0)
                     double baseValue = baseStats.getOrDefault(statKey, 0.0);
                     double reforgeMultiplier = reforgeModifiers.getOrDefault(statKey, 0.0);
+
+                    // 최종 능력치 값 계산: Final = Base * (1 + Multiplier)
                     double finalValue = baseValue * (1 + reforgeMultiplier);
+                    // 기본값과의 차이(증가/감소량)를 계산합니다.
                     double diff = finalValue - baseValue;
 
+                    // 새로운 로어 라인 포맷팅 (예: "공격력: 10 (+2)")
                     String newLoreLine = String.format("<i:false><gray>%s: </gray><white>%.0f</white>", statDisplayName, finalValue);
+                    // 변경량이 0.01 이상일 경우에만 차이 값을 표시합니다.
                     if (Math.abs(diff) > 0.01) {
+                        // 차이 값(diff)이 양수일 경우 "+" 기호를 붙입니다.
                         newLoreLine += String.format(" <gray>(%s%.0f)</gray>", diff > 0 ? "+" : "", diff);
                     }
+                    // 포맷팅된 문자열을 Component로 변환하여 새로운 로어 리스트에 추가합니다.
                     newLore.add(MINI_MESSAGE.deserialize(newLoreLine));
                 } else {
+                    // 능력치 패턴은 찾았으나 유효한 능력치 키가 없는 경우, 원본 로어만 추가합니다.
                     newLore.add(loreComponent.decoration(TextDecoration.ITALIC, false));
                 }
             } else {
+                // 능력치 패턴을 찾지 못한 일반 로어 라인인 경우, 원본 로어만 추가합니다.
                 newLore.add(loreComponent.decoration(TextDecoration.ITALIC, false));
             }
         }
 
+        // 8. ItemMeta 업데이트 및 최종 능력치 새로고침
+        // 새로 생성된 로어 리스트를 ItemMeta에 적용합니다.
         meta.lore(newLore);
+        // ItemMeta를 ItemStack에 다시 설정합니다.
         item.setItemMeta(meta);
+        // 변경된 로어(능력치)를 기반으로 아이템의 최종 능력치(Attributes 등)를 새로고침합니다.
         refreshStatsFromLore(item);
     }
 
