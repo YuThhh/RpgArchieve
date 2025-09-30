@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin; // JavaPlugin 임포트
+import org.role.rPG.Craft.CraftManager;
 import org.role.rPG.Level.LevelManager;
 import org.role.rPG.Player.PER_DATA;
 import org.role.rPG.Player.StatManager; // StatManager 임포트
@@ -21,15 +22,17 @@ public class Storage_UI extends BaseUI {
     private final ItemStack[] storage;
     private final Player viewer;
     private final LevelManager levelManager;
+    private final CraftManager craftManager;
 
     // ▼▼▼ [수정] 생성자 변경 ▼▼▼
-    public Storage_UI(JavaPlugin plugin, StatManager statManager, ItemStack[] playerStorageData, Player viewer, LevelManager levelManager) {
+    public Storage_UI(JavaPlugin plugin, StatManager statManager, ItemStack[] playerStorageData, Player viewer, LevelManager levelManager, CraftManager craftManager) {
         super(54, Component.text("창고", NamedTextColor.BLUE));
         this.plugin = plugin;
         this.statManager = statManager;
         this.storage = playerStorageData;
         this.viewer = viewer;
         this.levelManager = levelManager;
+        this.craftManager = craftManager;
     }
 
     @Override
@@ -67,7 +70,7 @@ public class Storage_UI extends BaseUI {
         if (clickedType == Material.BARRIER) {
             event.setCancelled(true);
             // ▼▼▼ [수정] Menu_UI를 열 때 plugin과 statManager를 전달합니다. ▼▼▼
-            new Menu_UI(plugin, statManager, viewer, levelManager).openInventory(player);
+            new Menu_UI(plugin, statManager, viewer, levelManager, craftManager).openInventory(player);
         }
     }
 

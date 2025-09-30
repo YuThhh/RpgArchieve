@@ -28,6 +28,13 @@ public class EffectListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        // 메서드 실행의 가장 첫 단계에서, 이벤트가 취소되었는지 확인합니다.
+        // 만약 Stat 클래스 같은 다른 리스너가 이벤트를 취소했다면,
+        // 더 이상 코드를 진행하지 않고 즉시 메서드를 종료합니다.
+        if (event.isCancelled()) {
+            return;
+        }
+
         // 1. 공격자가 플레이어이고, 피격자가 살아있는 개체인지 확인합니다.
         if (!(event.getDamager() instanceof Player && event.getEntity() instanceof LivingEntity)) {
             return;
