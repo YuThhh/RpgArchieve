@@ -44,6 +44,7 @@ public class Menu_UI extends BaseUI {
         inv.setItem(23, createItem(Material.CRAFTING_TABLE, "제작대", NamedTextColor.DARK_GREEN));
         inv.setItem(24, createItem(Material.CHEST, "창고", NamedTextColor.GREEN));
         inv.setItem(31, createItem(Material.BOOK, "도감", NamedTextColor.DARK_PURPLE));
+        inv.setItem(32, createItem(Material.BUNDLE, "장신구", NamedTextColor.YELLOW));
         inv.setItem(45, createItem(Material.OAK_SIGN, "건의사항", NamedTextColor.DARK_GREEN));
         inv.setItem(46, createItem(Material.REDSTONE, "버그 제보", NamedTextColor.DARK_RED));
         inv.setItem(53, createItem(Material.BARRIER, "뒤로가기", NamedTextColor.RED));
