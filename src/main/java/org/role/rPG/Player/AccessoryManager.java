@@ -1,49 +1,62 @@
 package org.role.rPG.Player;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.role.rPG.Effect.Effect;
+import org.role.rPG.Effect.EffectManager;
 import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Item.ItemType;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-/**
- * 플레이어의 장신구 데이터를 관리하고, 장착/해제 로직을 처리하는 클래스입니다.
- */
 public class AccessoryManager {
 
     private final ItemManager itemManager;
     private final StatManager statManager;
+    private final EffectManager effectManager;
     private final Map<UUID, ItemStack[]> equippedAccessories = new HashMap<>();
+    private final Map<UUID, List<String>> activePassiveEffects = new HashMap<>();
 
-    public AccessoryManager(ItemManager itemManager, StatManager statManager) {
+    public AccessoryManager(ItemManager itemManager, StatManager statManager, EffectManager effectManager) {
         this.itemManager = itemManager;
         this.statManager = statManager;
+        this.effectManager = effectManager;
     }
 
-    /**
-     * 지정된 슬롯에 장신구를 장착하고 스탯을 즉시 업데이트합니다.
-     */
+    public void loadAccessories(Player player) {
+        UUID playerUUID = player.getUniqueId();
+        ItemStack[] loadedAccessories = StatDataManager.getPlayerAccessories(playerUUID);
+        equippedAccessories.put(playerUUID, loadedAccessories);
+        statManager.updatePlayerStats(player);
+        updatePassiveEffects(player);
+    }
+
+    public void saveAccessories(Player player) {
+        UUID playerUUID = player.getUniqueId();
+        ItemStack[] accessoriesToSave = equippedAccessories.getOrDefault(playerUUID, new ItemStack[4]);
+        StatDataManager.setPlayerAccessories(playerUUID, accessoriesToSave);
+    }
+
     public void equipAccessory(Player player, int slot, ItemStack accessory) {
-        if (itemManager.getItemType(accessory) != ItemType.ACCESSORY) {
+        ItemType type = itemManager.getItemType(accessory);
+        // [수정] || (OR) 가 아닌 && (AND) 를 사용해야 합니다.
+        // "패시브도 아니고, 액티브도 아닐 때" 장착을 막아야 합니다.
+        if (type != ItemType.PASSIVE_ACCESSORY && type != ItemType.ACTIVE_ACCESSORY) {
             return;
         }
 
         UUID playerUUID = player.getUniqueId();
         equippedAccessories.putIfAbsent(playerUUID, new ItemStack[4]);
-
         int accessoryIndex = getAccessoryIndex(slot);
         if (accessoryIndex == -1) return;
-
         equippedAccessories.get(playerUUID)[accessoryIndex] = accessory.clone();
-        statManager.updatePlayerStats(player); // 즉시 스탯 업데이트
+        statManager.updatePlayerStats(player);
+        updatePassiveEffects(player);
     }
 
-    /**
-     * 지정된 슬롯의 장신구를 해제하고 스탯을 즉시 업데이트합니다.
-     */
+    // ... (unequipAccessory, updatePassiveEffects 등 나머지 코드는 모두 동일) ...
     public void unequipAccessory(Player player, int slot) {
         UUID playerUUID = player.getUniqueId();
         if (!equippedAccessories.containsKey(playerUUID)) {
@@ -53,10 +66,43 @@ public class AccessoryManager {
         int accessoryIndex = getAccessoryIndex(slot);
         if (accessoryIndex == -1) return;
 
-        // 해당 슬롯에 아이템이 있을 때만 스탯 업데이트 호출
         if (equippedAccessories.get(playerUUID)[accessoryIndex] != null) {
             equippedAccessories.get(playerUUID)[accessoryIndex] = null;
-            statManager.updatePlayerStats(player); // 즉시 스탯 업데이트
+            statManager.updatePlayerStats(player);
+
+            updatePassiveEffects(player);
+        }
+    }
+
+    private void updatePassiveEffects(Player player) {
+        UUID playerUUID = player.getUniqueId();
+
+        List<String> previouslyActive = activePassiveEffects.getOrDefault(playerUUID, new ArrayList<>());
+        for (String effectName : previouslyActive) {
+            Effect effect = effectManager.getEffect(effectName);
+            if (effect != null) {
+                effect.removeEffect(player);
+            }
+        }
+        activePassiveEffects.put(playerUUID, new ArrayList<>());
+
+        for (ItemStack accessory : getEquippedAccessories(player)) {
+            if (accessory == null || !accessory.hasItemMeta() || !accessory.getItemMeta().hasLore()) {
+                continue;
+            }
+
+            for (Component lineComponent : Objects.requireNonNull(accessory.getItemMeta().lore())) {
+                String plainLine = PlainTextComponentSerializer.plainText().serialize(lineComponent);
+                if (plainLine.startsWith("효과:")) {
+                    String effectName = plainLine.substring(plainLine.indexOf(":") + 1).trim();
+                    Effect effect = effectManager.getEffect(effectName);
+
+                    if (effect != null && !(effect instanceof org.role.rPG.Effect.effects.Bleeding)) {
+                        effect.getEffect(player, player);
+                        activePassiveEffects.get(playerUUID).add(effectName);
+                    }
+                }
+            }
         }
     }
 
@@ -66,10 +112,10 @@ public class AccessoryManager {
 
     private int getAccessoryIndex(int slot) {
         return switch (slot) {
-            case 11 -> 0; // 액티브
-            case 14 -> 1; // 패시브 1
-            case 15 -> 2; // 패시브 2
-            case 16 -> 3; // 패시브 3
+            case 11 -> 0;
+            case 14 -> 1;
+            case 15 -> 2;
+            case 16 -> 3;
             default -> -1;
         };
     }

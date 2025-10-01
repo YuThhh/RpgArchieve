@@ -72,6 +72,15 @@ public class Bleeding implements Effect {
         }
     }
 
+    @Override
+    public void removeEffect(LivingEntity entity) {
+        BleedRunnable existingBleed = activeBleeds.get(entity.getUniqueId());
+        if (existingBleed != null) {
+            existingBleed.cancel(); // 실행 중인 출혈 작업 취소
+            activeBleeds.remove(entity.getUniqueId()); // 맵에서 제거
+        }
+    }
+
     // 출혈 효과의 실제 로직을 담고 있는 내부 클래스
     private class BleedRunnable extends BukkitRunnable {
         private final LivingEntity target;
@@ -130,5 +139,3 @@ public class Bleeding implements Effect {
         }
     }
 }
-
-//test

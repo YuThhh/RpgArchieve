@@ -2,15 +2,16 @@ package org.role.rPG.Player;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class StatDataManager {
 
     private static JavaPlugin plugin;
+
+    private static final Map<UUID, ItemStack[]> playerAccessories = new HashMap<>();
 
     /**
      * StatDataManager를 초기화합니다. 메인 클래스의 onEnable에서 호출해야 합니다.
@@ -18,6 +19,16 @@ public class StatDataManager {
      */
     public static void initialize(JavaPlugin mainPlugin) {
         plugin = mainPlugin;
+    }
+
+    // [신규] 플레이어의 장신구 배열을 가져오는 메서드
+    public static ItemStack[] getPlayerAccessories(UUID uuid) {
+        return playerAccessories.getOrDefault(uuid, new ItemStack[4]);
+    }
+
+    // [신규] 플레이어의 장신구 배열을 설정(저장)하는 메서드
+    public static void setPlayerAccessories(UUID uuid, ItemStack[] accessories) {
+        playerAccessories.put(uuid, accessories);
     }
 
     /**
@@ -66,6 +77,7 @@ public class StatDataManager {
                     config.set(basePath + ".current_mana", perData.getPlayerCurrentMana(uuid));
                     config.set(basePath + ".level", perData.getPlayerLevel(uuid));
                     config.set(basePath + ".experience", perData.getPlayerExperience(uuid));
+                    plugin.getConfig().set(basePath + ".accessories", getPlayerAccessories(uuid));
 
                     // 숙련도 저장
                     perData.getProficiencies(uuid).forEach((proficiencyName, level) -> {
@@ -129,6 +141,20 @@ public class StatDataManager {
                         perData.setProficiencyLevel(uuid, proficiencyName, config.getInt(profPath + ".level"));
                         perData.setProficiencyExperience(uuid, proficiencyName, config.getDouble(profPath + ".experience"));
                     }
+                }
+
+                List<?> rawList = plugin.getConfig().getList(basePath + ".accessories"); // 먼저 타입이 불분명한 리스트로 받습니다.
+                if (rawList != null) {
+                    List<ItemStack> accessoriesList = new ArrayList<>();
+                    for (Object obj : rawList) {
+                        // 각 항목이 ItemStack이 맞는지 확인합니다.
+                        if (obj instanceof ItemStack) {
+                            // ItemStack이 맞을 경우에만 안전하게 형 변환하여 리스트에 추가합니다.
+                            accessoriesList.add((ItemStack) obj);
+                        }
+                    }
+                    // 안전하게 만들어진 리스트를 배열로 변환하여 저장합니다.
+                    setPlayerAccessories(uuid, accessoriesList.toArray(new ItemStack[0]));
                 }
 
             } catch (IllegalArgumentException e) {
