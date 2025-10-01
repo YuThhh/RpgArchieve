@@ -1,5 +1,6 @@
 package org.role.rPG.Player;
 
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -16,6 +17,7 @@ public class StatManager {
     private final RPG plugin;
     private final ItemManager itemManager;
     private final PER_DATA perData;
+    private AccessoryManager accessoryManager;
 
     // 플레이어별 최종 스탯을 임시 저장하는 맵 (서버 재시작 시 사라짐)
     private final Map<UUID, Map<String, Double>> finalStatsCache = new HashMap<>();
@@ -24,6 +26,10 @@ public class StatManager {
         this.plugin = plugin;
         this.itemManager = itemManager;
         this.perData = PER_DATA.getInstance();
+    }
+
+    public void setAccessoryManager(AccessoryManager accessoryManager) {
+        this.accessoryManager = accessoryManager;
     }
 
     /**
@@ -118,6 +124,19 @@ public class StatManager {
                 Map<String, Double> itemStats = itemManager.getStatsFromItem(heldItem);
                 itemStats.forEach((stat, value) -> equipStats.merge(stat, value, Double::sum));
             }
+        }
+
+        ItemStack[] equippedAccessories = accessoryManager.getEquippedAccessories(player);
+
+        for (ItemStack accessory : equippedAccessories) {
+            if (accessory == null || accessory.getType() == Material.AIR) {
+                continue;
+            }
+            // Get the stats from the accessory item itself
+            Map<String, Double> accessory_stats = itemManager.getStatsFromItem(accessory);
+
+            // Add the accessory's stats to the player's total stats
+            accessory_stats.forEach((stat, value) -> equipStats.merge(stat, value, Double::sum));
         }
 
         return equipStats;

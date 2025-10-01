@@ -37,6 +37,7 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
     private EffectManager effectManager;
     private EnchantmentManager enchantmentManager;
     private CraftManager craftManager;
+    private AccessoryManager accessoryManager;
 
     // 매직 넘버 선언
     private static final double NormalHpRegen = 1; // 체력 재생 (고정값)
@@ -59,13 +60,18 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
 
         // ▼▼▼ 여기가 수정되어야 합니다 ▼▼▼
 
-        // 1. ItemManager가 먼저 모든 아이템을 불러옵니다.
-        this.itemManager.reloadItems();
+        // 1. StatManager를 먼저 생성합니다 (AccessoryManager 없이).
+        this.statManager = new StatManager(this, this.itemManager);
 
-        // 2. 아이템 정보가 필요한 다른 매니저들을 생성합니다.
+        // 2. AccessoryManager를 생성하면서 완성된 StatManager를 전달합니다.
+        this.accessoryManager = new AccessoryManager(this.itemManager, this.statManager);
+
+        // 3. Setter를 사용해 StatManager에 AccessoryManager를 연결합니다.
+        this.statManager.setAccessoryManager(this.accessoryManager);
+
+        // 4. 아이템 정보가 필요한 다른 매니저들을 생성합니다.
         this.craftManager = new CraftManager(this, this.itemManager);
         this.mobManager = new MobManager(this, this.itemManager);
-        this.statManager = new StatManager(this, this.itemManager);
 
         // ▲▲▲ 여기까지 수정 ▲▲▲
 
@@ -79,7 +85,7 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
         this.enchantmentManager.registerEnchantmentsFromPackage(this, "org.role.rPG.Enchant.enchants");
 
         // --- 4. 명령어 관리자(CMD_manager) 등록 ---
-        CMD_manager cmdManager = new CMD_manager(this, this.itemManager, this.reforgeManager, this.statManager, this.mobManager, this.levelManager, this.craftManager);
+        CMD_manager cmdManager = new CMD_manager(this, this.itemManager, this.reforgeManager, this.statManager, this.mobManager, this.levelManager, this.craftManager, this.accessoryManager);
         cmdManager.registerCommands();
 
         // --- 5. 이벤트 리스너(Listener) 등록 ---
