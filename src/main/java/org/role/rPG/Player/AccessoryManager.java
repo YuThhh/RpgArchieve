@@ -16,7 +16,6 @@ public class AccessoryManager {
 
     private final ItemManager itemManager;
     private final StatManager statManager;
-    // 플레이어 UUID와 장착한 장신구 배열(슬롯 0: 액티브, 1-3: 패시브)을 매핑하여 저장합니다.
     private final Map<UUID, ItemStack[]> equippedAccessories = new HashMap<>();
 
     public AccessoryManager(ItemManager itemManager, StatManager statManager) {
@@ -25,35 +24,25 @@ public class AccessoryManager {
     }
 
     /**
-     * 지정된 슬롯에 장신구를 장착합니다.
-     * @param player 대상 플레이어
-     * @param slot UI에서의 실제 인벤토리 슬롯 번호 (11, 14, 15, 16)
-     * @param accessory 장착할 장신구 아이템
+     * 지정된 슬롯에 장신구를 장착하고 스탯을 즉시 업데이트합니다.
      */
     public void equipAccessory(Player player, int slot, ItemStack accessory) {
         if (itemManager.getItemType(accessory) != ItemType.ACCESSORY) {
-            return; // 장신구 타입이 아니면 장착 불가
+            return;
         }
 
         UUID playerUUID = player.getUniqueId();
-        equippedAccessories.putIfAbsent(playerUUID, new ItemStack[4]); // 플레이어 데이터가 없으면 초기화
+        equippedAccessories.putIfAbsent(playerUUID, new ItemStack[4]);
 
         int accessoryIndex = getAccessoryIndex(slot);
-        if (accessoryIndex == -1) return; // 유효하지 않은 슬롯이면 중단
-
-        // 기존에 아이템이 있었다면 해제 처리 (플레이어에게 아이템을 돌려주는 로직은 UI에서 처리)
-        if (getEquippedAccessories(player)[accessoryIndex] != null) {
-            unequipAccessory(player, slot);
-        }
+        if (accessoryIndex == -1) return;
 
         equippedAccessories.get(playerUUID)[accessoryIndex] = accessory.clone();
-        statManager.updatePlayerStats(player); // 스탯 업데이트
+        statManager.updatePlayerStats(player); // 즉시 스탯 업데이트
     }
 
     /**
-     * 지정된 슬롯의 장신구를 해제합니다.
-     * @param player 대상 플레이어
-     * @param slot UI에서의 실제 인벤토리 슬롯 번호
+     * 지정된 슬롯의 장신구를 해제하고 스탯을 즉시 업데이트합니다.
      */
     public void unequipAccessory(Player player, int slot) {
         UUID playerUUID = player.getUniqueId();
@@ -64,31 +53,24 @@ public class AccessoryManager {
         int accessoryIndex = getAccessoryIndex(slot);
         if (accessoryIndex == -1) return;
 
-        equippedAccessories.get(playerUUID)[accessoryIndex] = null;
-        statManager.updatePlayerStats(player); // 스탯 업데이트
+        // 해당 슬롯에 아이템이 있을 때만 스탯 업데이트 호출
+        if (equippedAccessories.get(playerUUID)[accessoryIndex] != null) {
+            equippedAccessories.get(playerUUID)[accessoryIndex] = null;
+            statManager.updatePlayerStats(player); // 즉시 스탯 업데이트
+        }
     }
 
-    /**
-     * 플레이어가 장착한 모든 장신구 아이템 배열을 반환합니다.
-     * @param player 대상 플레이어
-     * @return 장신구 ItemStack 배열 (크기 4), 데이터가 없으면 빈 배열
-     */
     public ItemStack[] getEquippedAccessories(Player player) {
         return equippedAccessories.getOrDefault(player.getUniqueId(), new ItemStack[4]);
     }
 
-    /**
-     * UI 인벤토리 슬롯 번호를 내부 데이터 배열 인덱스(0-3)로 변환합니다.
-     * @param slot UI 슬롯 번호
-     * @return 내부 배열 인덱스, 유효하지 않으면 -1
-     */
     private int getAccessoryIndex(int slot) {
-        switch (slot) {
-            case 11: return 0; // 액티브
-            case 14: return 1; // 패시브 1
-            case 15: return 2; // 패시브 2
-            case 16: return 3; // 패시브 3
-            default: return -1;
-        }
+        return switch (slot) {
+            case 11 -> 0; // 액티브
+            case 14 -> 1; // 패시브 1
+            case 15 -> 2; // 패시브 2
+            case 16 -> 3; // 패시브 3
+            default -> -1;
+        };
     }
 }

@@ -57,6 +57,7 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
         this.indicatorManager = new IndicatorManager(this);
         this.reforgeManager = new ReforgeManager(this);
         this.itemManager = new ItemManager(this, this.reforgeManager);
+        this.itemManager.reloadItems();
 
         // ▼▼▼ 여기가 수정되어야 합니다 ▼▼▼
 
@@ -80,7 +81,6 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
         this.enchantmentManager = new EnchantmentManager();
 
         // --- 3. 콘텐츠 로드/등록 ---
-        this.itemManager.reloadItems();
         this.mobManager.registerMobsFromPackage("org.role.rPG.Mob.mobs");
         this.enchantmentManager.registerEnchantmentsFromPackage(this, "org.role.rPG.Enchant.enchants");
 

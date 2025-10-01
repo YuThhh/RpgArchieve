@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin; // JavaPlugin 임포트
 import org.role.rPG.Craft.CraftManager;
 import org.role.rPG.Level.LevelManager;
+import org.role.rPG.Player.AccessoryManager;
 import org.role.rPG.Player.PER_DATA;
 import org.role.rPG.Player.StatManager; // StatManager 임포트
 
@@ -69,8 +70,8 @@ public class Storage_UI extends BaseUI {
 
         if (clickedType == Material.BARRIER) {
             event.setCancelled(true);
-            // ▼▼▼ [수정] Menu_UI를 열 때 plugin과 statManager를 전달합니다. ▼▼▼
-            new Menu_UI(plugin, statManager, viewer, levelManager, craftManager).openInventory(player);
+//            // ▼▼▼ [수정] Menu_UI를 열 때 plugin과 statManager를 전달합니다. ▼▼▼
+//            new Menu_UI(plugin, statManager, viewer, levelManager, craftManager, ).openInventory(player);
         }
     }
 

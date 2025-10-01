@@ -14,73 +14,83 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 장신구 UI를 관리하는 클래스입니다.
+ * 장신구 UI를 관리하는 클래스입니다. (즉시 적용 방식으로 수정됨)
  */
 public class Accessories_UI extends BaseUI {
 
     private final AccessoryManager accessoryManager;
     private final ItemManager itemManager;
-    // 클릭 가능한 장신구 슬롯 목록
     private static final List<Integer> ACCESSORY_SLOTS = Arrays.asList(11, 14, 15, 16);
 
-    /**
-     * Accessories_UI의 생성자입니다.
-     */
     public Accessories_UI(AccessoryManager accessoryManager, ItemManager itemManager) {
         super(27, Component.text("장신구", NamedTextColor.GOLD));
         this.accessoryManager = accessoryManager;
         this.itemManager = itemManager;
     }
 
-    /**
-     * 장신구 UI의 아이템을 초기화하고 배치합니다.
-     * @param player UI를 보는 플레이어
-     */
     @Override
     protected void initializeItems(Player player) {
-        // 1. 배경을 회색 유리판으로 채웁니다.
         Graypanefiller.fillBackground(inv);
-
-        // 2. 플레이어가 이미 장착한 장신구를 불러와서 배치합니다.
         ItemStack[] equipped = accessoryManager.getEquippedAccessories(player);
         if (equipped.length == 4) {
-            inv.setItem(11, equipped[0]); // 액티브
-            inv.setItem(14, equipped[1]); // 패시브 1
-            inv.setItem(15, equipped[2]); // 패시브 2
-            inv.setItem(16, equipped[3]); // 패시브 3
+            inv.setItem(11, equipped[0]);
+            inv.setItem(14, equipped[1]);
+            inv.setItem(15, equipped[2]);
+            inv.setItem(16, equipped[3]);
         }
     }
 
     /**
-     * 장신구 UI 내에서 발생하는 클릭 이벤트를 처리합니다.
-     * @param event 인벤토리 클릭 이벤트
+     * [수정] 아이템을 클릭할 때마다 즉시 스탯이 적용되도록 로직을 변경합니다.
      */
     @Override
     public void handleClick(InventoryClickEvent event) {
-        event.setCancelled(true); // 기본적으로 모든 클릭은 취소
+        event.setCancelled(true); // 기본 동작을 막고 아래 로직으로만 제어
 
         Player player = (Player) event.getWhoClicked();
-        ItemStack cursorItem = event.getCursor(); // 플레이어가 들고 있는 아이템
-        ItemStack clickedItem = event.getCurrentItem(); // 클릭한 슬롯의 아이템
-        int clickedSlot = event.getSlot();
+        ItemStack cursorItem = event.getCursor();
+        ItemStack clickedItem = event.getCurrentItem();
+        int clickedSlot = event.getRawSlot(); // 플레이어 인벤토리 클릭 감지를 위해 getRawSlot() 사용
 
-        // 클릭한 슬롯이 장신구 슬롯이 아니면 아무것도 하지 않음
+        // UI 바깥 (플레이어 인벤토리 등)을 클릭했다면 아무것도 하지 않음
+        if (clickedSlot >= inv.getSize()) {
+            event.setCancelled(false); // 플레이어 인벤토리 내에서의 움직임은 허용
+            return;
+        }
+
+        // 클릭한 슬롯이 장신구 슬롯이 아니면 동작을 막음 (회색 유리판 등)
         if (!ACCESSORY_SLOTS.contains(clickedSlot)) {
             return;
         }
 
-        // Case 1: 장신구 해제 (클릭한 슬롯에 아이템이 있고, 커서가 비어있음)
-        if (clickedItem != null && cursorItem.getType() == Material.AIR) {
-            accessoryManager.unequipAccessory(player, clickedSlot); // 매니저를 통해 해제
-            player.getInventory().addItem(clickedItem); // 인벤토리로 아이템 반환
-            inv.setItem(clickedSlot, null); // UI 슬롯 비우기
+        boolean cursorIsEmpty = (cursorItem == null || cursorItem.getType().isAir());
+        boolean slotIsEmpty = (clickedItem == null || clickedItem.getType().isAir());
+
+        // Case 1: 장신구 해제 (슬롯에 아이템 O, 커서 X)
+        if (!slotIsEmpty && cursorIsEmpty) {
+            accessoryManager.unequipAccessory(player, clickedSlot);
+            player.setItemOnCursor(clickedItem);
+            inv.setItem(clickedSlot, null);
         }
-        // Case 2: 장신구 장착 (클릭한 슬롯이 비어있고, 커서에 장신구 아이템이 있음)
-        else if (clickedItem == null && cursorItem.getType() != Material.AIR) {
+        // Case 2: 장신구 장착 (슬롯에 아이템 X, 커서 O)
+        else if (slotIsEmpty && !cursorIsEmpty) {
             if (itemManager.getItemType(cursorItem) == ItemType.ACCESSORY) {
-                accessoryManager.equipAccessory(player, clickedSlot, cursorItem); // 매니저를 통해 장착
-                inv.setItem(clickedSlot, cursorItem.clone()); // UI에 아이템 복사본 배치
-                event.getWhoClicked().setItemOnCursor(null); // 커서의 아이템 제거
+                accessoryManager.equipAccessory(player, clickedSlot, cursorItem);
+                inv.setItem(clickedSlot, cursorItem);
+                player.setItemOnCursor(null);
+            }
+        }
+        // Case 3: 장신구 교체 (슬롯에 아이템 O, 커서 O)
+        else if (!slotIsEmpty && !cursorIsEmpty) {
+            if (itemManager.getItemType(cursorItem) == ItemType.ACCESSORY) {
+                // 기존 아이템(clickedItem) 해제
+                accessoryManager.unequipAccessory(player, clickedSlot);
+                // 새 아이템(cursorItem) 장착
+                accessoryManager.equipAccessory(player, clickedSlot, cursorItem);
+
+                // 아이템 스왑
+                inv.setItem(clickedSlot, cursorItem);
+                player.setItemOnCursor(clickedItem);
             }
         }
     }
