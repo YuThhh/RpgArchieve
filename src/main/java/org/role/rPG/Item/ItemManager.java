@@ -221,12 +221,13 @@ public class ItemManager {
         // 파싱된 기본 능력치 맵을 커스텀 데이터 타입으로 PDC에 저장
         container.set(BASE_STATS_KEY, new StatMapDataType(), baseStats);
 
+        // ▼▼▼ [수정] 소비 아이템 효과(effects) 섹션 파싱 및 저장 로직 ▼▼▼
         if (config.isConfigurationSection("effects")) {
             ConfigurationSection effectsSection = config.getConfigurationSection("effects");
-            // effectsSection이 null이 아닌지 한번 더 확인합니다.
             if (effectsSection != null) {
-                // Bukkit이 제공하는 Map을 깨끗한 HashMap으로 복사하여 문제를 해결합니다.
-                Map<String, Object> cleanEffectsMap = new HashMap<>(effectsSection.getValues(true));
+                // Bukkit의 ConfigurationSection을 순수 Map으로 깊은 복사(Deep Copy)합니다.
+                // 이렇게 하면 Gson이 Bukkit 내부 객체에 접근하는 것을 원천 차단할 수 있습니다.
+                Map<String, Object> cleanEffectsMap = deepCloneSection(effectsSection);
 
                 String effectsJson = gson.toJson(cleanEffectsMap);
                 container.set(CONSUMABLE_EFFECTS_KEY, PersistentDataType.STRING, effectsJson);
@@ -272,6 +273,21 @@ public class ItemManager {
             }
         }
         return meta;
+    }
+
+    private Map<String, Object> deepCloneSection(ConfigurationSection section) {
+        Map<String, Object> map = new HashMap<>();
+        for (String key : section.getKeys(false)) {
+            Object value = section.get(key);
+            if (value instanceof ConfigurationSection) {
+                // 값이 또 다른 섹션이면, 재귀적으로 다시 맵으로 변환합니다.
+                map.put(key, deepCloneSection((ConfigurationSection) value));
+            } else {
+                // 일반 값이면 그대로 넣습니다.
+                map.put(key, value);
+            }
+        }
+        return map;
     }
 
     /**

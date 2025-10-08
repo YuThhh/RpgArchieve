@@ -38,6 +38,7 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
     private EnchantmentManager enchantmentManager;
     private CraftManager craftManager;
     private AccessoryManager accessoryManager;
+    private BuffManager buffManager;
 
     // 매직 넘버 선언
     private static final double NormalHpRegen = 1; // 체력 재생 (고정값)
@@ -65,6 +66,9 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
 
         // 2. AccessoryManager를 생성하면서 StatManager와 effectManager를 주입합니다.
         this.accessoryManager = new AccessoryManager(this.itemManager, this.statManager, this.effectManager);
+        this.statManager = new StatManager(this, this.itemManager);
+        this.buffManager = new BuffManager(this, this.statManager); // <-- BuffManager 초기화
+        this.statManager.setBuffManager(this.buffManager); // <-- StatManager에 BuffManager 연결
 
         // 3. Setter를 사용해 StatManager에 AccessoryManager 의존성을 주입합니다.
         this.statManager.setAccessoryManager(this.accessoryManager);

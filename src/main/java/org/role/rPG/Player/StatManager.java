@@ -18,6 +18,7 @@ public class StatManager {
     private final ItemManager itemManager;
     private final PER_DATA perData;
     private AccessoryManager accessoryManager;
+    private BuffManager buffManager;
 
     // 플레이어별 최종 스탯을 임시 저장하는 맵 (서버 재시작 시 사라짐)
     private final Map<UUID, Map<String, Double>> finalStatsCache = new HashMap<>();
@@ -27,6 +28,11 @@ public class StatManager {
         this.itemManager = itemManager;
         this.perData = PER_DATA.getInstance();
     }
+
+    public void setBuffManager(BuffManager buffManager) { // <-- Setter 추가
+        this.buffManager = buffManager;
+    }
+
 
     public void setAccessoryManager(AccessoryManager accessoryManager) {
         this.accessoryManager = accessoryManager;
@@ -45,14 +51,14 @@ public class StatManager {
         // 2. 장비 스탯 계산하기
         Map<String, Double> equipStats = calculateEquipmentStats(player);
 
-        // 3. 기본 스탯과 장비 스탯을 합산하여 최종 스탯 계산
+        // 3. 버프 스탯 계산
+        Map<String, Double> buffStats = buffManager.getStatBuffsForPlayer(uuid);
+
         Map<String, Double> finalStats = new HashMap<>(baseStats);
         equipStats.forEach((stat, value) -> finalStats.merge(stat, value, Double::sum));
+        buffStats.forEach((stat, value) -> finalStats.merge(stat, value, Double::sum));
 
-        // 4. 계산된 최종 스탯을 캐시에 저장
         finalStatsCache.put(uuid, finalStats);
-
-        // 5. 최종 스탯을 실제 게임에 적용
         applyStatsToPlayer(player, finalStats);
     }
 

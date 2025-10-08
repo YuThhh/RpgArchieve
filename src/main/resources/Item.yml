@@ -103,7 +103,11 @@
   # 요리
   custom_meatball:
     type: CONSUMABLE_FOOD
-    # ... (미트볼 설정) ...
+    material: COCOA_BEANS
+    name: "<i:false><yellow><b>미트볼</b></yellow>"
+    lore:
+      - "<i:false><gray>황금의 기운이 느껴지는 빵이다.</gray>"
+      - "<i:false><gray>허기를 5 채워준다.</gray>"
     effects:
       hunger: 6
       saturation: 7.2
