@@ -1,5 +1,5 @@
 name: Automatic Archive Sync to RpgArchive
-
+# test
 on:
   push:
     branches:
