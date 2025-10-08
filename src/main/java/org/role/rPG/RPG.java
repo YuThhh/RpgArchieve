@@ -22,7 +22,7 @@ import org.role.rPG.UI.Reforge_UI;
 
 import java.util.UUID;
 
-// test workflow
+// test workflow asdfjkl;asdf
 public final class RPG extends JavaPlugin implements Listener { // 메인 클래스
 
     // 필요한 클래스 선언

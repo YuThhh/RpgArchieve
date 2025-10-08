@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9e8f6da2-8b24-4ded-b691-cb0ba1e8794d" name="변경" comment="요리 시스템 개선 중&#10;p">
+    <list default="true" id="9e8f6da2-8b24-4ded-b691-cb0ba1e8794d" name="변경" comment="워크플로 테스트 중">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -236,7 +235,23 @@
       <option name="project" value="LOCAL" />
       <updated>1759899952133</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="워크플로 테스트 중">
+      <option name="closed" value="true" />
+      <created>1759913698082</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1759913698082</updated>
+    </task>
+    <task id="LOCAL-00018" summary="워크플로 테스트 중">
+      <option name="closed" value="true" />
+      <created>1759913997028</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1759913997028</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -253,6 +268,7 @@
     <MESSAGE value="장신구 시스템 추가" />
     <MESSAGE value="요리 관련 yml 추가" />
     <MESSAGE value="요리 시스템 개선 중&#10;p" />
-    <option name="LAST_COMMIT_MESSAGE" value="요리 시스템 개선 중&#10;p" />
+    <MESSAGE value="워크플로 테스트 중" />
+    <option name="LAST_COMMIT_MESSAGE" value="워크플로 테스트 중" />
   </component>
 </project>
