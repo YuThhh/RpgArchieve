@@ -18,6 +18,7 @@ import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Item.ReforgeManager;
 import org.role.rPG.Level.LevelManager;
 import org.role.rPG.Mob.MobManager;
+import org.role.rPG.Player.AccessoryManager;
 import org.role.rPG.Player.StatManager;
 import org.role.rPG.UI.Craft_UI;
 import org.role.rPG.UI.Menu_UI;
@@ -36,9 +37,10 @@ public class CMD_manager implements CommandExecutor, TabCompleter {
     private final MobManager mobManager;
     private final LevelManager levelManager;
     private final CraftManager craftManager;
+    private final AccessoryManager accessoryManager;
 
     // 생성자를 5개의 인자를 받도록 수정
-    public CMD_manager(JavaPlugin plugin, ItemManager itemManager, ReforgeManager reforgeManager, StatManager statManager, MobManager mobManager, LevelManager levelManager, CraftManager craftManager) {
+    public CMD_manager(JavaPlugin plugin, ItemManager itemManager, ReforgeManager reforgeManager, StatManager statManager, MobManager mobManager, LevelManager levelManager, CraftManager craftManager, AccessoryManager accessoryManager) {
         this.plugin = plugin;
         this.itemManager = itemManager;
         this.reforgeManager = reforgeManager;
@@ -46,6 +48,7 @@ public class CMD_manager implements CommandExecutor, TabCompleter {
         this.mobManager = mobManager;
         this.levelManager = levelManager;
         this.craftManager = craftManager;
+        this.accessoryManager = accessoryManager;
     }
 
     // 명령어 등록
@@ -71,7 +74,7 @@ public class CMD_manager implements CommandExecutor, TabCompleter {
 
         switch (commandName) {
             case "메뉴":
-                new Menu_UI(plugin, statManager, player, levelManager, craftManager).openInventory(player);
+                new Menu_UI(plugin, statManager, player, levelManager, craftManager,accessoryManager, itemManager).openInventory(player);
                 break;
             case "리포지":
                 // 필요할 때마다 Reforge_UI를 새로 생성하여 필요한 매니저들을 전달

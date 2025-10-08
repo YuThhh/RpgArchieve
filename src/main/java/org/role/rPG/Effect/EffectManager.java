@@ -2,6 +2,7 @@ package org.role.rPG.Effect;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.role.rPG.Effect.effects.Bleeding;
+import org.role.rPG.Effect.effects.FireResistance;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class EffectManager {
      */
     private void registerEffects() {
         registerEffect(new Bleeding(plugin));
+        registerEffect(new FireResistance());
         // 여기에 다른 효과들(중독, 기절 등)을 추가할 수 있습니다.
     }
 

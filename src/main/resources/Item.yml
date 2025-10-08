@@ -1,36 +1,41 @@
 ﻿items:
   test_sword:
+    type: MELEE
+    grade: LEGENDARY # 등급 추가
     material: DIAMOND_SWORD
-    name: "<i:false><gold><bold>테스트용 무기</bold></gold>"
+    name: "<i:false><bold>테스트용 무기</bold>" # 색상 코드 제거
     lore:
-      - "<i:false><gray>피해량: <white>20</white></gray>" # 바닐라 공격 피해
-      - "<i:false><gray>힘: <white>50</white></gray>"   # 커스텀 스탯
+      - "<i:false><gray>피해량: <white>20</white></gray>"
+      - "<i:false><gray>힘: <white>100</white></gray>"
       - "<i:false><gray>크리티컬 확률: <white>30</white></gray>"
       - "<i:false><gray>크리티컬 피해: <white>20</white></gray>"
       - "<i:false><gray>공격 속도: <white>30</white></gray>"
       - "<i:false><gray>이동 속도: <white>10</white></gray>"
-      - "<i:false><gray>체력: <white>10</white></gray>"
-      - "<i:false><gray>방어력: <white>20</white></gray>"
+      - "<i:false><gray>효과: <red>출혈</red></gray>"
     unbreakable: true
   test_armor:
+    type: ARMOR
+    grade: EPIC # 등급 추가
     material: DIAMOND_CHESTPLATE
-    name: "<i:false><gold><bold>테스트용 갑옷</bold></gold>"
+    name: "<i:false><bold>테스트용 갑옷</bold>" # 색상 코드 제거
     lore:
-      - "<i:false><gray>피해량: <white>20</white></gray>" # 바닐라 공격 피해
-      - "<i:false><gray>힘: <white>20</white></gray>"   # 커스텀 스탯
+      - "<i:false><gray>피해량: <white>1</white></gray>"
+      - "<i:false><gray>힘: <white>20</white></gray>"
       - "<i:false><gray>크리티컬 확률: <white>30</white></gray>"
       - "<i:false><gray>크리티컬 피해: <white>20</white></gray>"
       - "<i:false><gray>공격 속도: <white>30</white></gray>"
       - "<i:false><gray>이동 속도: <white>10</white></gray>"
-      - "<i:false><gray>체력: <white>100</white></gray>"
+      - "<i:false><gray>체력: <white>2000</white></gray>"
       - "<i:false><gray>방어력: <white>50</white></gray>"
     unbreakable: true
   test_bow:
+    type: RANGE
+    grade: EPIC # 등급 추가
     material: BOW
-    name: "<i:false><gold><bold>테스트용 활</bold></gold>"
+    name: "<i:false><bold>테스트용 활</bold>" # 색상 코드 제거
     lore:
-      - "<i:false><gray>피해량: <white>20</white></gray>" # 바닐라 공격 피해
-      - "<i:false><gray>힘: <white>50</white></gray>"   # 커스텀 스탯
+      - "<i:false><gray>피해량: <white>20</white></gray>"
+      - "<i:false><gray>힘: <white>50</white></gray>"
       - "<i:false><gray>크리티컬 확률: <white>30</white></gray>"
       - "<i:false><gray>크리티컬 피해: <white>20</white></gray>"
       - "<i:false><gray>공격 속도: <white>30</white></gray>"
@@ -38,15 +43,71 @@
       - "<i:false><gray>체력: <white>100</white></gray>"
       - "<i:false><gray>방어력: <white>50</white></gray>"
     unbreakable: true
-  test_magicbook:
+  water_magicbook:
+    type: MAGIC
+    grade: RARE # 등급 추가
     material: BOOK
-    name: "<i:false><gold><bold>테스트용 마법서</bold></gold>"
+    name: "<i:false><bold>물의 마법서</bold>" # 이름 및 색상 코드 수정
     lore:
-      - "<i:false><gray>피해량: <white>20</white></gray>" # 바닐라 공격 피해
-      - "<i:false><gray>힘: <white>50</white></gray>"   # 커스텀 스탯
+      - "<i:false><gray>힘: <white>50</white></gray>"
       - "<i:false><gray>크리티컬 확률: <white>30</white></gray>"
       - "<i:false><gray>크리티컬 피해: <white>20</white></gray>"
       - "<i:false><gray>공격 속도: <white>30</white></gray>"
       - "<i:false><gray>이동 속도: <white>10</white></gray>"
       - "<i:false><gray>마나: <white>100</white></gray>"
+      - ""
+      - "<i:false><yellow>마법: <blue>워터 볼트</blue></yellow>"
     unbreakable: true
+  fire_magicbook:
+    type: MAGIC
+    grade: RARE # 등급 추가
+    material: BOOK
+    name: "<i:false><bold>불의 마법서</bold>" # 이름 및 색상 코드 수정
+    lore:
+      - "<i:false><gray>힘: <white>50</white></gray>"
+      - "<i:false><gray>크리티컬 확률: <white>30</white></gray>"
+      - "<i:false><gray>크리티컬 피해: <white>20</white></gray>"
+      - "<i:false><gray>공격 속도: <white>30</white></gray>"
+      - "<i:false><gray>이동 속도: <white>10</white></gray>"
+      - "<i:false><gray>마나: <white>100</white></gray>"
+      - ""
+      - "<i:false><yellow>마법: <blue>파이어 볼</blue></yellow>"
+    unbreakable: true
+
+  # ▼▼▼ 여기부터 들여쓰기 수정 ▼▼▼
+  # 장신구
+  rare_slime_core:
+    type: PASSIVE_ACCESSORY
+    grade: RARE 
+    material: EMERALD
+    name: "희귀한 슬라임 핵"
+    lore:
+      - "<gray>힘: <white>+5</white>"
+      - "<gray>체력: <white>+10</white>"
+      - ""
+      - "<gold>특별한 힘이 느껴지는"
+      - "<gold>슬라임의 핵이다."
+  fire_resistance_ring:
+    type: PASSIVE_ACCESSORY
+    grade: RARE
+    material: GOLD_NUGGET
+    name: "내화의 반지"
+    lore:
+      - "<gray>방어력: <white>+5</white>"
+      - ""
+      - "<gray>효과: <gold>화염저항</gold>"
+      - ""
+      - "<red>용암 속에 던져져도"
+      - "<red>상처 하나 입지 않는 반지."
+
+  # 잡템
+  slime_jelly:
+    type: MISC
+    grade: COMMON
+    material: SLIME_BALL
+    name: "말랑한 젤리"
+    lore:
+      - "<gray>슬라임에게서 얻을 수 있는"
+      - "<gray>말랑하고 끈적한 젤리다."
+      - ""
+      - "<dark_gray>재료 아이템"
