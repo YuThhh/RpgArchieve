@@ -19,7 +19,7 @@ import org.role.rPG.Player.PER_DATA;
 
 import java.util.*;
 
-public class Cooked implements Listener {
+public class FoodListener implements Listener {
 
     private final JavaPlugin plugin;
     private final Component GUI_TITLE = Component.text("§6모닥불 요리");
@@ -27,7 +27,7 @@ public class Cooked implements Listener {
     private final Map<UUID, Long> eatCooldowns = new HashMap<>();
     private final Map<UUID, Integer> activeStrengthBuffs = new HashMap<>();
 
-    public Cooked(JavaPlugin plugin) {
+    public FoodListener(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 

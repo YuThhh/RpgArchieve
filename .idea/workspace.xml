@@ -4,13 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9e8f6da2-8b24-4ded-b691-cb0ba1e8794d" name="변경" comment="장신구 시스템 추가">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/cooking.yml" afterDir="false" />
+    <list default="true" id="9e8f6da2-8b24-4ded-b691-cb0ba1e8794d" name="변경" comment="요리 관련 yml 추가">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/PER_DATA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/PER_DATA.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/StatDataManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Player/StatDataManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/Item.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Item.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Food/Cooked.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Food/FoodListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/LIS_manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/LIS_manager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -224,7 +221,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759282264493</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="요리 관련 yml 추가">
+      <option name="closed" value="true" />
+      <created>1759895853392</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1759895853392</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -239,6 +244,7 @@
     <MESSAGE value="주석 추가" />
     <MESSAGE value="장신구 칸 추가" />
     <MESSAGE value="장신구 시스템 추가" />
-    <option name="LAST_COMMIT_MESSAGE" value="장신구 시스템 추가" />
+    <MESSAGE value="요리 관련 yml 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="요리 관련 yml 추가" />
   </component>
 </project>

@@ -5,7 +5,7 @@ import org.bukkit.plugin.PluginManager;
 import org.role.rPG.Effect.EffectListener;
 import org.role.rPG.Enchant.EnchantmentListener;
 import org.role.rPG.Enchant.EnchantmentManager;
-import org.role.rPG.Food.Cooked;
+import org.role.rPG.Food.FoodListener;
 import org.role.rPG.Indicator.IndicatorManager;
 import org.role.rPG.Item.EquipmentListener;
 import org.role.rPG.Item.ItemManager;
@@ -48,7 +48,7 @@ public class LIS_manager {
 
         // 기타 모든 리스너들
         pm.registerEvents(new Stat(plugin, statManager, indicatorManager, effectManager), plugin);
-        pm.registerEvents(new Cooked(plugin), plugin);
+        pm.registerEvents(new FoodListener(plugin), plugin);
         pm.registerEvents(new EquipmentListener(plugin, statManager), plugin);
         pm.registerEvents(new Ui(plugin, statManager, levelManager), plugin);
         pm.registerEvents(new ItemUpdateListener(itemManager), plugin);
