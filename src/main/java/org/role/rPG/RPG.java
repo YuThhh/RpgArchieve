@@ -60,18 +60,15 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
         this.itemManager = new ItemManager(this, this.reforgeManager);
         this.itemManager.reloadItems();
 
-        // 1. StatManager와 EffectManager를 먼저 생성합니다.
-        this.effectManager = new EffectManager(this);
+        // 1. StatManager를 먼저 생성합니다.
         this.statManager = new StatManager(this, this.itemManager);
+
+        // 2. BuffManager를 생성하고 StatManager에 연결합니다.
         this.buffManager = new BuffManager(this, this.statManager);
         this.statManager.setBuffManager(this.buffManager);
 
-        // 2. AccessoryManager를 생성하면서 StatManager와 effectManager를 주입합니다.
+        // 3. AccessoryManager를 생성하고 StatManager에 연결합니다.
         this.accessoryManager = new AccessoryManager(this.itemManager, this.statManager, this.effectManager);
-        this.statManager = new StatManager(this, this.itemManager);
-        this.statManager.setBuffManager(this.buffManager); // <-- StatManager에 BuffManager 연결
-
-        // 3. Setter를 사용해 StatManager에 AccessoryManager 의존성을 주입합니다.
         this.statManager.setAccessoryManager(this.accessoryManager);
 
         // 4. 나머지 매니저들을 생성합니다.
@@ -91,7 +88,8 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
         // --- 5. 이벤트 리스너(Listener) 등록 ---
         getServer().getPluginManager().registerEvents(this, this);
         LIS_manager lisManager = new LIS_manager(this);
-        lisManager.registerGeneralListeners(statManager, indicatorManager, itemManager, levelManager, mobManager, effectManager, enchantmentManager);
+        // LIS_manager에 buffManager 전달
+        lisManager.registerGeneralListeners(statManager, indicatorManager, itemManager, levelManager, mobManager, effectManager, enchantmentManager, buffManager);
 
         // --- 6. PlaceholderAPI 등록 및 후속 작업 ---
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {

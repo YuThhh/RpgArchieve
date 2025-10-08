@@ -15,6 +15,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.role.rPG.Item.ItemManager;
 import org.role.rPG.Item.ItemType;
+import org.role.rPG.Player.Buff;
+import org.role.rPG.Player.BuffManager;
 import org.role.rPG.Player.StatManager;
 
 import java.util.Map;
@@ -25,11 +27,13 @@ public class FoodListener implements Listener {
     private final JavaPlugin plugin;
     private final ItemManager itemManager;
     private final StatManager statManager;
+    private final BuffManager buffManager;
 
-    public FoodListener(JavaPlugin plugin, ItemManager itemManager, StatManager statManager) {
+    public FoodListener(JavaPlugin plugin, ItemManager itemManager, StatManager statManager, BuffManager buffManager) {
         this.plugin = plugin;
         this.itemManager = itemManager;
         this.statManager = statManager;
+        this.buffManager = buffManager; // <-- 초기화
     }
 
     @EventHandler
@@ -104,9 +108,24 @@ public class FoodListener implements Listener {
 
         // 스탯 버프
         Object rawStatBuffs = effects.get("stat-buffs");
-        if (rawStatBuffs instanceof Map) { // [NPE 방지] 타입 확인
+        if (rawStatBuffs instanceof Map) {
             Map<String, Map<String, Object>> statBuffs = (Map<String, Map<String, Object>>) rawStatBuffs;
-            // (이하 스탯 버프 로직은 이전과 동일)
+            for (Map.Entry<String, Map<String, Object>> entry : statBuffs.entrySet()) {
+                String statName = entry.getKey().toUpperCase(); // 스탯 이름을 대문자로 통일
+                Map<String, Object> buffData = entry.getValue();
+
+                Object rawValue = buffData.get("value");
+                Object rawDuration = buffData.get("duration");
+
+                if (rawValue instanceof Number && rawDuration instanceof Number) {
+                    double value = ((Number) rawValue).doubleValue();
+                    int durationTicks = ((Number) rawDuration).intValue();
+
+                    // 새로운 Buff 객체를 생성하여 BuffManager에 추가합니다.
+                    Buff newBuff = new Buff(statName, value, durationTicks);
+                    buffManager.addBuff(player, newBuff);
+                }
+            }
         }
     }
 }

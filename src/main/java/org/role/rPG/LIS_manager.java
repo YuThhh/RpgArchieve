@@ -14,6 +14,7 @@ import org.role.rPG.Level.ExperienceListener;
 import org.role.rPG.Level.LevelManager;
 import org.role.rPG.Mob.MobDeathListener;
 import org.role.rPG.Mob.MobManager;
+import org.role.rPG.Player.BuffManager;
 import org.role.rPG.Player.Stat;
 import org.role.rPG.Player.StatManager;
 import org.role.rPG.Skill.SkillListener;
@@ -37,7 +38,7 @@ public class LIS_manager {
      * 플러그인의 모든 일반 이벤트 리스너를 등록합니다.
      * onEnable에서 필요한 매니저들을 인자로 받아옵니다.
      */
-    public void registerGeneralListeners(StatManager statManager, IndicatorManager indicatorManager, ItemManager itemManager, LevelManager levelManager, MobManager mobManager, EffectManager effectManager, EnchantmentManager enchantmentManager) {
+    public void registerGeneralListeners(StatManager statManager, IndicatorManager indicatorManager, ItemManager itemManager, LevelManager levelManager, MobManager mobManager, EffectManager effectManager, EnchantmentManager enchantmentManager, BuffManager buffManager) {
 
         // GUI 이벤트 총괄 매니저
         pm.registerEvents(new GUI_manager(), plugin);
@@ -48,7 +49,7 @@ public class LIS_manager {
 
         // 기타 모든 리스너들
         pm.registerEvents(new Stat(plugin, statManager, indicatorManager, effectManager), plugin);
-        pm.registerEvents(new FoodListener(plugin, itemManager, statManager), plugin);
+        pm.registerEvents(new FoodListener(plugin, itemManager, statManager, buffManager), plugin);
         pm.registerEvents(new EquipmentListener(plugin, statManager), plugin);
         pm.registerEvents(new Ui(plugin, statManager, levelManager), plugin);
         pm.registerEvents(new ItemUpdateListener(itemManager), plugin);
