@@ -31,10 +31,15 @@ jobs:
           git push archive-remote --mirror
           
   # 2. 오래된 브랜치를 삭제하는 작업 (sync_to_archive 작업 성공 후 실행)
+ # 2. 오래된 브랜치를 삭제하는 작업 (clean_stale_branches 작업)
   clean_stale_branches:
     runs-on: ubuntu-latest
-    # sync_to_archive가 성공해야 실행됩니다.
     needs: [sync_to_archive]
+    
+    # 🔑 추가할 부분: 이 작업이 리포지토리 콘텐츠에 쓰기 권한을 가지도록 명시
+    permissions:
+      contents: write # 이 설정을 추가해야 브랜치 삭제가 가능합니다.
+      
     steps:
       - name: Checkout RpgPlugin Repository (Full History)
         uses: actions/checkout@v4
