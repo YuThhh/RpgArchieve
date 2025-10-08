@@ -25,7 +25,7 @@ jobs:
           
           # 아카이브 리포지토리의 URL을 원격으로 추가 (Secret을 사용하여 인증)
           # [주의: {RpgArchive_Owner}를 실제 소유자 이름으로 변경하세요]
-          git remote add archive-remote https://x-access-token:${{ secrets.ARCHIVE_TOKEN }}@github.com/{YuThhh}/RpgArchive.git
+          git remote add archive-remote https://x-access-token:${{ secrets.ARCHIVE_TOKEN }}@github.com/YuThhh/RpgArchive.git
           
       - name: Execute Mirror Push to RpgArchive
         run: |
