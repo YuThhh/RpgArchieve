@@ -1,6 +1,8 @@
 package org.role.rPG.Item;
 
 import com.google.common.collect.Multimap;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -23,6 +25,7 @@ import org.role.rPG.Player.StatMapDataType;
 import org.role.rPG.RPG;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,6 +44,8 @@ public class ItemManager {
     private FileConfiguration itemConfig; // Item.yml 설정 파일의 내용을 담는 객체
     private File itemConfigFile; // Item.yml 파일 객체
 
+    private final Gson gson = new Gson();
+
     // === PersistentDataContainer(PDC)에 사용될 고유 키(NamespacedKey) 정의 ===
     // PDC는 아이템에 영구적인 커스텀 데이터를 저장하는 데 사용됩니다.
     public static final NamespacedKey CUSTOM_ITEM_ID_KEY; // 커스텀 아이템의 고유 ID (예: "SWORD_OF_FIRE")
@@ -49,6 +54,7 @@ public class ItemManager {
     private static final NamespacedKey BASE_STATS_KEY = new NamespacedKey("rpg", "base_stats"); // 아이템의 순수 기본 능력치 맵
     private static final NamespacedKey REFORGE_KEY = new NamespacedKey("rpg", "reforge_id"); // 아이템에 적용된 재련(Reforge) ID
     private static final NamespacedKey CONFIG_HASH_KEY = new NamespacedKey("rpg", "config_hash"); // 설정 변경 여부를 확인하기 위한 해시 값
+    public static final NamespacedKey CONSUMABLE_EFFECTS_KEY = new NamespacedKey("rpg", "consumable_effects");
 
     // === 정규 표현식 및 MiniMessage 인스턴스 정의 ===
     // 아이템 설명(Lore)에서 능력치 정보(예: "힘: +10.5")를 파싱하기 위한 정규식
@@ -214,6 +220,16 @@ public class ItemManager {
         }
         // 파싱된 기본 능력치 맵을 커스텀 데이터 타입으로 PDC에 저장
         container.set(BASE_STATS_KEY, new StatMapDataType(), baseStats);
+
+        if (config.isConfigurationSection("effects")) {
+            // "effects" 섹션의 모든 내용을 Map 형태로 가져옵니다.
+            Map<String, Object> effectsMap = Objects.requireNonNull(config.getConfigurationSection("effects")).getValues(true);
+
+            // Map을 JSON 문자열로 변환하여 아이템의 NBT에 저장합니다.
+            // 복잡한 데이터를 NBT에 저장하는 가장 간단하고 확장성 있는 방법입니다.
+            String effectsJson = gson.toJson(effectsMap);
+            container.set(CONSUMABLE_EFFECTS_KEY, PersistentDataType.STRING, effectsJson);
+        }
 
         // 8. 아이템 속성(Attribute) 적용 및 ItemMeta 반환
         return applyAttributesFromLore(meta, itemId, originalLoreStrings);
@@ -581,6 +597,21 @@ public class ItemManager {
             case "마나" -> "MAX_MANA";
             default -> null;
         };
+    }
+
+    public Map<String, Object> getConsumableEffects(ItemStack item) {
+        if (isNotCustomItem(item)) {
+            return null;
+        }
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        String effectsJson = container.get(CONSUMABLE_EFFECTS_KEY, PersistentDataType.STRING);
+
+        if (effectsJson != null) {
+            // JSON 문자열을 다시 Map 형태로 변환하여 반환합니다.
+            Type type = new TypeToken<Map<String, Object>>(){}.getType();
+            return gson.fromJson(effectsJson, type);
+        }
+        return null;
     }
 
     /**

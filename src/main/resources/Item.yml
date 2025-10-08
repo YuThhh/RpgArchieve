@@ -102,41 +102,29 @@
 
   # 요리
   custom_meatball:
-    type: CONSUMABLE # 타입을 CONSUMABLE(소비용)로 지정
+    type: CONSUMABLE_FOOD # <-- 타입 변경
     material: COCOA_BEANS
     name: "<i:false><gold><b>미트볼</b></gold>"
     lore:
       - "<i:false><gray>잘 다져진 고기를 뭉쳐 만들었다.</gray>"
       - "<i:false><gray>허기를 6 채워준다.</gray>"
-    food:
-      hunger: 6 # 채워줄 허기
-      saturation: 7.2 # 포만감 (선택 사항)
-      effects:
-        # 먹었을 때 적용될 효과 목록
-        stat-buffs:
-          STRENGTH: # 스탯 이름
-            value: 1000 # 증가량
-            duration: 1200 # 지속 시간 (틱 단위, 20틱 = 1초)
-        # potion-effects: # 마인크래프트 기본 포션 효과도 추가 가능
-        #   SPEED:
-        #     amplifier: 1 # 효과 레벨
-        #     duration: 600
+    effects:
+      hunger: 6 # 허기 회복량
+      saturation: 7.2 # 포만감
+      stat-buffs:
+        STRENGTH: # 스탯 이름
+          value: 1000 # 증가량
+          duration: 1200 # 지속 시간 (틱 단위, 20틱 = 1초)
 
-    custom_golden_bread:
-      type: CONSUMABLE
-      material: BREAD
-      name: "<i:false><yellow><b>황금 빵</b></yellow>"
-      lore:
-        - "<i:false><gray>황금의 기운이 느껴지는 빵이다.</gray>"
-        - "<i:false><gray>허기를 5 채워준다.</gray>"
-      food:
-        hunger: 5
-        saturation: 6.0
-        effects:
-          potion-effects:
-            REGENERATION: # 포션 효과 이름
-              amplifier: 0 # 효과 레벨 (0 = 1레벨)
-              duration: 100 # 지속 시간 (틱)
+  # ▼▼▼ [추가] 즉시 사용 아이템 예시 ▼▼▼
+  minor_health_potion:
+    type: CONSUMABLE_INSTANT # <-- 즉시 사용 타입
+    material: POTION
+    name: "<i:false><red>하급 체력 물약</red>"
+    lore:
+      - "<i:false><gray>사용 시 체력을 즉시 회복합니다.</gray>"
+    effects:
+      instant-health: 15 # 즉시 회복량
 
   # 잡템
   slime_jelly:
