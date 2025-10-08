@@ -29,8 +29,6 @@ public class AccessoryManager {
         UUID playerUUID = player.getUniqueId();
         ItemStack[] loadedAccessories = StatDataManager.getPlayerAccessories(playerUUID);
         equippedAccessories.put(playerUUID, loadedAccessories);
-        statManager.updatePlayerStats(player);
-        updatePassiveEffects(player);
     }
 
     public void saveAccessories(Player player) {
@@ -74,7 +72,7 @@ public class AccessoryManager {
         }
     }
 
-    private void updatePassiveEffects(Player player) {
+    public void updatePassiveEffects(Player player) {
         UUID playerUUID = player.getUniqueId();
 
         List<String> previouslyActive = activePassiveEffects.getOrDefault(playerUUID, new ArrayList<>());

@@ -63,11 +63,12 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
         // 1. StatManager와 EffectManager를 먼저 생성합니다.
         this.effectManager = new EffectManager(this);
         this.statManager = new StatManager(this, this.itemManager);
+        this.buffManager = new BuffManager(this, this.statManager);
+        this.statManager.setBuffManager(this.buffManager);
 
         // 2. AccessoryManager를 생성하면서 StatManager와 effectManager를 주입합니다.
         this.accessoryManager = new AccessoryManager(this.itemManager, this.statManager, this.effectManager);
         this.statManager = new StatManager(this, this.itemManager);
-        this.buffManager = new BuffManager(this, this.statManager); // <-- BuffManager 초기화
         this.statManager.setBuffManager(this.buffManager); // <-- StatManager에 BuffManager 연결
 
         // 3. Setter를 사용해 StatManager에 AccessoryManager 의존성을 주입합니다.
@@ -120,6 +121,9 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
         Cash.loadAllPlayerData();
         accessoryManager.loadAccessories(player);
         StatDataManager.loadAllStats();
+
+        statManager.updatePlayerStats(player);
+        accessoryManager.updatePassiveEffects(player);
     }
 
     @EventHandler

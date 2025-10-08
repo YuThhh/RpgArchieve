@@ -102,19 +102,17 @@
 
   # 요리
   custom_meatball:
-    type: CONSUMABLE_FOOD
+    type: CONSUMABLE_INSTANT
     material: COCOA_BEANS
     name: "<i:false><yellow><b>미트볼</b></yellow>"
     lore:
-      - "<i:false><gray>황금의 기운이 느껴지는 빵이다.</gray>"
-      - "<i:false><gray>허기를 5 채워준다.</gray>"
+      - "<i:false><gray>맛있는 미트볼이다</gray>"
+      - "<i:false><gray>강해진 기분이 든다</gray>"
     effects:
-      hunger: 6
-      saturation: 7.2
       stat-buffs:
         STRENGTH:
-          value: 1000
-          duration: 1200
+          value: 50
+          duration: 120
 
   # ▼▼▼ [추가] 즉시 사용 아이템 예시 ▼▼▼
   minor_health_potion:
@@ -122,7 +120,7 @@
     material: POTION
     name: "<i:false><red>하급 체력 물약</red>"
     lore:
-      - "<i:false><gray>사용 시 체력을 즉시 회복합니다.</gray>"
+      - "<i:false><gray>사용 시 체력을 즉시 회복합니다</gray>"
     effects:
       instant-health: 15 # 즉시 회복량
 
@@ -132,7 +130,7 @@
     material: BREAD
     name: "<i:false><yellow><b>황금 빵</b></yellow>"
     lore:
-      - "<i:false><gray>황금의 기운이 느껴지는 빵이다.</gray>"
+      - "<i:false><gray>황금의 기운이 느껴지는 빵이다</gray>"
       - "<i:false><gray>허기를 5 채워준다.</gray>"
     effects:
       hunger: 5
