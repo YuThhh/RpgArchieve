@@ -222,13 +222,15 @@ public class ItemManager {
         container.set(BASE_STATS_KEY, new StatMapDataType(), baseStats);
 
         if (config.isConfigurationSection("effects")) {
-            // "effects" 섹션의 모든 내용을 Map 형태로 가져옵니다.
-            Map<String, Object> effectsMap = Objects.requireNonNull(config.getConfigurationSection("effects")).getValues(true);
+            ConfigurationSection effectsSection = config.getConfigurationSection("effects");
+            // effectsSection이 null이 아닌지 한번 더 확인합니다.
+            if (effectsSection != null) {
+                // Bukkit이 제공하는 Map을 깨끗한 HashMap으로 복사하여 문제를 해결합니다.
+                Map<String, Object> cleanEffectsMap = new HashMap<>(effectsSection.getValues(true));
 
-            // Map을 JSON 문자열로 변환하여 아이템의 NBT에 저장합니다.
-            // 복잡한 데이터를 NBT에 저장하는 가장 간단하고 확장성 있는 방법입니다.
-            String effectsJson = gson.toJson(effectsMap);
-            container.set(CONSUMABLE_EFFECTS_KEY, PersistentDataType.STRING, effectsJson);
+                String effectsJson = gson.toJson(cleanEffectsMap);
+                container.set(CONSUMABLE_EFFECTS_KEY, PersistentDataType.STRING, effectsJson);
+            }
         }
 
         // 8. 아이템 속성(Attribute) 적용 및 ItemMeta 반환

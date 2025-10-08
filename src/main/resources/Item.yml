@@ -102,19 +102,15 @@
 
   # 요리
   custom_meatball:
-    type: CONSUMABLE_FOOD # <-- 타입 변경
-    material: COCOA_BEANS
-    name: "<i:false><gold><b>미트볼</b></gold>"
-    lore:
-      - "<i:false><gray>잘 다져진 고기를 뭉쳐 만들었다.</gray>"
-      - "<i:false><gray>허기를 6 채워준다.</gray>"
+    type: CONSUMABLE_FOOD
+    # ... (미트볼 설정) ...
     effects:
-      hunger: 6 # 허기 회복량
-      saturation: 7.2 # 포만감
+      hunger: 6
+      saturation: 7.2
       stat-buffs:
-        STRENGTH: # 스탯 이름
-          value: 1000 # 증가량
-          duration: 1200 # 지속 시간 (틱 단위, 20틱 = 1초)
+        STRENGTH:
+          value: 1000
+          duration: 1200
 
   # ▼▼▼ [추가] 즉시 사용 아이템 예시 ▼▼▼
   minor_health_potion:
@@ -125,6 +121,22 @@
       - "<i:false><gray>사용 시 체력을 즉시 회복합니다.</gray>"
     effects:
       instant-health: 15 # 즉시 회복량
+
+  # ▼▼▼ [수정] 들여쓰기를 맨 앞으로 당겨서 독립된 아이템으로 만듭니다. ▼▼▼
+  custom_golden_bread:
+    type: CONSUMABLE_FOOD # CONSUMABLE -> CONSUMABLE_FOOD 로 변경하는 것을 추천
+    material: BREAD
+    name: "<i:false><yellow><b>황금 빵</b></yellow>"
+    lore:
+      - "<i:false><gray>황금의 기운이 느껴지는 빵이다.</gray>"
+      - "<i:false><gray>허기를 5 채워준다.</gray>"
+    effects:
+      hunger: 5
+      saturation: 6.0
+      potion-effects:
+        REGENERATION:
+          amplifier: 0
+          duration: 100
 
   # 잡템
   slime_jelly:
