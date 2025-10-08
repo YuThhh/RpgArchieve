@@ -1,0 +1,17 @@
+﻿recipes:
+  # 각 조합법에 고유한 ID를 부여합니다. (예: sharp_iron_sword)
+  craft_test_sword:
+    # 결과물: ItemManager에 등록된 아이템의 고유 ID를 적습니다.
+    result: test_sword
+    # 재료 목록
+    ingredients:
+      # Craft_UI의 슬롯 번호, 아이템 종류, 개수를 지정합니다.
+      - slot: 12
+        item: slime_jelly   # 마인크래프트 기본 아이템은 Material 이름을 대문자로 적습니다.
+        amount: 1
+      - slot: 21
+        item: rare_slime_core
+        amount: 1
+      - slot: 30
+        item: STICK
+        amount: 1

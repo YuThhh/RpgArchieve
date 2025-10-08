@@ -1,39 +1,82 @@
-# plugins/RPG/reforges.yml
-
-# 리포지에 필요한 비용
+﻿# 리포지 비용
 reforge_cost: 1000
 
 # 리포지 접두사 목록
-# 모든 값은 '곱연산'으로 적용됩니다. (예: 0.1 = +10%, -0.05 = -5%)
+# 모든 스탯은 기본값에 더해집니다. (예: STRENGTH: 10 = 힘 10 증가)
 prefixes:
-  common: # 등급 (나중에 legendary, mythic 등으로 확장 가능)
+  # =================================================
+  #           모든 아이템에 적용되는 공통 접두사
+  # =================================================
+  common:
     broken:
       name: '부서진'
       modifiers:
-        STRENGTH: -0.15      # 힘 15% 감소
-        ATTACK_DAMAGE: -0.2  # 공격 피해 20% 감소
-        
+        STRENGTH: -15
+        MAX_HEALTH: -10
+    normal:
+      name: '평범한'
+      modifiers:
+        # 아무런 효과가 없음
     strong:
       name: '강력한'
       modifiers:
-        STRENGTH: 0.1        # 힘 10% 증가
-        CRIT_CHANCE: 0.05    # 치명타 확률 5% 증가
+        STRENGTH: 10
+        CRIT_CHANCE: 5
 
-    godly:
-      name: '신성한'
+  # =================================================
+  #           근접 무기(MELEE) 전용 접두사
+  # =================================================
+  melee:
+    sharp:
+      name: '날카로운'
       modifiers:
-        STRENGTH: 0.15       # 힘 15% 증가
-        ATTACK_DAMAGE: 0.1   # 공격 피해 10% 증가
-        CRIT_CHANCE: 0.1     # 치명타 확률 10% 증가
-
-    demonic:
-      name: '불길한'
+        STRENGTH: 15
+        CRIT_DAMAGE: 20
+    heavy:
+      name: '묵직한'
       modifiers:
-        STRENGTH: 0.2        # 힘 20% 증가
-        DEFENSE: -0.1        # 방어력 10% 감소 (패널티)
+        STRENGTH: 30
+        ATTACK_SPEED: -10 # 공격 속도 감소
 
+  # =================================================
+  #           원거리 무기(RANGE) 전용 접두사
+  # =================================================
+  range:
+    rapid:
+      name: '신속한'
+      modifiers:
+        ATTACK_SPEED: 20
+    precise:
+      name: '정밀한'
+      modifiers:
+        CRIT_CHANCE: 15
+        CRIT_DAMAGE: 15
+
+  # =================================================
+  #           방어구(ARMOR) 전용 접두사
+  # =================================================
+  armor:
+    sturdy:
+      name: '견고한'
+      modifiers:
+        DEFENSE: 5
+        MAX_HEALTH: 5
     light:
       name: '가벼운'
       modifiers:
-        SPEED: 0.1           # 이동 속도 10% 증가
-        ATTACK_SPEED: 0.1    # 공격 속도 10% 증가
+        DEFENSE: 10
+        MOVEMENT_SPEED: 10 # 이동 속도 증가
+
+  # =================================================
+  #           마법 무기(MAGIC) 전용 접두사
+  # =================================================
+  magic:
+    wise:
+      name: '현명한'
+      modifiers:
+        MAX_MANA: 100
+    cursed:
+      name: '저주받은'
+      modifiers:
+        STRENGTH: 50
+        MAX_MANA: -50 # 마나 감소
