@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9e8f6da2-8b24-4ded-b691-cb0ba1e8794d" name="변경" comment="요리 관련 yml 추가">
+    <list default="true" id="9e8f6da2-8b24-4ded-b691-cb0ba1e8794d" name="변경" comment="요리 시스템 개선 중&#10;p">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/Food/Cooked.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/Food/FoodListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/LIS_manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/LIS_manager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/role/rPG/RPG.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,26 +62,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Maven.rpgplugin [clean].executor": "Run",
-    "Maven.rpgplugin [package].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/USER-PC/IdeaProjects/Rpgplugin/pom.xml",
-    "project.structure.last.edited": "아티팩트",
-    "project.structure.proportion": "0.1484375",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Maven.rpgplugin [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.rpgplugin [package].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/USER-PC/IdeaProjects/Rpgplugin/pom.xml&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;아티팩트&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.1484375&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\USER-PC\IdeaProjects\Rpgplugin\src\main\resources" />
@@ -229,7 +228,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759895853392</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="요리 시스템 개선 중&#10;p">
+      <option name="closed" value="true" />
+      <created>1759899952133</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1759899952133</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -245,6 +252,7 @@
     <MESSAGE value="장신구 칸 추가" />
     <MESSAGE value="장신구 시스템 추가" />
     <MESSAGE value="요리 관련 yml 추가" />
-    <option name="LAST_COMMIT_MESSAGE" value="요리 관련 yml 추가" />
+    <MESSAGE value="요리 시스템 개선 중&#10;p" />
+    <option name="LAST_COMMIT_MESSAGE" value="요리 시스템 개선 중&#10;p" />
   </component>
 </project>
