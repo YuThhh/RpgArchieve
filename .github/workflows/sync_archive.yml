@@ -1,11 +1,13 @@
-name: Automatic Archive Sync to RpgArchive
+name: Automatic Archive Sync and Stale Branch Cleanup
 
 on:
   push:
+    # 🔑 변경 사항 1: main 브랜치뿐만 아니라, 모든 브랜치에 푸시될 때 실행합니다.
     branches:
-      - master # RpgPlugin의 main 브랜치에 푸시될 때 실행
+      - '**'
 
 jobs:
+  # 1. RpgArchive로 전체 이력을 미러링 동기화하는 작업
   sync_to_archive:
     runs-on: ubuntu-latest
     steps:
@@ -24,11 +26,53 @@ jobs:
           git config user.email "action@github.com"
           
           # 아카이브 리포지토리의 URL을 원격으로 추가 (Secret을 사용하여 인증)
-          # [주의: {RpgArchive_Owner}를 실제 소유자 이름으로 변경하세요]
-          git remote add archive-remote https://x-access-token:${{ secrets.ARCHIVE_TOKEN }}@github.com/YuThhh/RpgArchieve.git
+          # {YuThhh}는 정확하게 입력되어야 합니다. (이전에 중괄호 제거를 요청했었음)
+          git remote add archive-remote https://x-access-token:${{ secrets.ARCHIVE_TOKEN }}@github.com/YuThhh/RpgArchive.git
           
       - name: Execute Mirror Push to RpgArchive
         run: |
           # --mirror 옵션으로 모든 브랜치, 태그, 커밋 이력을 강제 동기화(덮어쓰기)합니다.
-          # 이 작업은 RpgPlugin의 현재 상태를 RpgArchive에 그대로 반영합니다.
           git push archive-remote --mirror
+          
+  # 2. 오래된 브랜치를 삭제하는 작업 (별도 작업)
+  clean_stale_branches:
+    runs-on: ubuntu-latest
+    # 동기화 작업과 독립적으로 실행됩니다.
+    steps:
+      - name: Checkout RpgPlugin Repository (Full History)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 전체 이력 가져오기
+
+      - name: Calculate and Delete Stale Branches
+        env:
+          # 💡 기준 브랜치: 현재 'master'로 설정되어 있습니다. 기본 브랜치 이름(main 또는 master)에 맞춰 수정하세요.
+          BASE_BRANCH: master
+          # 💡 임계치: 50 커밋 뒤처지면 삭제
+          COMMIT_THRESHOLD: 50
+        run: |
+          echo "Start checking branches against ${BASE_BRANCH}..."
+          
+          # 원격 추적 브랜치 목록을 가져와 master/main 브랜치와 HEAD 추적 브랜치를 제외합니다.
+          # 모든 브랜치에 대해 master와의 커밋 뒤처짐 정도를 계산합니다.
+          git branch -r | grep 'origin/' | grep -v '\->' | sed 's/origin\///' | grep -E -v "^(${BASE_BRANCH}|main)$" | while read branch_name; do
+            # 브랜치가 기준 브랜치(${BASE_BRANCH})보다 얼마나 뒤처져 있는지 커밋 수를 계산합니다.
+            COMMITS_BEHIND=$(git rev-list ${branch_name}..${BASE_BRANCH} --count)
+            
+            echo "🔍 Branch: ${branch_name} (Behind ${BASE_BRANCH}: ${COMMITS_BEHIND} commits)"
+            
+            # 뒤처진 커밋 수가 임계치(50) 이상일 경우
+            if [ ${COMMITS_BEHIND} -ge ${COMMIT_THRESHOLD} ]; then
+              echo "🗑️ Deleting stale branch: ${branch_name} (${COMMITS_BEHIND} commits behind ${BASE_BRANCH})"
+              
+              # 원격 리포지토리 (origin = RpgPlugin)에서 브랜치 삭제
+              # GITHUB_TOKEN은 현재 리포지토리에 대한 쓰기 권한이 있으므로 사용 가능합니다.
+              git push origin --delete "${branch_name}"
+              
+              if [ $? -eq 0 ]; then
+                echo "✅ Branch ${branch_name} successfully deleted from origin (RpgPlugin)."
+              else
+                echo "❌ Failed to delete branch ${branch_name}."
+              fi
+            fi
+          done
