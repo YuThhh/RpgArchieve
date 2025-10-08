@@ -1,0 +1,15 @@
+# cooking.yml - 모든 모닥불 요리 레시피를 이곳에 정의합니다.
+
+recipes:
+  meatball: # 레시피의 고유 ID
+    result_item: custom_meatball # Item.yml에 정의될 결과 아이템 ID
+    ingredients:
+      # 재료 목록: 마인크래프트 아이템 이름 또는 Item.yml의 아이템 ID를 사용할 수 있습니다.
+      - PORKCHOP: 3
+      - STICK: 2
+  
+  golden_bread:
+    result_item: custom_golden_bread
+    ingredients:
+      - WHEAT: 3
+      - GOLD_NUGGET: 1

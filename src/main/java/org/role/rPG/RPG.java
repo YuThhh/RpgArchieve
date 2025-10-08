@@ -59,26 +59,19 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
         this.itemManager = new ItemManager(this, this.reforgeManager);
         this.itemManager.reloadItems();
 
-        // ▼▼▼ 여기가 수정되어야 합니다 ▼▼▼
-
-        // 1. StatManager보다 먼저 EffectManager를 생성합니다.
+        // 1. StatManager와 EffectManager를 먼저 생성합니다.
         this.effectManager = new EffectManager(this);
-
-        // 2. StatManager를 생성합니다.
         this.statManager = new StatManager(this, this.itemManager);
 
-        // 3. 이제 정상적으로 생성된 effectManager를 AccessoryManager에 전달합니다.
+        // 2. AccessoryManager를 생성하면서 StatManager와 effectManager를 주입합니다.
         this.accessoryManager = new AccessoryManager(this.itemManager, this.statManager, this.effectManager);
 
-        // 4. Setter를 사용해 StatManager에 AccessoryManager를 연결합니다.
+        // 3. Setter를 사용해 StatManager에 AccessoryManager 의존성을 주입합니다.
         this.statManager.setAccessoryManager(this.accessoryManager);
 
-        // 5. 아이템 정보가 필요한 다른 매니저들을 생성합니다.
+        // 4. 나머지 매니저들을 생성합니다.
         this.craftManager = new CraftManager(this, this.itemManager);
         this.mobManager = new MobManager(this, this.itemManager);
-
-        // ▲▲▲ 여기까지 수정 ▲▲▲
-
         this.levelManager = new LevelManager(this, this.statManager);
         this.enchantmentManager = new EnchantmentManager();
 
@@ -117,7 +110,9 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        UUID playerUUID = player.getUniqueId();
         // 데이터는 이미 메모리에 있으므로 별도의 로딩이 필요 없습니다.
+        PER_DATA.getInstance().addPlayer(playerUUID);
         Cash.loadAllPlayerData();
         accessoryManager.loadAccessories(player);
         StatDataManager.loadAllStats();

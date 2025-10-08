@@ -1,8 +1,6 @@
 package org.role.rPG.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,6 +9,8 @@ public class PER_DATA{
 
     private static PER_DATA instance;
     private static JavaPlugin plugin;
+
+    private final Set<UUID> allPlayerUUIDs = new HashSet<>();
 
     private final Map<UUID, String> lastUiMap = new HashMap<>(); // GUI 뒤로가기 창
     private final Map<UUID,ItemStack[]> p_storage = new HashMap<>(); // GUI 창고 스토리지
@@ -41,6 +41,23 @@ public class PER_DATA{
     public static final String MAGIC_PROFICIENCY = "MAGIC";
     public static final String TIMBER_PROFICIENCY = "WOODCUTTING";
     public static final String GATHERING_PROFICIENCY = "GATHERING";
+
+    /**
+     * 서버에 접속한 플레이어의 UUID를 기록합니다.
+     * @param uuid 기록할 플레이어의 UUID
+     */
+    public void addPlayer(UUID uuid) {
+        allPlayerUUIDs.add(uuid);
+    }
+
+    /**
+     * 서버에 접속했던 모든 플레이어의 UUID 목록을 반환합니다.
+     * @return 모든 플레이어 UUID가 담긴 Set (수정 불가)
+     */
+    public Set<UUID> getAllPlayerUUIDs() {
+        // 외부에서 수정할 수 없도록 unmodifiableSet으로 감싸서 반환합니다.
+        return Collections.unmodifiableSet(allPlayerUUIDs);
+    }
 
     // 생성자: new PER_DATA()를 할 때 instance에 자기 자신을 저장합니다.
     public PER_DATA() {

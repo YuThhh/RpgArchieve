@@ -56,32 +56,30 @@ public class StatDataManager {
         // 모든 플레이어의 스탯을 저장하기 위해선 접속했던 모든 플레이어 UUID 목록이 필요합니다.
         // Cash 클래스의 playerMoney 맵을 활용하여 UUID 목록을 가져옵니다.
         // (더 나은 방법은 PER_DATA가 모든 유저 UUID를 관리하는 것입니다)
-        ConfigurationSection moneySection = config.getConfigurationSection("player_money");
-        if (moneySection != null) {
-            for (String uuidString : moneySection.getKeys(false)) {
-                try {
-                    UUID uuid = UUID.fromString(uuidString);
-                    String basePath = "player_stats." + uuidString;
+        for (UUID uuid : perData.getAllPlayerUUIDs()) {
+            try {
+                String uuidString = uuid.toString();
+                String basePath = "player_stats." + uuidString;
 
-                    // 각 스탯을 yml 파일에 저장합니다.
-                    config.set(basePath + ".last_ui", perData.getLastUi(uuid));
-                    config.set(basePath + ".max_health", perData.getplayerMaxHealth(uuid));
-                    config.set(basePath + ".hp_regeneration", perData.getPlayerHpRegenarationBonus(uuid));
-                    config.set(basePath + ".defense", perData.getPlayerDefense(uuid));
-                    config.set(basePath + ".crit_chance", perData.getPlayerCrit(uuid));
-                    config.set(basePath + ".crit_damage", perData.getPlayerCritDamage(uuid));
-                    config.set(basePath + ".strength", perData.getPlayerStrength(uuid));
-                    config.set(basePath + ".attack_speed", perData.getPlayerAttactSpeed(uuid));
-                    config.set(basePath + ".speed", perData.getPlayerSpeed(uuid));
-                    config.set(basePath + ".max_mana", perData.getPlayerMaxMana(uuid));
-                    config.set(basePath + ".current_mana", perData.getPlayerCurrentMana(uuid));
-                    config.set(basePath + ".level", perData.getPlayerLevel(uuid));
-                    config.set(basePath + ".experience", perData.getPlayerExperience(uuid));
-                    plugin.getConfig().set(basePath + ".accessories", getPlayerAccessories(uuid));
+                // 각 스탯을 yml 파일에 저장합니다.
+                config.set(basePath + ".last_ui", perData.getLastUi(uuid));
+                config.set(basePath + ".max_health", perData.getplayerMaxHealth(uuid));
+                config.set(basePath + ".hp_regeneration", perData.getPlayerHpRegenarationBonus(uuid));
+                config.set(basePath + ".defense", perData.getPlayerDefense(uuid));
+                config.set(basePath + ".crit_chance", perData.getPlayerCrit(uuid));
+                config.set(basePath + ".crit_damage", perData.getPlayerCritDamage(uuid));
+                config.set(basePath + ".strength", perData.getPlayerStrength(uuid));
+                config.set(basePath + ".attack_speed", perData.getPlayerAttactSpeed(uuid));
+                config.set(basePath + ".speed", perData.getPlayerSpeed(uuid));
+                config.set(basePath + ".max_mana", perData.getPlayerMaxMana(uuid));
+                config.set(basePath + ".current_mana", perData.getPlayerCurrentMana(uuid));
+                config.set(basePath + ".level", perData.getPlayerLevel(uuid));
+                config.set(basePath + ".experience", perData.getPlayerExperience(uuid));
+                plugin.getConfig().set(basePath + ".accessories", getPlayerAccessories(uuid));
 
-                    // 숙련도 저장
-                    perData.getProficiencies(uuid).forEach((proficiencyName, level) -> {
-                        String profPath = basePath + ".proficiencies." + proficiencyName;
+                // 숙련도 저장
+                perData.getProficiencies(uuid).forEach((proficiencyName, level) -> {
+                    String profPath = basePath + ".proficiencies." + proficiencyName;
                         config.set(profPath + ".level", level);
                         config.set(profPath + ".experience", perData.getProficiencyExperience(uuid, proficiencyName));
                     });
@@ -90,10 +88,10 @@ public class StatDataManager {
                     // 이 예제에서는 편의상 제외했습니다.
 
                 } catch (IllegalArgumentException e) {
-                    // 잘못된 UUID는 무시
-                }
+                // 잘못된 UUID는 무시
             }
         }
+
 
         plugin.saveConfig();
         plugin.getLogger().info("플레이어 스탯 데이터가 저장되었습니다.");
