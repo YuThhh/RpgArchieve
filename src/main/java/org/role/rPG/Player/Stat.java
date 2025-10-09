@@ -23,9 +23,13 @@ public class Stat implements Listener {
     // [수정] Random 객체는 한 번만 생성해서 재사용하는 것이 성능에 유리합니다.
     private static final Random RANDOM = new Random();
 
-    // [수정] 코드의 가독성과 유지보수를 위해 '매직 넘버'들을 상수로 정의합니다.
-    private static final double DEFENSE_CONSTANT = 500.0;
-    private static final double STRENGTH_MUPLTPLIER = 0.003;
+    // 힘(STRENGTH) 1당 최종 데미지가 몇 % 증가하는지에 대한 계수 (0.003 = 0.3%)
+    private static final double STRENGTH_DAMAGE_MULTIPLIER = 0.003;
+
+    // 방어력(DEFENSE)이 몇일 때 데미지 감소율이 50%가 되는지에 대한 기준값
+    private static final double DEFENSE_HALF_REDUCTION_POINT = 500.0;
+
+    // 공격 속도(ATTACK_SPEED)에 따른 최소 무적 시간 (틱 단위)
     private static final int MINIMUM_INVINCIBILITY_TICKS = 5;
 
     public static final String MAGIC_DAMAGE_KEY = "CUSTOM_MAGIC_DAMAGE";
@@ -72,7 +76,7 @@ public class Stat implements Listener {
                 if (def > 0.0) {
                     double original_damage = e.getDamage();
                     // [수정] 상수를 사용하여 가독성 향상
-                    double damageReduction = Math.pow(0.5, def / DEFENSE_CONSTANT);
+                    double damageReduction = Math.pow(0.5, def / DEFENSE_HALF_REDUCTION_POINT);
                     double final_damage = original_damage * damageReduction;
 
                     e.setDamage(final_damage);
@@ -191,7 +195,7 @@ public class Stat implements Listener {
         // 힘 스탯 적용
         double str = statManager.getFinalStat(attacker.getUniqueId(), "STRENGTH");
         if (str > 0.0) {
-            final_damage *= (1 + str * STRENGTH_MUPLTPLIER);
+            final_damage *= (1 + str * STRENGTH_DAMAGE_MULTIPLIER);
         }
 
         // 커스텀 치명타 계산
