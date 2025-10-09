@@ -613,6 +613,7 @@ public class ItemManager {
             case "이동 속도" -> "SPEED";
             case "공격 속도" -> "ATTACK_SPEED";
             case "마나" -> "MAX_MANA";
+            case "체력 재생", "재생력" -> "HP_REGENERATION_BONUS";
             default -> null;
         };
     }

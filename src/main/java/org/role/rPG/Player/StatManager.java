@@ -86,6 +86,7 @@ public class StatManager {
         base.put("MAX_MANA", perData.getPlayerMaxMana(uuid));
         base.put("CURRENT_MANA", perData.getPlayerCurrentMana(uuid));
         base.put("SPEED", (double) perData.getPlayerSpeed(uuid));
+        base.put("HP_REGENERATION_BONUS", perData.getPlayerHpRegenarationBonus(uuid));
 
         // 레벨에 따른 추가 스탯 보너스를 계산하여 합산합니다.
         int mainLevel = perData.getPlayerLevel(uuid);

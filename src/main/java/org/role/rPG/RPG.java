@@ -174,9 +174,8 @@ public final class RPG extends JavaPlugin implements Listener { // 메인 클래
                     double currentHealth = player.getHealth();
 
                     if (currentHealth < maxHealth) {
-                        // vital 스탯도 StatManager를 통해 가져와야 하지만, 현재 구조상 PER_DATA에서 가져옵니다.
-                        // 추후 vital도 장비 스탯으로 관리하려면 StatManager에 추가해야 합니다.
-                        double vital = PER_DATA.getInstance().getPlayerHpRegenarationBonus(playerUUID);
+                        double vital = statManager.getFinalStat(playerUUID, "HP_REGENERATION_BONUS");
+
                         double hpRegenAmount = 0.5 * (NormalHpRegen + maxHealth * 0.01 * (1 + vital * 0.01));
                         player.setHealth(Math.min(maxHealth, currentHealth + hpRegenAmount));
                     }
